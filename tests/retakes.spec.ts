@@ -32,7 +32,7 @@ test("retake allowance counts successful replacements across slots and resets fo
   await expect(page.getByLabel("Retakes per guest session")).toHaveValue("1");
   const k = await enter(page, 2);
   await takePhotos(page, 1, true);
-  await expect(k.locator(".capture-progress")).toContainText("1 of 2");
+  await expect(k.locator(".shot-gallery img")).toHaveCount(1);
   await takePhotos(page, 2);
   await expect(
     k.getByRole("button", { name: "Continue to themes" }),
@@ -59,7 +59,8 @@ test("retake allowance counts successful replacements across slots and resets fo
   await expect(k.locator(".retake-progress")).toContainText(
     "0 retakes remaining",
   );
-  await expect(k.locator("input[type=file]")).toBeDisabled();
+  await expect(k.locator(".kiosk-camera-button .camera-retake-badge")).toHaveText("0");
+  await expect(k.locator("input[type=file]")).toHaveCount(0);
   await expect(
     k.getByRole("button", { name: "Retake photo", exact: true }),
   ).toBeDisabled();

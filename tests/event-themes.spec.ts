@@ -142,7 +142,7 @@ test("event themes persist offline, edit in place and appear beside built-ins fo
   await k.getByRole("button", { name: "Start", exact: true }).click();
   await k.getByRole("button", { name: "4 shots", exact: true }).click();
   await k.getByRole("button", { name: "Continue to camera" }).click();
-  await expect(k.locator("input[type=file]")).toBeVisible();
+  await expect(k.locator("input[type=file]")).toHaveCount(0);
   await takePhotos(page, 4);
   await expect(
     k.getByRole("button", { name: "Continue to themes" }),

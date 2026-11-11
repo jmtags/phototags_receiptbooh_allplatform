@@ -3592,6 +3592,49 @@ h2 {
 .kiosk-photo-adjust input[type="range"] {
   width: 145px;
 }
+.camera-retake-badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 23px;
+  height: 23px;
+  padding: 0 5px;
+  border-radius: 20px;
+  background: white;
+  color: #17243b;
+  border: 1px solid #cdd5e9;
+  font-size: 12px;
+  font-weight: 700;
+}
+.is-camera-step.is-camera-expanded .kiosk-photo-adjust {
+  top: 50%;
+  bottom: auto;
+  left: max(12px, env(safe-area-inset-left));
+  right: auto;
+  transform: translateY(-35%);
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin: 0;
+  padding: 10px;
+  border: 1px solid #ffffff6b;
+  backdrop-filter: blur(12px);
+}
+.is-camera-expanded .kiosk-photo-adjust label:first-child {
+  flex-direction: column;
+}
+.is-camera-expanded .kiosk-photo-adjust input[type="range"] {
+  writing-mode: vertical-lr;
+  direction: rtl;
+  width: 32px;
+  height: clamp(70px, calc(100dvh - 430px), 200px);
+  touch-action: none;
+}
+.is-camera-expanded .kiosk-photo-adjust label {
+  font-size: 11px;
+}
 .kiosk-error {
   max-width: 1000px;
   margin: 0 auto 22px;
@@ -3686,6 +3729,8 @@ h2 {
   gap: 55px;
 }
 .kiosk-final-preview {
+  flex-direction: column;
+  align-items: center;
   background: #e4e7f1;
   padding: 25px 40px;
   border-radius: 16px;
@@ -3746,11 +3791,14 @@ h2 {
   color: #626575;
 }
 .kiosk-print-button {
-  width: 100%;
-  min-height: 78px;
-  font-size: 23px;
+  align-self: flex-end;
+  width: auto;
+  max-width: 100%;
+  min-height: 48px;
+  font-size: 15px;
+  margin-top: 18px;
   border-radius: 12px;
-  margin-bottom: 14px;
+  margin-bottom: 0;
 }
 .kiosk-save {
   width: 100%;
@@ -4162,8 +4210,8 @@ h2 {
     font-size: 14px;
   }
   .kiosk-print-button {
-    min-height: 72px;
-    font-size: 22px;
+    min-height: 48px;
+    font-size: 15px;
   }
   .kiosk-confirm {
     padding: 25px 0;
@@ -5608,3 +5656,14 @@ h2 {
 .folder-export .button { min-height: 44px; font-size: 11px; }
 .folder-export > p { width: 100%; margin: 0; overflow-wrap: anywhere; }
 @media (max-width: 700px) { .device-folder-settings { padding: 18px; } .device-folder-actions { flex-direction: column; } }
+
+/* Keep the capture target compact at every camera breakpoint. */
+.is-camera-step .kiosk-photo-actions .kiosk-camera-button {
+  position: relative;
+  flex: none;
+  width: 54px;
+  height: 54px;
+  min-height: 54px;
+  padding: 0;
+  border-radius: 50%;
+}

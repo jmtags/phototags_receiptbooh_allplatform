@@ -177,7 +177,7 @@ test("automatic permission denial stops without retries and keeps camera retry a
     k.getByRole("button", { name: "Stop automatic capture" }),
   ).toHaveCount(0);
   expect(await page.evaluate(() => (window as any).mediaCalls)).toBe(1);
-  await expect(k.locator("input[type=file]")).toBeEnabled();
+  await expect(k.locator("input[type=file]")).toHaveCount(0);
   await expect(
     k.getByRole("button", { name: "Open camera", exact: true }),
   ).toBeEnabled();
@@ -194,7 +194,7 @@ test("stopping a running countdown keeps completed shots and a new entry fills t
   await synthetic(page);
   await setup(page);
   const k = await enter(page, 4);
-  await expect(k.locator(".capture-progress")).toContainText("1 of 4", {
+  await expect(k.locator(".shot-gallery img")).toHaveCount(1, {
     timeout: 5000,
   });
   await k.getByRole("button", { name: "Stop automatic capture" }).click();
@@ -208,7 +208,7 @@ test("stopping a running countdown keeps completed shots and a new entry fills t
   ).toBeDisabled();
   await k.getByRole("button", { name: "Back", exact: true }).click();
   await k.getByRole("button", { name: "Continue to camera" }).click();
-  await expect(k.locator(".capture-progress")).toContainText("2 of 4", {
+  await expect(k.locator(".shot-gallery img")).toHaveCount(2, {
     timeout: 5000,
   });
   await expect(

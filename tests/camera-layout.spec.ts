@@ -63,6 +63,10 @@ test("large camera and enlarged view retain visible controls, capture cancellati
   await kiosk.getByRole("button", { name: "Start", exact: true }).click();
   await kiosk.getByRole("button", { name: "4 shots", exact: true }).click();
   await kiosk.getByRole("button", { name: "Continue to camera" }).click();
+  await expect(kiosk.locator(".capture-progress")).toHaveCount(0);
+  const captureSize = (await kiosk.locator(".kiosk-camera-button").boundingBox())!;
+  expect(captureSize.width).toBeLessThanOrEqual(56);
+  expect(captureSize.height).toBeLessThanOrEqual(56);
   await kiosk.getByRole("button", { name: "Open camera", exact: true }).click();
   await expect(
     kiosk.getByRole("button", { name: "Take 4 photos", exact: true }),
@@ -87,7 +91,7 @@ test("large camera and enlarged view retain visible controls, capture cancellati
         kiosk.getByRole("button", { name, exact: true }),
       );
     }
-    await visibleControl(page, kiosk.locator(".kiosk-upload"));
+    await expect(kiosk.locator("input[type=file]")).toHaveCount(0);
     for (let i = 1; i <= 4; i++)
       await visibleControl(
         page,
@@ -140,11 +144,22 @@ test("large camera and enlarged view retain visible controls, capture cancellati
     kiosk.getByRole("button", { name: "Retake photo", exact: true }),
   );
   await visibleControl(page, kiosk.locator(".kiosk-photo-adjust"));
+  const zoom = kiosk.getByRole("slider", { name: "Photo zoom" });
+  await visibleControl(page, zoom);
+  await expect(zoom).toHaveAttribute("aria-orientation", "vertical");
+  const zoomBox = (await zoom.boundingBox())!;
+  expect(zoomBox.x + zoomBox.width).toBeLessThan(page.viewportSize()!.width / 2);
+  expect(zoomBox.height).toBeGreaterThan(zoomBox.width);
+  await zoom.focus();
+  await page.keyboard.press("ArrowUp");
+  await expect(zoom).toHaveValue("1.05");
+  await page.screenshot({ path: `artifacts/camera-vertical-zoom-${info.project.name}.png` });
   await kiosk.getByRole("button", { name: "Exit kiosk", exact: true }).click();
   await expect(
     kiosk.getByRole("heading", { name: "Enter host PIN" }),
   ).toBeVisible();
-  await expect(kiosk).not.toHaveClass(/is-camera-expanded/);
+  // The PIN popup keeps the originating camera layout mounted behind it.
+  await expect(kiosk).toHaveClass(/is-camera-expanded/);
   await kiosk.getByRole("button", { name: "Keep booth open" }).click();
   await expect(kiosk).toHaveClass(/is-camera-expanded/);
   await expect(kiosk.locator(".shot-gallery img")).toHaveCount(4);
@@ -207,7 +222,7 @@ test("automatic capture controls stay reachable on narrow and short screens", as
           kiosk.getByRole("button", { name, exact: true }),
         );
       await visibleControl(page, kiosk.locator(".kiosk-camera-button"));
-      await visibleControl(page, kiosk.locator(".kiosk-upload"));
+      await expect(kiosk.locator("input[type=file]")).toHaveCount(0);
       const controls = await kiosk.locator("button").evaluateAll((elements) =>
         elements
           .filter((element) => element.getClientRects().length)
@@ -264,6 +279,6 @@ test("automatic capture controls stay reachable on narrow and short screens", as
         page,
         kiosk.getByRole("button", { name, exact: true }),
       );
-    await visibleControl(page, kiosk.locator(".kiosk-upload"));
+    await expect(kiosk.locator("input[type=file]")).toHaveCount(0);
   }
 });

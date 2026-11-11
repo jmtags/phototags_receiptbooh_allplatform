@@ -6,7 +6,6 @@ import {
   Check,
   CheckCircle2,
   Download,
-  ImagePlus,
   LoaderCircle,
   LockKeyhole,
   Maximize,
@@ -436,17 +435,6 @@ export function Kiosk({
                     </button>
                   ))}
                 </div>
-                <div className="capture-summary">
-                  <p className="capture-progress" role="status">
-                    {b.photos.filter(Boolean).length} of {b.shotCount} photos
-                    captured{b.camera ? ` - photo ${b.activePhoto + 1}` : ""}
-                  </p>
-                  <p className="retake-progress" role="status">
-                    {b.retakeLimit < 0
-                      ? "Unlimited retakes"
-                      : `${b.retakesRemaining} ${b.retakesRemaining === 1 ? "retake" : "retakes"} remaining this session`}
-                  </p>
-                </div>
                 <div className="camera-workspace">
                   <div
                     className={`kiosk-camera ${b.photo && !b.camera ? "has-photo" : ""}`}
@@ -567,6 +555,18 @@ export function Kiosk({
                   <div className="kiosk-photo-actions">
                     <button
                       className="button button-primary kiosk-camera-button"
+                      aria-label={
+                        b.count
+                          ? `Capturing… ${b.count}`
+                          : b.camera
+                            ? b.shotCount > 1 && !b.photo
+                              ? `Take ${b.photos.filter((p) => !p).length} photos`
+                              : "Take my photo"
+                            : b.photo
+                              ? "Retake photo"
+                              : "Open camera"
+                      }
+                      aria-describedby="kiosk-retakes"
                       disabled={
                         b.busy ||
                         (!!b.photo && !b.canRetake) ||
@@ -587,47 +587,30 @@ export function Kiosk({
                       ) : (
                         <Camera aria-hidden="true" size={24} />
                       )}
-                      <span>
-                        {b.count
-                          ? `Capturing… ${b.count}`
-                          : b.camera
-                            ? b.shotCount > 1 && !b.photo
-                              ? `Take ${b.photos.filter((p) => !p).length} photos`
-                              : "Take my photo"
-                            : b.photo
-                              ? "Retake photo"
-                              : "Open camera"}
+
+                      <span
+                        id="kiosk-retakes"
+                        className="retake-progress sr-only"
+                        role="status"
+                      >
+                        {b.retakeLimit < 0
+                          ? "Unlimited retakes"
+                          : `${b.retakesRemaining} ${b.retakesRemaining === 1 ? "retake" : "retakes"} remaining this session`}
                       </span>
+                      {b.hasPhotos && (
+                        <span className="camera-retake-badge" aria-hidden="true">
+                          {b.retakeLimit < 0 ? "\u221e" : b.retakesRemaining}
+                        </span>
+                      )}
                     </button>
-                    <label
-                      className={`kiosk-upload ${b.busy || (!!b.photo && !b.canRetake) ? "disabled" : ""}`}
-                    >
-                      <ImagePlus aria-hidden="true" size={21} />
-                      <span>
-                        {b.shotCount > 1
-                          ? "Choose photos instead"
-                          : "Choose a photo instead"}
-                      </span>
-                      <input
-                        type="file"
-                        name="kiosk-photo"
-                        multiple={b.shotCount > 1}
-                        accept="image/*"
-                        disabled={b.busy || (!!b.photo && !b.canRetake)}
-                        onChange={(e) => {
-                          stopAutoCapture();
-                          void b.uploadMany(Array.from(e.target.files ?? []));
-                          e.target.value = "";
-                        }}
-                      />
-                    </label>
                   </div>
                 </div>
                 {b.photo && !b.camera && (
                   <div className="kiosk-photo-adjust">
                     <label>
-                      Photo zoom
+                      <span>Photo zoom</span>
                       <input
+                        aria-orientation={cameraExpanded ? "vertical" : "horizontal"}
                         type="range"
                         name="kiosk-zoom"
                         min="1"
@@ -671,6 +654,23 @@ export function Kiosk({
                     <div className="kiosk-loading" role="status">
                       Preparing receipt…
                     </div>
+                  )}
+
+                  {!b.job && (
+                    <button
+                      className="button button-primary kiosk-print-button"
+                      disabled={
+                        !b.printer ||
+                        b.busy ||
+                        !b.preview ||
+                        !b.complete ||
+                        b.rendering
+                      }
+                      onClick={b.print}
+                    >
+                      <Printer aria-hidden="true" size={25} />
+                      Print my receipt
+                    </button>
                   )}
                 </div>
                 <section
@@ -760,20 +760,6 @@ export function Kiosk({
                           </button>
                         </div>
                       )}
-                      <button
-                        className="button button-primary kiosk-print-button"
-                        disabled={
-                          !b.printer ||
-                          b.busy ||
-                          !b.preview ||
-                          !b.complete ||
-                          b.rendering
-                        }
-                        onClick={b.print}
-                      >
-                        <Printer aria-hidden="true" size={25} />
-                        Print my receipt
-                      </button>
                     </>
                   )}
                   <button

@@ -95,6 +95,13 @@ test("offline full-screen guest journey has gated steps, export, keyboard focus 
     path: `artifacts/kiosk-${info.project.name}-themes.png`,
   });
   await kiosk.getByRole("button", { name: "Review receipt" }).click();
+  const printButton = kiosk.locator(".kiosk-final-preview .kiosk-print-button");
+  await expect(printButton).toBeVisible();
+  const printBox = (await printButton.boundingBox())!;
+  const receiptBox = (await kiosk.getByRole("img", { name: "Your final receipt" }).boundingBox())!;
+  const panelBox = (await kiosk.locator(".kiosk-final-preview").boundingBox())!;
+  expect(printBox.y).toBeGreaterThanOrEqual(receiptBox.y + receiptBox.height);
+  expect(printBox.x + printBox.width).toBeGreaterThan(panelBox.x + panelBox.width / 2);
   await expect(
     kiosk.getByRole("button", { name: "Print my receipt" }),
   ).toBeDisabled();

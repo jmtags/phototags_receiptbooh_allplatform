@@ -37,7 +37,7 @@ test("four shots, original offline stickers, signature and decorated export", as
   await page.screenshot({ path: `artifacts/shots-${info.project.name}.png` });
   await k.getByRole("button", { name: "Continue to camera" }).click();
   await takePhotos(page, 2, true);
-  await expect(k.locator(".capture-progress")).toContainText("2 of 4");
+  await expect(k.locator(".shot-gallery img")).toHaveCount(2);
   await expect(
     k.getByRole("button", { name: "Continue to themes" }),
   ).toBeDisabled();
@@ -54,7 +54,7 @@ test("four shots, original offline stickers, signature and decorated export", as
   await k.getByRole("button", { name: "Keep booth open" }).click();
   await k.getByRole("button", { name: "4 shots", exact: true }).click();
   await k.getByRole("button", { name: "Continue to camera" }).click();
-  await expect(k.locator(".capture-progress")).toContainText("4 of 4");
+  await expect(k.locator(".shot-gallery img")).toHaveCount(4);
   await k.getByRole("button", { name: "Continue to themes" }).click();
   await k.getByRole("button", { name: "Super Snap", exact: true }).click();
   await expect(k.getByRole("button", { name: "Review receipt" })).toBeEnabled();
@@ -248,7 +248,7 @@ test("four-shot camera sequence counts down separately and stops its stream", as
   await k.getByRole("button", { name: "Continue to camera" }).click();
   await k.getByRole("button", { name: "Open camera", exact: true }).click();
   await k.getByRole("button", { name: "Take 4 photos", exact: true }).click();
-  await expect(k.locator(".capture-progress")).toContainText("1 of 4", {
+  await expect(k.locator(".shot-gallery img")).toHaveCount(1, {
     timeout: 6000,
   });
   await expect(
@@ -256,7 +256,7 @@ test("four-shot camera sequence counts down separately and stops its stream", as
   ).toBeDisabled();
   await k.getByRole("button", { name: "Exit kiosk" }).click();
   await k.getByRole("button", { name: "Keep booth open" }).click();
-  await expect(k.locator(".capture-progress")).toContainText("1 of 4");
+  await expect(k.locator(".shot-gallery img")).toHaveCount(1);
   await k.getByRole("button", { name: "Select photo 2" }).click();
   await k.getByRole("button", { name: "Open camera", exact: true }).click();
   await k.getByRole("button", { name: "Take 3 photos", exact: true }).click();

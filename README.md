@@ -33,7 +33,7 @@ Logo and background uploads accept PNG, JPEG and WebP up to 10 MB each. Logos ar
 
 ## Camera timer
 
-Open **Settings > Camera** and select **Capture countdown**, from 1 to 15 seconds (default 3). The value saves on this device and applies separately to every shot and retake. Enable **Automatic capture in Step 2** to open the camera and start capturing all empty slots as soon as the preview is ready. This switch is off by default and also saves locally. Guests can stop automatic capture and use the manual camera or image upload. Returning to a completed photo step keeps existing photos; camera permission denial does not automatically retry. Starting or finishing a guest session preserves the admin timer. Exit or navigation cancels the active countdown and stops the camera.
+Open **Settings > Camera** and select **Capture countdown**, from 1 to 15 seconds (default 3). The value saves on this device and applies separately to every shot and retake. Enable **Automatic capture in Step 2** to open the camera and start capturing all empty slots as soon as the preview is ready. This switch is off by default and also saves locally. Guests can stop automatic capture and use the manual camera. Returning to a completed photo step keeps existing photos; camera permission denial does not automatically retry. Starting or finishing a guest session preserves the admin timer. Exit or navigation cancels the active countdown and stops the camera.
 
 ## Retakes
 
@@ -54,9 +54,9 @@ Choose **Launch kiosk** from Settings. The app requests browser fullscreen where
 Guests follow four steps:
 
 1. **Choose layout:** choose 1, 2, 3 or 4 shots.
-2. **Take photos:** a large live camera fills the available workspace. Use **Enlarge view** for video across the kiosk and **Restore view** to return. Dark translucent capture, upload, stop and navigation controls stay over the preview. Capture every empty slot with a separate admin-configured countdown and a brief shutter flash after each shot, or choose multiple local images. Select any slot to replace or retake it. All slots must be filled to continue.
+2. **Take photos:** a large live camera fills the available workspace. Use **Enlarge view** for video across the kiosk and **Restore view** to return. Dark translucent capture, stop and navigation controls stay over the preview. The compact capture/retake icon shows the remaining retake allowance as a badge. Capture every empty slot with a separate admin-configured countdown and a brief shutter flash after each shot. Select any slot to retake it. The enlarged captured-photo view places a vertical zoom slider on the left. All slots must be filled to continue.
 3. **Decorate:** choose from the vertical theme collection beside the large receipt preview. Add original APK stickers from the horizontal category strip; drag, resize or rotate them. Move, pinch to zoom or mirror each photo, and draw a signature. Arrow controls provide alternatives to dragging. Decorations appear in both PNG and printer output.
-4. **Print & keep:** save the PNG or send one copy to the host's configured printer queue.
+4. **Print & keep:** save the PNG or send one copy using the print button at the lower right of the receipt preview panel.
 
 Configure the printer before launching the kiosk before opening the kiosk. If no queue is selected, printing stays disabled and the host can return to setup with the guest's photo intact. Submission does not confirm physical output: every print remains unresolved until the host checks the paper/queue. A pending job blocks another print and the next session. No print is triggered by entering a step.
 
