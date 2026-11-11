@@ -598,17 +598,47 @@ export function Studio({
                   <div>
                     <h3>iPhone & iPad</h3>
                     <p>
-                      Open in Safari, tap Share, then Add to Home Screen. Open
-                      the new icon and check offline readiness before
-                      disconnecting.
+                      Safari uses Add to Home Screen instead of an automatic
+                      install prompt. Use the installation instructions below
+                      to add the booth to your phone.
                     </p>
                   </div>
                 </div>
-                {b.installPrompt && (
+                {b.installPrompt ? (
                   <button className="button button-primary" onClick={b.install}>
                     <Download aria-hidden="true" size={17} />
                     Install Receipt Booth
                   </button>
+                ) : (
+                  <details className="manual-install">
+                    <summary className="button button-primary">
+                      <Download aria-hidden="true" size={17} />
+                      Install Receipt Booth
+                    </summary>
+                    <div className="manual-install-steps">
+                      <h3>On iPhone or iPad</h3>
+                      <ol>
+                        <li>Open this booth page directly in Safari.</li>
+                        <li>Open Safari's Share menu and choose Add to Home Screen.</li>
+                        <li>Turn on Open as Web App if shown, then tap Add.</li>
+                      </ol>
+                      <p>
+                        If Add to Home Screen is missing, scroll down in the
+                        Share menu and use Edit Actions to add it.
+                      </p>
+                      <h3>Before going offline</h3>
+                      <p>
+                        Open the new Home Screen icon while online. In Settings,
+                        open Offline &amp; installation, tap Prepare / check offline
+                        files, and wait for Ready for offline use. Test reopening
+                        the app without internet before your event.
+                      </p>
+                      <p>
+                        On Windows or Mac, use your browser's Install app menu,
+                        or File → Add to Dock in supported macOS Safari versions.
+                      </p>
+                    </div>
+                  </details>
                 )}
                 <div className="guide-tip">
                   <LockKeyhole aria-hidden="true" size={18} />

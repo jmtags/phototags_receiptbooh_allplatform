@@ -3608,6 +3608,26 @@ h2 {
   font-size: 12px;
   font-weight: 700;
 }
+.manual-install > summary {
+  list-style: none;
+  cursor: pointer;
+  min-height: 48px;
+}
+.manual-install > summary::-webkit-details-marker { display: none; }
+.manual-install[open] > summary { margin-bottom: 16px; }
+.manual-install-steps {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: #fff;
+  font-size: 13px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.manual-install-steps h3 { font-size: 14px; margin-bottom: 8px; }
+.manual-install-steps ol { padding-left: 22px; }
+.manual-install-steps p { margin-top: 12px; color: #54607b; }
+.manual-install-steps p + h3 { margin-top: 18px; }
 .is-camera-step.is-camera-expanded .kiosk-photo-adjust {
   top: 50%;
   bottom: auto;
