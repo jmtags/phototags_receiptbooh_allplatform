@@ -3628,6 +3628,17 @@ h2 {
 .manual-install-steps ol { padding-left: 22px; }
 .manual-install-steps p { margin-top: 12px; color: #54607b; }
 .manual-install-steps p + h3 { margin-top: 18px; }
+.light-license-settings { max-width: 960px; background: white; border: 1px solid var(--line); border-radius: 16px; padding: 28px; line-height: 1.7; }
+.light-license-settings form, .light-license-settings h3 { margin-top: 24px; }
+.light-license-settings .field { margin: 16px 0; }
+.light-license-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin: 20px 0; }
+.light-license-facts dt { color: #54607b; font-size: 12px; }
+.light-license-facts dd { margin: 0; overflow-wrap: anywhere; font-size: 14px; }
+.light-agreement { display: block; margin: 14px 0; font-size: 13px; }
+.light-plan-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 14px; margin: 20px 0; }
+.light-plan-grid article { border: 1px solid var(--line); border-radius: 12px; padding: 18px; }
+.light-plan-grid .button { width: 100%; margin-top: 14px; }
+@media(max-width:600px) { .light-license-settings { padding: 18px; } .light-license-facts { grid-template-columns: 1fr; } }
 .is-camera-step.is-camera-expanded .kiosk-photo-adjust {
   top: 50%;
   bottom: auto;

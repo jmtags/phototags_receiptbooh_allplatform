@@ -20,6 +20,7 @@ test("studio views pass automated accessibility and keyboard checks", async ({
   await expect(page.getByLabel("Printer profile")).toHaveValue("g80");
   await expect(page.getByLabel("G80 photo tone")).toBeVisible();
   for (const view of [
+    "Light license",
     "Overview",
     "Branding",
     "Camera",

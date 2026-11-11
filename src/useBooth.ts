@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useBranding } from "./branding";
 import { useEventThemes } from "./eventThemes";
 import { useSecurity } from "./security";
+import { useLightLicense } from "./lightLicense";
 import { localDate, readHistoryAssets, usePhotoHistory } from "./history";
 import {
   compose,
@@ -44,6 +45,7 @@ function save(key: string, value: string) {
   }
 }
 export function useBooth() {
+  const lightLicense = useLightLicense();
   const { branding, saveBranding } = useBranding();
   const themeLibrary = useEventThemes();
   const security = useSecurity();
@@ -782,6 +784,10 @@ export function useBooth() {
     });
   }
   async function submitPrint(prepareBytes: () => Promise<Uint8Array>) {
+    if (!lightLicense.hasAccess()) {
+      setError("A valid PhotoTags Light license is required to print. Open Light license in Settings.");
+      return;
+    }
     if (printLock.current || job || !printer || busy) return;
     printLock.current = true;
     setWorking(true);
@@ -905,6 +911,7 @@ export function useBooth() {
     }
   }
   return {
+    lightLicense,
     ...photoHistory,
     printHistoryReceipt,
     captureEvent,

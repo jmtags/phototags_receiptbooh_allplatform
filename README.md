@@ -1,8 +1,8 @@
 # PhotoTags Receipt Booth
 
-Independent, local-first React / TypeScript / Vite PWA. One-to-four-photo booth with five original Android receipt designs and 176 original stickers; Deli ES423 (384 dots) and VOZY G80 (576 dots) rendering. No deployment, Android edits or existing website edits.
+Independent, local-first React / TypeScript / Vite PWA. One-to-four-photo booth with five original Android receipt designs and 176 original stickers; Deli ES423 (384 dots) and VOZY G80 (576 dots) rendering. Android APK source remains unchanged. Light licensing integrates with isolated website components and a separate Light API service.
 
-The Settings page has a sidebar for Overview, Branding, Camera, Event themes, Photo history, Security, Receipt output, Printer connection, Offline & installation, and About the system. Capture, themes, stickers and receipt previews live in the guest kiosk. The interface uses locally bundled Manrope typography and Lucide icons. [Design decisions and open-source references](docs/DESIGN.md).
+The Settings page has a sidebar for Light license, Overview, Branding, Camera, Event themes, Photo history, Security, Receipt output, Printer connection, Offline & installation, and About the system. Capture, themes, stickers and receipt previews live in the guest kiosk. The interface uses locally bundled Manrope typography and Lucide icons. [Design decisions and open-source references](docs/DESIGN.md).
 
 ## Run
 
@@ -120,3 +120,8 @@ On **iPhone/iPad and browsers without directory access**, choose a date folder, 
 Use **Open saved ZIP** to restore a saved archive on Windows, macOS or iOS for browsing and reprinting. Existing newer session versions are retained. ZIP files keep the same date folders, images and session metadata as desktop folder saves. Archive preparation/import supports up to 512 MB; direct desktop folder saves avoid packaging the event into one ZIP. Everything runs locally and remains available offline after the app has been prepared.
 
 Browser behavior references: [File System Access](https://developer.chrome.com/docs/capabilities/web-apis/file-system-access), [Web Share](https://w3c.github.io/web-share/), [Apple Files downloads](https://support.apple.com/en-au/102440). Physical iOS/macOS save dialogs require acceptance testing on those devices.
+
+
+## PhotoTags Light licensing
+
+The Light client supports installation-key registration, activation, plan checkout and signed offline permits. Enforcement defaults to disabled until the separate Light service, migration and public verification key are configured. [Light setup and behavior](docs/LIGHT_LICENSING.md). Android licensing and payments use their existing process.

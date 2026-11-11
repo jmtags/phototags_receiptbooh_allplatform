@@ -1,5 +1,5 @@
 import { createRoot } from "react-dom/client";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Studio } from "./Studio";
 import { Kiosk } from "./Kiosk";
 import { useBooth } from "./useBooth";
@@ -9,6 +9,10 @@ function App() {
   const [kiosk, setKiosk] = useState(false);
   const ownsFullscreen = useRef(false);
   async function launch() {
+    if (!booth.lightLicense.hasAccess()) {
+      booth.navigate("license");
+      return;
+    }
     booth.stopCamera();
     if (
       !document.fullscreenElement &&
@@ -38,6 +42,12 @@ function App() {
         ?.focus(),
     );
   }
+  useEffect(() => {
+    if (kiosk && booth.lightLicense.enabled && !booth.lightLicense.allowed) {
+      close();
+      booth.navigate("license");
+    }
+  }, [kiosk, booth.lightLicense.allowed]);
   return (
     <>
       <Studio

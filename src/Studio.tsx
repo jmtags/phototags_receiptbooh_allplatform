@@ -34,6 +34,7 @@ import { CameraSettings } from "./CameraSettings";
 import { ThemeSettings } from "./ThemeSettings";
 import { SecuritySettings } from "./SecuritySettings";
 import { HistorySettings } from "./HistorySettings";
+import { LightLicenseSettings } from "./LightLicenseSettings";
 import type { BoothModel } from "./useBooth";
 
 export function Studio({
@@ -47,6 +48,12 @@ export function Studio({
   const active = b.tab === "booth";
   useEffect(() => window.scrollTo(0, 0), [b.tab]);
   const sections = [
+    {
+      id: "license",
+      label: "Light license",
+      icon: ShieldCheck,
+      description: "Activate this installation, renew access and check offline permits.",
+    },
     {
       id: "booth",
       label: "Overview",
@@ -244,7 +251,9 @@ export function Studio({
             </div>
           )}
 
-          {b.tab === "history" ? (
+          {b.tab === "license" ? (
+            <LightLicenseSettings booth={b} />
+          ) : b.tab === "history" ? (
             <HistorySettings booth={b} />
           ) : b.tab === "branding" ? (
             <BrandingSettings booth={b} />
