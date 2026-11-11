@@ -1,0 +1,13 @@
+node_modules/
+dist/
+test-results/
+playwright-report/
+*.local
+.env*
+*.tsbuildinfo
+*.log
+artifacts/*
+!artifacts/printer-test-384.png
+!artifacts/printer-test-384.bin
+!artifacts/printer-test-576.png
+!artifacts/printer-test-576.bin

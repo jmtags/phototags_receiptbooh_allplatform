@@ -1,0 +1,11 @@
+import {readFile,writeFile,copyFile,mkdir} from 'node:fs/promises';
+import {createHash} from 'node:crypto';
+await mkdir('public/fonts',{recursive:true});
+const source='node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2';
+const file='/fonts/manrope-latin-wght-normal.woff2';
+await copyFile(source,'public'+file);
+await copyFile('node_modules/@fontsource-variable/manrope/LICENSE','public/licenses/Manrope-OFL.txt');
+await copyFile('node_modules/lucide-react/LICENSE','public/licenses/Lucide.txt');
+const records=JSON.parse(await readFile('public/asset-provenance.json','utf8')).filter(r=>r.file!==file);
+records.push({file,source:'npm:@fontsource-variable/manrope@5.3.0/files/manrope-latin-wght-normal.woff2',repository:'https://github.com/fontsource/font-files/tree/main/fonts/variable/manrope',transformation:'none',license:'OFL-1.1',sha256:createHash('sha256').update(await readFile(source)).digest('hex')});
+await writeFile('public/asset-provenance.json',JSON.stringify(records,null,2));

@@ -1,0 +1,1144 @@
+[
+  {
+    "file": "/assets/receipt_design_super_snap.webp",
+    "source": "C:\\codes\\Android_PHOTOTAGS\\app\\src\\main\\res\\drawable-nodpi\\receipt_design_super_snap.webp",
+    "sha256": "cdf086cebceec014e1af64dee2eda08f32b775b36d39e110105987a64ca0c56b",
+    "transformation": "none"
+  },
+  {
+    "file": "/assets/receipt_design_snap_hero.webp",
+    "source": "C:\\codes\\Android_PHOTOTAGS\\app\\src\\main\\res\\drawable-nodpi\\receipt_design_snap_hero.webp",
+    "sha256": "e58e5f577989ff0178e7f60e710ecb8587e07bac6450d2a938e16e1109b03f63",
+    "transformation": "none"
+  },
+  {
+    "file": "/assets/receipt_design_phototags_times.webp",
+    "source": "C:\\codes\\Android_PHOTOTAGS\\app\\src\\main\\res\\drawable-nodpi\\receipt_design_phototags_times.webp",
+    "sha256": "e9b37edf616e5d9d1b612557a971ffce484e0954c83fdaeada0f64f2a5e46a35",
+    "transformation": "none"
+  },
+  {
+    "file": "/assets/receipt_design_wanted.webp",
+    "source": "C:\\codes\\Android_PHOTOTAGS\\app\\src\\main\\res\\drawable-nodpi\\receipt_design_wanted.webp",
+    "sha256": "859dbccebb711dcd0474829192307ce4d44619cfffa7d064c66660f1d4efcfa3",
+    "transformation": "none"
+  },
+  {
+    "file": "/assets/receipt_design_fashion.webp",
+    "source": "C:\\codes\\Android_PHOTOTAGS\\app\\src\\main\\res\\drawable-nodpi\\receipt_design_fashion.webp",
+    "sha256": "248457dd68812f60b8d941c2ccb9e9a31f16c504614393657ca58f7ba2ca0616",
+    "transformation": "none"
+  },
+  {
+    "file": "/assets/logo.png",
+    "source": "C:\\codes\\Android_PHOTOTAGS_WEBSITE\\public\\assets\\logo.png",
+    "sha256": "a235c18d37f33190ebe795c43152bc3f29a7ee0d3f0c70d2f6a47909b83f709f",
+    "transformation": "none"
+  },
+  {
+    "file": "/assets/logo-dark.png",
+    "source": "C:\\codes\\Android_PHOTOTAGS_WEBSITE\\public\\assets\\logo-dark.png",
+    "sha256": "c4d2fc2002a995cbe824af29c2c9916d22c881d7af0ab610f04148c61b38cb12",
+    "transformation": "none"
+  },
+  {
+    "file": "/icons/icon-192.png",
+    "source": "C:/codes/Android_PHOTOTAGS_WEBSITE/public/assets/logo-dark.png",
+    "transformation": "Camera mark cropped at 190,80,388,388; resized to 192px. Original artwork retained.",
+    "sha256": "2244d2fb2d2b9fe2d97b6c3fc32957bb0622d88cc6fe8b674875c58d1395a371"
+  },
+  {
+    "file": "/icons/icon-512.png",
+    "source": "C:/codes/Android_PHOTOTAGS_WEBSITE/public/assets/logo-dark.png",
+    "transformation": "Camera mark cropped at 190,80,388,388; resized to 512px. Original artwork retained.",
+    "sha256": "c9068f5ce8a9ae56330b58482cd6029ebb8ab202d7430d3becd30b4a41967a9e"
+  },
+  {
+    "file": "/fonts/manrope-latin-wght-normal.woff2",
+    "source": "npm:@fontsource-variable/manrope@5.3.0/files/manrope-latin-wght-normal.woff2",
+    "repository": "https://github.com/fontsource/font-files/tree/main/fonts/variable/manrope",
+    "transformation": "none",
+    "license": "OFL-1.1",
+    "sha256": "a30ddcd349703aff7464c34bef3fffdff405ee50c113440d7c8693c02d210972"
+  },
+  {
+    "file": "/stickers/sticker_cute_arrow_heart.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_arrow_heart.webp",
+    "transformation": "none",
+    "sha256": "a79b4580ae386fa4a860f1836628a47542b1ec60181090a9eb3182301f67be06"
+  },
+  {
+    "file": "/stickers/sticker_cute_avocado_pair.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_avocado_pair.webp",
+    "transformation": "none",
+    "sha256": "2528b8cb250fd8c98f67e36362b51c9d7cdeb60e93d29c18e22370a0175af2a8"
+  },
+  {
+    "file": "/stickers/sticker_cute_bat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_bat.webp",
+    "transformation": "none",
+    "sha256": "3c73f46677aa06009ca945cccf2471ccf56d53e0f1fd7ca857e4cc346829d29b"
+  },
+  {
+    "file": "/stickers/sticker_cute_black_cat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_black_cat.webp",
+    "transformation": "none",
+    "sha256": "9ff2a7298548a178b5b640508c95b88d159f4d4a4d226d0f73d31f597e0a11f7"
+  },
+  {
+    "file": "/stickers/sticker_cute_blue_brontosaurus.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_blue_brontosaurus.webp",
+    "transformation": "none",
+    "sha256": "a3070dfa4babe743f25c16b22d609212f6b28f8987f3432adad7fd5a786ec4cf"
+  },
+  {
+    "file": "/stickers/sticker_cute_candy_corn.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_candy_corn.webp",
+    "transformation": "none",
+    "sha256": "a937ccb3b5fe31dfe5aafa9665d8fcbd6bbc23b413baed74d4ea7eee29af90e2"
+  },
+  {
+    "file": "/stickers/sticker_cute_cauldron.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_cauldron.webp",
+    "transformation": "none",
+    "sha256": "3f0ae86846facb332f7ae9a3a03bd9a3cb9b82fd5b3a1cf4aeb9d78da491416f"
+  },
+  {
+    "file": "/stickers/sticker_cute_champagne_bottle.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_champagne_bottle.webp",
+    "transformation": "none",
+    "sha256": "de8e3a0952d40e57a28ec827086b2798981de203f06016b895b16a15a3976363"
+  },
+  {
+    "file": "/stickers/sticker_cute_champagne_glasses.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_champagne_glasses.webp",
+    "transformation": "none",
+    "sha256": "a382487ae341884494099be30708192f8235d90794195028d4d74119a2cb4e05"
+  },
+  {
+    "file": "/stickers/sticker_cute_chocolate_strawberry.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_chocolate_strawberry.webp",
+    "transformation": "none",
+    "sha256": "4b453e767876a56e84f398c49e3c1b8de292dd59b81e6708e6ba00e2a8647016"
+  },
+  {
+    "file": "/stickers/sticker_cute_christmas_ornament.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_christmas_ornament.webp",
+    "transformation": "none",
+    "sha256": "345a2f10d42f3dbf97809f8a7e587b9041c3c68b7c32158cf9396ae735d98cc1"
+  },
+  {
+    "file": "/stickers/sticker_cute_christmas_stocking.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_christmas_stocking.webp",
+    "transformation": "none",
+    "sha256": "ff3708b968bf54f213dcb080ccec0be81301fc9129eadfae17acf94f343adbf8"
+  },
+  {
+    "file": "/stickers/sticker_cute_christmas_tree.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_christmas_tree.webp",
+    "transformation": "none",
+    "sha256": "67750906b67319e52c0a2bfb55551ff3a8aeace0362a6547495276dffc831c42"
+  },
+  {
+    "file": "/stickers/sticker_cute_cocoa.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_cocoa.webp",
+    "transformation": "none",
+    "sha256": "7eeaed486ebdffecdffd204fbb13a0cbd02f1bb71935f2197a32c45b5106ea8a"
+  },
+  {
+    "file": "/stickers/sticker_cute_coffee_pair.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_coffee_pair.webp",
+    "transformation": "none",
+    "sha256": "e8f8934b7067e4e2db2f07d8f48a7d0a8f387805a3f144ac5d1db1df5c0b7ea9"
+  },
+  {
+    "file": "/stickers/sticker_cute_disco_ball.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_disco_ball.webp",
+    "transformation": "none",
+    "sha256": "8b96c9d93751bcbc4a5e3d77f5c96dc8544c9d89cea7c237585dbbece1d48484"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_01_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_01_eyewear.webp",
+    "transformation": "none",
+    "sha256": "b5ad22347d1e2dcfd4a54f8b9c2063ceef34fd3feb90a8cca4173a1bb65769d3"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_02_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_02_eyewear.webp",
+    "transformation": "none",
+    "sha256": "b3027eb47e58ff5b956bc01e15d62f857ad7ed94afe4c64efd33fa2b25d241e8"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_03_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_03_eyewear.webp",
+    "transformation": "none",
+    "sha256": "24faad1106c3e60edb6cf95f7f3387e1641e925302e4fe56c1bb60bc50758dcd"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_04_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_04_eyewear.webp",
+    "transformation": "none",
+    "sha256": "92001052e3927b50acb9e7195b8504b2916e555417b60ce1a0563f6f88a51283"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_05_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_05_eyewear.webp",
+    "transformation": "none",
+    "sha256": "fc1ebd94f269de7aad74fc3cd5376f53225d5cfb48e1d8356a343122cbf30a58"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_06_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_06_eyewear.webp",
+    "transformation": "none",
+    "sha256": "36be88ab335a804cf0d2763e35551c1493519bbef9162c6cc428f884d746e399"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_07_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_07_eyewear.webp",
+    "transformation": "none",
+    "sha256": "480da0ae329d6f14e887572dba58863e9738372030003b1e0b9b53cba1921bbd"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_08_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_08_eyewear.webp",
+    "transformation": "none",
+    "sha256": "d0d1bec4e0e597f9ffcb639b751a11eddfc8951faa065c11709f610a43c9726e"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_09_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_09_eyewear.webp",
+    "transformation": "none",
+    "sha256": "25579870e16836a12006f0a0bfa27d86619dc6c3581197a28ab63f81674bdf55"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_10_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_10_eyewear.webp",
+    "transformation": "none",
+    "sha256": "137e9344f997abc5e720e6c0c0f9c581b0377099914758ff4d4f59a5eaf935d3"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_11_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_11_eyewear.webp",
+    "transformation": "none",
+    "sha256": "0ee6658b8dc915841821d5dd6bebbb457144d3f4cc9df456fda6564e5724a8cd"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_12_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_12_eyewear.webp",
+    "transformation": "none",
+    "sha256": "3a9c991243990cbb6bd2819867422c87a6cc062e06d13c84a917d69ac58f33a7"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_13_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_13_eyewear.webp",
+    "transformation": "none",
+    "sha256": "7165a9fd3c60e0dd70ec1247880433a006f97e3f949c3f33e969977615d009c7"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_14_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_14_eyewear.webp",
+    "transformation": "none",
+    "sha256": "382b3f940ad496ad4a9a18bd85b53328101956d476e936abbdc7544114aefb3f"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_15_eyewear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_15_eyewear.webp",
+    "transformation": "none",
+    "sha256": "bcac05c8be65b09570616ccc98a493e869fdb9f8e6c1463e98c202601d358548"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_16_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_16_eyes.webp",
+    "transformation": "none",
+    "sha256": "8c39b40c149f19ffd3570f41eb9e290f029ef84d0d41d4ea45b40a3b3f40c184"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_17_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_17_eyes.webp",
+    "transformation": "none",
+    "sha256": "6c59a31401a7a45c2ce0c33b5f5b6152d703fa092ce7eede3bb07f418905a193"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_18_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_18_eyes.webp",
+    "transformation": "none",
+    "sha256": "d5163fba19865ca34707ff2bfb78161172767d267464b72fb14ed39a45ef6fda"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_19_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_19_eyes.webp",
+    "transformation": "none",
+    "sha256": "e0a5288adfa1f12c410989465c091050d4a963f6eac93f9ff46172ab05a6bded"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_20_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_20_eyes.webp",
+    "transformation": "none",
+    "sha256": "b8f7bb04958f6c71acf42b09de1d5be7cda6ca7451d06c3c923c137683335681"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_21_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_21_eyes.webp",
+    "transformation": "none",
+    "sha256": "870e750589ac55656957f94e0d4b2449119113c7e68c9460f7930725dced6d92"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_22_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_22_eyes.webp",
+    "transformation": "none",
+    "sha256": "ea148026ba6195c127edc6fd62668f5e9a21d76de30826944a4cdb575e3dd4ce"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_23_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_23_eyes.webp",
+    "transformation": "none",
+    "sha256": "7eaa7aac71d49b1581781b0f7b4401f153946b930a296010f742dbab3ba7ef4c"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_24_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_24_eyes.webp",
+    "transformation": "none",
+    "sha256": "52c754ea29d84afc216951769216140158636060c64ad4c2e9b73071da2f6da9"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_25_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_25_eyes.webp",
+    "transformation": "none",
+    "sha256": "ca62a71561b9e5c934ed21f6bfc0c8944a06f43a37c660eba1b4a749b9eb3ba5"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_26_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_26_eyes.webp",
+    "transformation": "none",
+    "sha256": "f0248dbda6916dd1052234bb7dfca518167e850652a1e7183d1ac1b25b2c4173"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_27_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_27_eyes.webp",
+    "transformation": "none",
+    "sha256": "11742260c4eb13c983e71b6f9ae5ecfe9c048e06bda030d12ebbb92328753522"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_28_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_28_eyes.webp",
+    "transformation": "none",
+    "sha256": "cd10fd484b0b51b9ddf449591feb42f59ccc2e46a42b569433586923d7fcc95c"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_29_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_29_eyes.webp",
+    "transformation": "none",
+    "sha256": "918d0175b7de9527e4892c32940e8ccdc5acf2d97aaf27a170cf9eec413fc7fa"
+  },
+  {
+    "file": "/stickers/sticker_cute_eye_30_eyes.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_eye_30_eyes.webp",
+    "transformation": "none",
+    "sha256": "269648d60ad89694dff9ed2763de6a47f16472eb12428015243fe900e325d79d"
+  },
+  {
+    "file": "/stickers/sticker_cute_friendship_bracelets.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_friendship_bracelets.webp",
+    "transformation": "none",
+    "sha256": "af6a0d818cbd8842fc4a077fd63aa401c9414ae77890cc4e60cf8b8f18092fb0"
+  },
+  {
+    "file": "/stickers/sticker_cute_ghost.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_ghost.webp",
+    "transformation": "none",
+    "sha256": "6f19d0ad981744cd5a58aea344db6e517269bb13eebc03e25d380b46fb6d4542"
+  },
+  {
+    "file": "/stickers/sticker_cute_gift.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_gift.webp",
+    "transformation": "none",
+    "sha256": "25379b7d2ee9f216ff3d7827f7efd19424d95e8ff856c5ebcbcfc001db3a4c34"
+  },
+  {
+    "file": "/stickers/sticker_cute_gingerbread.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_gingerbread.webp",
+    "transformation": "none",
+    "sha256": "65a38bfd0d209b49835351a2fe0820ba42c0a5bd1de976533f6256fab2e1f2d9"
+  },
+  {
+    "file": "/stickers/sticker_cute_green_trex.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_green_trex.webp",
+    "transformation": "none",
+    "sha256": "f21bc37c8f9e793f73a3d2934bf1e72ca377e7ffafce5b38383d14f6f26546bc"
+  },
+  {
+    "file": "/stickers/sticker_cute_hatching_dino.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_hatching_dino.webp",
+    "transformation": "none",
+    "sha256": "f2b3f9d0e1d9e83bea537b65c19049cfbecf15c9fee27992a9813c341bc090c5"
+  },
+  {
+    "file": "/stickers/sticker_cute_haunted_house.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_haunted_house.webp",
+    "transformation": "none",
+    "sha256": "e4d9546d2ea41629d5cf7135f36e4cd31f56b6d4493066ad0989ba09a8925a97"
+  },
+  {
+    "file": "/stickers/sticker_cute_heart_bouquet.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_heart_bouquet.webp",
+    "transformation": "none",
+    "sha256": "e737c67e9ff786d048788b445769695bd00aa8b2654943404575d91f6949a128"
+  },
+  {
+    "file": "/stickers/sticker_cute_heart_locks.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_heart_locks.webp",
+    "transformation": "none",
+    "sha256": "4cd4c853f2958acb56cfdcf4a33586990efafa74898b10a7b2b620211a40fe16"
+  },
+  {
+    "file": "/stickers/sticker_cute_hugging_hearts.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_hugging_hearts.webp",
+    "transformation": "none",
+    "sha256": "cdbcc793fc641aed8500ef03f8800ef22e01103829863a6b157102199e133746"
+  },
+  {
+    "file": "/stickers/sticker_cute_ice_cream_cone.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_ice_cream_cone.webp",
+    "transformation": "none",
+    "sha256": "e16837de21cc7caee77d7d44b2f48fc642668cc10daec62b83959eb51f04d2f5"
+  },
+  {
+    "file": "/stickers/sticker_cute_lovebirds.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_lovebirds.webp",
+    "transformation": "none",
+    "sha256": "5a118ca5d65ab22794ec2cf4faa2171621cbbc1d9d21b9ae589cc3e5d57660b7"
+  },
+  {
+    "file": "/stickers/sticker_cute_love_bear.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_love_bear.webp",
+    "transformation": "none",
+    "sha256": "aca7c1c1307daeea32353bdc861930d18a96cc2fd8d886247a2b39883a94ebc6"
+  },
+  {
+    "file": "/stickers/sticker_cute_love_letter.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_love_letter.webp",
+    "transformation": "none",
+    "sha256": "685d41c2c9303d0cc47928a8c9b51e811564300aa63803969069a535d9e0a472"
+  },
+  {
+    "file": "/stickers/sticker_cute_masquerade_mask.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_masquerade_mask.webp",
+    "transformation": "none",
+    "sha256": "909dd886c699ecc5538c31175826bfcd542eae0a9ddf0ce663b589660a396817"
+  },
+  {
+    "file": "/stickers/sticker_cute_midnight_clock.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_midnight_clock.webp",
+    "transformation": "none",
+    "sha256": "c716d3deaceba18c06dfc42429f57e3c599f4be0ed26b52c2a182776ec1b80f3"
+  },
+  {
+    "file": "/stickers/sticker_cute_mint_triceratops.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_mint_triceratops.webp",
+    "transformation": "none",
+    "sha256": "2e3823d9ffef50026b49f71739d9bf9c146a67524c9aa82d2dd6ec2db6497dfe"
+  },
+  {
+    "file": "/stickers/sticker_cute_orange_stegosaurus.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_orange_stegosaurus.webp",
+    "transformation": "none",
+    "sha256": "f6d7f943ae38338f213047154203566326e7975fba0e3a03c09efc1642fb8639"
+  },
+  {
+    "file": "/stickers/sticker_cute_party_hat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_party_hat.webp",
+    "transformation": "none",
+    "sha256": "525541db5db49e0ca4a4b84f4219535189a778f9a71f424515da86280ba1d49f"
+  },
+  {
+    "file": "/stickers/sticker_cute_party_popper.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_party_popper.webp",
+    "transformation": "none",
+    "sha256": "67d140e48465e7bcd9981e3a194ee593d38da3f3eee577799df186d605d0acf3"
+  },
+  {
+    "file": "/stickers/sticker_cute_paw_stack.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_paw_stack.webp",
+    "transformation": "none",
+    "sha256": "b150241d97e346e57bc66cd6c5526e3aea161309984e610c9d420f29b8614de0"
+  },
+  {
+    "file": "/stickers/sticker_cute_penguin.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_penguin.webp",
+    "transformation": "none",
+    "sha256": "b96e3da274a4c43a8e894af5550617360765df96ccf04b3769105967e3bc5d8b"
+  },
+  {
+    "file": "/stickers/sticker_cute_pterodactyl.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_pterodactyl.webp",
+    "transformation": "none",
+    "sha256": "829fb55a5caf58d7707a133058a7b8651172f88be0c4f4f07d72611ad48910ad"
+  },
+  {
+    "file": "/stickers/sticker_cute_pumpkin.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_pumpkin.webp",
+    "transformation": "none",
+    "sha256": "2a21d13454d359a70e1817d34e3839280ae2c18ff3e72fd60153efab353879ee"
+  },
+  {
+    "file": "/stickers/sticker_cute_puzzle_pair.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_puzzle_pair.webp",
+    "transformation": "none",
+    "sha256": "38968fca11783a17a920802fdbd5cf73edde0f658010b4f85e1cb6b20681fac6"
+  },
+  {
+    "file": "/stickers/sticker_cute_red_ankylosaurus.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_red_ankylosaurus.webp",
+    "transformation": "none",
+    "sha256": "34083f33b740eb46229e7572b4af426175b99719e1a4b9dc13001946dbd7d5e2"
+  },
+  {
+    "file": "/stickers/sticker_cute_reindeer.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_reindeer.webp",
+    "transformation": "none",
+    "sha256": "c4c792f6591935b4a74298d5271a074b358309a20032311fe6bb6534da2c53b6"
+  },
+  {
+    "file": "/stickers/sticker_cute_rocket.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_rocket.webp",
+    "transformation": "none",
+    "sha256": "c096ba9fd7bb6e3a6fcaada0fb9757c740e97cf777d84c16b888036574003611"
+  },
+  {
+    "file": "/stickers/sticker_cute_santa.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_santa.webp",
+    "transformation": "none",
+    "sha256": "567e6d4974176506f42a4ed071a37c9d315552e0354f3d3608464ef3747d3dde"
+  },
+  {
+    "file": "/stickers/sticker_cute_snowman.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_snowman.webp",
+    "transformation": "none",
+    "sha256": "5ad8aaa34831b30432270a923928ccde0f6ed33d13e4afbf5e8850940c295e84"
+  },
+  {
+    "file": "/stickers/sticker_cute_spider.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_spider.webp",
+    "transformation": "none",
+    "sha256": "898323ab8fc8c3ab51dcd52603464c9a1ab367d1d3864ee975f9e12dc70fd020"
+  },
+  {
+    "file": "/stickers/sticker_cute_star_pair.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_star_pair.webp",
+    "transformation": "none",
+    "sha256": "dc3351d6ec61e89b135b767eb7d85009c27f91c6f3f74183aa7d5e475b8ea8ed"
+  },
+  {
+    "file": "/stickers/sticker_cute_sugar_skull.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_sugar_skull.webp",
+    "transformation": "none",
+    "sha256": "3b53505dc101f4402b7fb75e5282c3e59f0079f9371af4884186292f9e2edb44"
+  },
+  {
+    "file": "/stickers/sticker_cute_witch_hat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_cute_witch_hat.webp",
+    "transformation": "none",
+    "sha256": "15a768b0a8e877aef028ec61be6d24ba2392016115cd6bbec4292909c18cd6ce"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_01.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_01.webp",
+    "transformation": "none",
+    "sha256": "5071600ca408ddc7fc0f8c84f762cc90d66cdec7e9fafcb2e04516f40129d64e"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_02.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_02.webp",
+    "transformation": "none",
+    "sha256": "4a30056cb6338e8068b3dee968ac930e3bb1da8ad3228d4d4cced5fe9221e467"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_03.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_03.webp",
+    "transformation": "none",
+    "sha256": "1ea2d6723e3fdcee4d81f696772bf9ac70fb50641dd75927e387062b54da64b8"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_04.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_04.webp",
+    "transformation": "none",
+    "sha256": "c1c0cc01669b2d0e28d40682e1371a465b4991357da67c5bdd070bf44f602189"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_05.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_05.webp",
+    "transformation": "none",
+    "sha256": "d6cce0db972c96a000ea90b964c5d1cc1742bf6f7769a4d0c23bb0c89755e88b"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_06.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_06.webp",
+    "transformation": "none",
+    "sha256": "31e784c6e5b1ff51e18051ae8d57745d50812463fa3642e83703912148208198"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_07.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_07.webp",
+    "transformation": "none",
+    "sha256": "f4ddd316ac51eaf77e2845b75b30013f7bdae63fa172f26218e0cddb0045f209"
+  },
+  {
+    "file": "/stickers/sticker_greeting_friends_photo_08.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_friends_photo_08.webp",
+    "transformation": "none",
+    "sha256": "16692ccc7e811e3e24467cc21829a660efcfc6024987c8247ed6e64b975e3660"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_01.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_01.webp",
+    "transformation": "none",
+    "sha256": "b26340ef7c3a7463ce0d37cb5fbd4f69e24dfbd136ef662efe74265cad12b791"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_02.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_02.webp",
+    "transformation": "none",
+    "sha256": "5901510f38519e5cf9334a4c39486f648df43b6046e647c71cb45fff879b0378"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_03.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_03.webp",
+    "transformation": "none",
+    "sha256": "e38b85d57fdbe3c6c6689ab685d1872f0a0d9220ad8fbd346bcf79dae3049cd2"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_04.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_04.webp",
+    "transformation": "none",
+    "sha256": "df83d01e952f63831739154aa0b7f267fce5d87bb4e8355ef10638129cc372e2"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_05.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_05.webp",
+    "transformation": "none",
+    "sha256": "cc5ad691ead720b1adb7d7d53d900ffbebacf8e78a2d09a633d7a70bea5cfd59"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_06.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_06.webp",
+    "transformation": "none",
+    "sha256": "1d60574dd42b8621623182547f8fc5fb6706236d4f544ad410bb6f15e344bcbd"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_07.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_07.webp",
+    "transformation": "none",
+    "sha256": "e45153adaefa6c3cb957520a04f54521ba7ceed02a737f4097dc6e34799953fb"
+  },
+  {
+    "file": "/stickers/sticker_greeting_halloween_08.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_halloween_08.webp",
+    "transformation": "none",
+    "sha256": "223abaa57f00100e7b8e0edbedd9dba959b72b1bbfc63874be1ce7078b199678"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_01.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_01.webp",
+    "transformation": "none",
+    "sha256": "059c8a3f3a59d78ededfd9af4b61026b7c0a71abf92d8b73ea45b4533aef8e47"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_02.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_02.webp",
+    "transformation": "none",
+    "sha256": "6c778b6b4c039a2fd730c3835467ed6fff1dd5770e98500d4c03fe8f04810f7c"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_03.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_03.webp",
+    "transformation": "none",
+    "sha256": "7db85fb304ce1b51cca49c4971e291df130f2ff87d3698da14702e7a7400e946"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_04.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_04.webp",
+    "transformation": "none",
+    "sha256": "7378c8fb0fb6a325f6f29eeb58a16064731297b32c3f3d001d8d09e41ced69ab"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_05.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_05.webp",
+    "transformation": "none",
+    "sha256": "3804a4b28ce2ccd2fc3f2aee7f46881a8fb1129d1e945cbb06517dfecfcc5382"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_06.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_06.webp",
+    "transformation": "none",
+    "sha256": "f91d5dddbfb0c979ab91189c48bf3f32b1eee8f69ea21d2562fdab00238a1e4f"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_07.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_07.webp",
+    "transformation": "none",
+    "sha256": "a6b17cd4802561e2896bea7beeeb97efeede55d1d51d78605395c44b37ad4d39"
+  },
+  {
+    "file": "/stickers/sticker_greeting_love_08.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_love_08.webp",
+    "transformation": "none",
+    "sha256": "8e17d7fee3227757777f2b527efdc8262cf7866d2c66ce9a03f449949b39e119"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_01.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_01.webp",
+    "transformation": "none",
+    "sha256": "2c6964943a1efd9c27ab1f9642c1103a42b62cfb8fe7d77791925b998419abff"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_02.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_02.webp",
+    "transformation": "none",
+    "sha256": "0367c7e4d0bc198b93ad483aa851230df446f635e1fd2c0d45713e702d2474ff"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_03.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_03.webp",
+    "transformation": "none",
+    "sha256": "bdffd287ee9ebf7ddedc336a297f249f321b719043fd83845bd87c82fec12e29"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_04.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_04.webp",
+    "transformation": "none",
+    "sha256": "e5d876d53c10ee8b738cfd66519533bfc1d6ec05812e83425d656bfaf33b52fb"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_05.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_05.webp",
+    "transformation": "none",
+    "sha256": "a4d53ce2613ef33067f3d1f881ba7d63d5819dc0ed8fada31f943fe0ed7dd6ed"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_06.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_06.webp",
+    "transformation": "none",
+    "sha256": "8e8be4fc653266626d075197ff9321c16fa9c07e8162905b54785e372f5e3898"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_07.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_07.webp",
+    "transformation": "none",
+    "sha256": "60d3a3cbc374c5942b2363480636cbe7a9e34d10b1942520d4e61f3ab2112d23"
+  },
+  {
+    "file": "/stickers/sticker_greeting_new_year_08.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_greeting_new_year_08.webp",
+    "transformation": "none",
+    "sha256": "118987b3728f6633423ce5add4ef25741d22ade77ee01277619a4f55ccfd9f6f"
+  },
+  {
+    "file": "/stickers/sticker_halloween_01_witchy_black_cat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_01_witchy_black_cat.webp",
+    "transformation": "none",
+    "sha256": "e022dec7c9f28abc1414acd505b64d4a33e19e2bfb83890fffc9e9c77bcf9ed5"
+  },
+  {
+    "file": "/stickers/sticker_halloween_02_candy_bat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_02_candy_bat.webp",
+    "transformation": "none",
+    "sha256": "96c94b4b5eb07cd4847d68dfd167bc767228bde3d683566d769bb98e0ad09744"
+  },
+  {
+    "file": "/stickers/sticker_halloween_03_waving_mummy.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_03_waving_mummy.webp",
+    "transformation": "none",
+    "sha256": "fb37c0f3b5c14c942b384d780a103f34dc83153ba9b2f5c694ff4e6b81cc67d6"
+  },
+  {
+    "file": "/stickers/sticker_halloween_04_skeleton_pumpkin_hoodie.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_04_skeleton_pumpkin_hoodie.webp",
+    "transformation": "none",
+    "sha256": "6b0928435aa5f391621ad422ddc4dfca601ec78cfa6e2b26ae3c79f7897b67d1"
+  },
+  {
+    "file": "/stickers/sticker_halloween_05_pumpkin_scarecrow.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_05_pumpkin_scarecrow.webp",
+    "transformation": "none",
+    "sha256": "afa280960449fa98d31554203c19ecfc438e589a933f20cf34cb37246d7c733c"
+  },
+  {
+    "file": "/stickers/sticker_halloween_06_baby_frankenstein.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_06_baby_frankenstein.webp",
+    "transformation": "none",
+    "sha256": "1aa02082224622642f2b52c3ae30b0afd7e93e559410dbb0b996adaefd3daa00"
+  },
+  {
+    "file": "/stickers/sticker_halloween_07_ghost_lantern.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_07_ghost_lantern.webp",
+    "transformation": "none",
+    "sha256": "be53633e79cc9f22a5b7809add5e2fbabbb88fab76cb3182c01e0d127d98103f"
+  },
+  {
+    "file": "/stickers/sticker_halloween_08_bow_spider.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_08_bow_spider.webp",
+    "transformation": "none",
+    "sha256": "e39f9722b36fa34ca365aa586d9c981044ba5d4e237e8a7e6e60427b8e4f4170"
+  },
+  {
+    "file": "/stickers/sticker_halloween_09_cauldron_cat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_09_cauldron_cat.webp",
+    "transformation": "none",
+    "sha256": "c94517765e2d8e88a86bab4300ae006e31b429a68c957efcf78e2f0a43c0e44c"
+  },
+  {
+    "file": "/stickers/sticker_halloween_10_werewolf_pup.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_10_werewolf_pup.webp",
+    "transformation": "none",
+    "sha256": "b84bd89380186ba8c7db2109b9b79fbfe2c1819e9f9546a89608fb95fc81d20a"
+  },
+  {
+    "file": "/stickers/sticker_halloween_11_ghost_tombstone.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_11_ghost_tombstone.webp",
+    "transformation": "none",
+    "sha256": "438b9c32fa757386b69518f9651672c0c68965fc10fb2d1190b9c56aa942aa48"
+  },
+  {
+    "file": "/stickers/sticker_halloween_12_candy_apple_ghost.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_12_candy_apple_ghost.webp",
+    "transformation": "none",
+    "sha256": "f6005c407a7601c1f848bbd4949621595a859a0a8d4378f6b72583bfeb3e5255"
+  },
+  {
+    "file": "/stickers/sticker_halloween_13_witch_owl_moon.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_13_witch_owl_moon.webp",
+    "transformation": "none",
+    "sha256": "0a7fee99c77598e4f821fcc4b4e588b71d400275f923784e8dcff825eb9cfb18"
+  },
+  {
+    "file": "/stickers/sticker_halloween_14_smiling_potion_bottle.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_14_smiling_potion_bottle.webp",
+    "transformation": "none",
+    "sha256": "b0308ef1d9e04aa0b756962bf7797d9c362146b9fbed39dfa733287a6819c999"
+  },
+  {
+    "file": "/stickers/sticker_halloween_15_skeleton_rose.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_15_skeleton_rose.webp",
+    "transformation": "none",
+    "sha256": "ce4b91a92a188af0398806f3c8c5048ac679288c1b35d92c1964ca21db21ad2e"
+  },
+  {
+    "file": "/stickers/sticker_halloween_16_haunted_mansion_cat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_16_haunted_mansion_cat.webp",
+    "transformation": "none",
+    "sha256": "261d3412180a4c912a41b710c306592ac859f7fe9c04164c365d4a3d717d9fc0"
+  },
+  {
+    "file": "/stickers/sticker_halloween_17_broom_riding_cat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_17_broom_riding_cat.webp",
+    "transformation": "none",
+    "sha256": "1f7e4c52be7c0e15ef9fbc780b1c1050801db2c8bbb63a2e14f019e08d7d7b8c"
+  },
+  {
+    "file": "/stickers/sticker_halloween_18_pumpkin_ghost.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_18_pumpkin_ghost.webp",
+    "transformation": "none",
+    "sha256": "f7b3ff32054f9e111cac90583e3b8fe6e23a7866136193403d578193d553bdeb"
+  },
+  {
+    "file": "/stickers/sticker_halloween_19_wizard_crow.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_19_wizard_crow.webp",
+    "transformation": "none",
+    "sha256": "6b606f7c7e0d8cea67efabe3bc434fe2a53549b5b2d568d668261fb49ee61ad0"
+  },
+  {
+    "file": "/stickers/sticker_halloween_20_candy_eyeball_monster.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_halloween_20_candy_eyeball_monster.webp",
+    "transformation": "none",
+    "sha256": "8962836df3b7c15a61d6d747b1a8c56df03236ef7cdcf552e7440898509d7d27"
+  },
+  {
+    "file": "/stickers/sticker_hat_01_rainbow_party.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_01_rainbow_party.webp",
+    "transformation": "none",
+    "sha256": "02d414e08459989b8da0f1d9a00664c36fc1ee85a75cc99ea4e39f47043f3fb9"
+  },
+  {
+    "file": "/stickers/sticker_hat_02_royal_crown.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_02_royal_crown.webp",
+    "transformation": "none",
+    "sha256": "2c33e34c391e4b59c0e5d193d57f8e90eb79eeac43353d6f5b6a7b7e3392b5f1"
+  },
+  {
+    "file": "/stickers/sticker_hat_03_circus_top_hat.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_03_circus_top_hat.webp",
+    "transformation": "none",
+    "sha256": "b598468f9a26a9054a7c90ed1a52fd3eec1c25ff580dc72094536b14b3caa0f6"
+  },
+  {
+    "file": "/stickers/sticker_hat_04_pink_cowboy.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_04_pink_cowboy.webp",
+    "transformation": "none",
+    "sha256": "f9f618113714407175f1438de0d38e992dceb0833b631ef59c911f4bdbd67157"
+  },
+  {
+    "file": "/stickers/sticker_hat_05_moon_wizard.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_05_moon_wizard.webp",
+    "transformation": "none",
+    "sha256": "9380b1b167c1aff077d66e86248bddfe46f9faa0c94164ca931fb6ce78892ec0"
+  },
+  {
+    "file": "/stickers/sticker_hat_06_pirate_tricorne.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_06_pirate_tricorne.webp",
+    "transformation": "none",
+    "sha256": "2807c9ead90baf38de36d8787585f86f9a6faa54fafe5852855a779bd794b1b7"
+  },
+  {
+    "file": "/stickers/sticker_hat_07_smiley_bucket.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_07_smiley_bucket.webp",
+    "transformation": "none",
+    "sha256": "63949f6634eb10ee736adec4bbe56ced2f93b26f5341db415e34af8451cb0e92"
+  },
+  {
+    "file": "/stickers/sticker_hat_08_disco_bow.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_08_disco_bow.webp",
+    "transformation": "none",
+    "sha256": "d31a0cd8619f79fa2c91a58f012331e36d57d7b297e44f8d753048784ff200a8"
+  },
+  {
+    "file": "/stickers/sticker_hat_09_graduation_cap.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_09_graduation_cap.webp",
+    "transformation": "none",
+    "sha256": "3fc15e87296e480f7c0157fb4dc67a9500f048c47e947a1cd9751da4dfc4ecdf"
+  },
+  {
+    "file": "/stickers/sticker_hat_10_hibiscus_crown.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_hat_10_hibiscus_crown.webp",
+    "transformation": "none",
+    "sha256": "d507dafc4d94bb322949532fbf904e40c7f34a90568591f8ba8fe3f7cac2fc4e"
+  },
+  {
+    "file": "/stickers/sticker_mental_ask_for_help.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_ask_for_help.webp",
+    "transformation": "none",
+    "sha256": "fda2bff86de7064381042d0dc2c1781302487514c6063307b466ac5817603cc5"
+  },
+  {
+    "file": "/stickers/sticker_mental_better_days_ahead.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_better_days_ahead.webp",
+    "transformation": "none",
+    "sha256": "01cdeba94615873d6b63773b6e44c5a6cd10aff554c26ff242b29cdc9305e231"
+  },
+  {
+    "file": "/stickers/sticker_mental_be_kind_to_your_mind.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_be_kind_to_your_mind.webp",
+    "transformation": "none",
+    "sha256": "b876d421a849553497b459eb252c4b7d0c35a710a07953d421f6b7e81348eca9"
+  },
+  {
+    "file": "/stickers/sticker_mental_breathe.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_breathe.webp",
+    "transformation": "none",
+    "sha256": "9f0dfc294b1ada106078b908977c3aea5007d8ec719ac6e58d910cabf3fe9dd4"
+  },
+  {
+    "file": "/stickers/sticker_mental_choose_yourself.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_choose_yourself.webp",
+    "transformation": "none",
+    "sha256": "dc874179690ff0877fc135274c24833267b2a02e16cc9b7ab04aa3700ff78b9b"
+  },
+  {
+    "file": "/stickers/sticker_mental_end_the_stigma.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_end_the_stigma.webp",
+    "transformation": "none",
+    "sha256": "5079ec8192f19f5fbad4991ea9d4219839e4fa37d6631a95679d471f0d61df79"
+  },
+  {
+    "file": "/stickers/sticker_mental_feel_your_feelings.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_feel_your_feelings.webp",
+    "transformation": "none",
+    "sha256": "d77d00e1609fcd1bbd30f8d377968e7206608e89399d13e2c37b9d8719b96e2b"
+  },
+  {
+    "file": "/stickers/sticker_mental_grow_through_it.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_grow_through_it.webp",
+    "transformation": "none",
+    "sha256": "9ccfd11a303bb9b90115633951bb128181e6c220fc90b4d6fb060ececb7faa9c"
+  },
+  {
+    "file": "/stickers/sticker_mental_healing_takes_time.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_healing_takes_time.webp",
+    "transformation": "none",
+    "sha256": "fb66b16a296ba745a2d8f1763079c5ad19ef4cab6ad93b25aba8301897d1eb2a"
+  },
+  {
+    "file": "/stickers/sticker_mental_its_okay_to_rest.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_its_okay_to_rest.webp",
+    "transformation": "none",
+    "sha256": "70740db317f91108029d7a75ad27bc89cc3162069934c153b896e7cd3d042814"
+  },
+  {
+    "file": "/stickers/sticker_mental_keep_going.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_keep_going.webp",
+    "transformation": "none",
+    "sha256": "739d4635b7663fee4b8567f80e993f60fcf9506ac30bcf50e699fda1ed11843a"
+  },
+  {
+    "file": "/stickers/sticker_mental_mental_health_matters.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_mental_health_matters.webp",
+    "transformation": "none",
+    "sha256": "957a1359e1ea270499a67d45f8258aceea197a2a27538cb9defc83dd0433e673"
+  },
+  {
+    "file": "/stickers/sticker_mental_not_alone.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_not_alone.webp",
+    "transformation": "none",
+    "sha256": "93cfdf2faababa268c17bcb4d5ad4d58e87e055a69e6f65fc669b5e5fdc33237"
+  },
+  {
+    "file": "/stickers/sticker_mental_one_day_at_a_time.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_one_day_at_a_time.webp",
+    "transformation": "none",
+    "sha256": "1567ff9e9c2c7e957fc47d5783b6a1bb659c49dfd8646537bd766704f2f0fbf9"
+  },
+  {
+    "file": "/stickers/sticker_mental_pause_and_reset.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_pause_and_reset.webp",
+    "transformation": "none",
+    "sha256": "7371770a34a24a93d59b3d32daddf721fc2b698a1805226ac8995ad81aa40fb2"
+  },
+  {
+    "file": "/stickers/sticker_mental_progress_not_perfection.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_progress_not_perfection.webp",
+    "transformation": "none",
+    "sha256": "6c526b683866e659716119fe125b03254c98bff1d3698736d5fd823828aa7b9f"
+  },
+  {
+    "file": "/stickers/sticker_mental_protect_your_peace.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_protect_your_peace.webp",
+    "transformation": "none",
+    "sha256": "1c136d55cd9fc815267ff4b663219f37dc5c3db16aaab4adb7584bd7aeacd805"
+  },
+  {
+    "file": "/stickers/sticker_mental_rest_is_productive.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_rest_is_productive.webp",
+    "transformation": "none",
+    "sha256": "38824c965318b03c4d2fab36f62f61f33482470e8e1cfdcdaf58f828d923a963"
+  },
+  {
+    "file": "/stickers/sticker_mental_self_care_club.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_self_care_club.webp",
+    "transformation": "none",
+    "sha256": "e856b8aacaeec9e48e73b9d7b181082c43d2ca5bab94c510a35265b795103d47"
+  },
+  {
+    "file": "/stickers/sticker_mental_small_steps.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_small_steps.webp",
+    "transformation": "none",
+    "sha256": "beca0c34740192efab4ae2230174a3070efeb734f86f7fb9b99f9c6f94ae4809"
+  },
+  {
+    "file": "/stickers/sticker_mental_therapy_is_cool.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_therapy_is_cool.webp",
+    "transformation": "none",
+    "sha256": "2f7ff1b0c62b213cff334c4085527ba2dc524c8c1bca8f130ede0dd73377ac11"
+  },
+  {
+    "file": "/stickers/sticker_mental_your_feelings_are_valid.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_your_feelings_are_valid.webp",
+    "transformation": "none",
+    "sha256": "550d396fd585e7b2d7d214a7ad62db72624d65b3faf27656e1b6beb5372eab5e"
+  },
+  {
+    "file": "/stickers/sticker_mental_you_are_enough.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_you_are_enough.webp",
+    "transformation": "none",
+    "sha256": "f15f9f3fcc8b47c08391e1e0199b9650db83ad7aa2b5207da39eb72c41759c04"
+  },
+  {
+    "file": "/stickers/sticker_mental_you_matter.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_mental_you_matter.webp",
+    "transformation": "none",
+    "sha256": "c6821432136dc930a2f7e417630d2f0811c88d0e1ad3757052755aaa367ec409"
+  },
+  {
+    "file": "/stickers/sticker_wig_01_pink_curls.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_01_pink_curls.webp",
+    "transformation": "none",
+    "sha256": "73c0a02664e8107ee32d88e91c12fa650fd9f538b70d0953a0adf1a96fd66738"
+  },
+  {
+    "file": "/stickers/sticker_wig_02_lavender_space_buns.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_02_lavender_space_buns.webp",
+    "transformation": "none",
+    "sha256": "24994fc9322c75617941308b5f63f699fba1990e5c172a230c4a4d9611c44669"
+  },
+  {
+    "file": "/stickers/sticker_wig_03_blue_anime.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_03_blue_anime.webp",
+    "transformation": "none",
+    "sha256": "a1b57c158b31ae40f063ca68af8ec48b529caa794b8d7074257d0d92c670ad7e"
+  },
+  {
+    "file": "/stickers/sticker_wig_04_rainbow_afro.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_04_rainbow_afro.webp",
+    "transformation": "none",
+    "sha256": "caba73de31b92365ed27072ee46c297a76c218f8e5478daf988e03b39353b114"
+  },
+  {
+    "file": "/stickers/sticker_wig_05_teal_bob.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_05_teal_bob.webp",
+    "transformation": "none",
+    "sha256": "5ae2ca89fe76532b29117b6c62a0b137d5e84b86d306f09b80392dc370ff66e6"
+  },
+  {
+    "file": "/stickers/sticker_wig_06_violet_retro.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_06_violet_retro.webp",
+    "transformation": "none",
+    "sha256": "0c50fbdb7c1f2866f68e5498aa2c4df4d6c01a062163b02d6d4ae960117b27ac"
+  },
+  {
+    "file": "/stickers/sticker_wig_07_copper_waves.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_07_copper_waves.webp",
+    "transformation": "none",
+    "sha256": "61a4fc3036e7a795bcd231157973a2715843149774c9b5db5dd3859946c04e36"
+  },
+  {
+    "file": "/stickers/sticker_wig_08_mint_pigtails.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_08_mint_pigtails.webp",
+    "transformation": "none",
+    "sha256": "04dd8963825ebfdc4c60e9df9860efacc2ca50d928da7dbdea13554623611cb2"
+  },
+  {
+    "file": "/stickers/sticker_wig_09_silver_pixie.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_09_silver_pixie.webp",
+    "transformation": "none",
+    "sha256": "b095bc34ae5b7a3890b7fe35020e978fdcabc07e3559f551ae15c233117066ec"
+  },
+  {
+    "file": "/stickers/sticker_wig_10_pink_mohawk.webp",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/sticker_wig_10_pink_mohawk.webp",
+    "transformation": "none",
+    "sha256": "7108ea0b395af0816703740163bd6b9d66a6ce115e5e84ae6ea890f2a53f3c35"
+  },
+  {
+    "file": "/assets/receipt_58mm_1_shot.png",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/receipt_58mm_1_shot.png",
+    "transformation": "none",
+    "sha256": "228ec087437a2fa2c1c0c8dffaa0a9412c7f8bfcba65f2cdac15f0d149633bcb"
+  },
+  {
+    "file": "/assets/receipt_58mm_2_shots.png",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/receipt_58mm_2_shots.png",
+    "transformation": "none",
+    "sha256": "c41c70551305406def966116488b09f6c47d16917390f334a034fb1e625e5929"
+  },
+  {
+    "file": "/assets/receipt_58mm_3_shots.png",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/receipt_58mm_3_shots.png",
+    "transformation": "none",
+    "sha256": "ac13aebd9622e6fe10a233605a866f37fb0b843ac905d91bf0857af2cad90330"
+  },
+  {
+    "file": "/assets/receipt_58mm_4_shots.png",
+    "source": "C:/codes/Android_PHOTOTAGS/app/src/main/res/drawable-nodpi/receipt_58mm_4_shots.png",
+    "transformation": "none",
+    "sha256": "b4748c4638f79786e1c0b236cb7b1fe4d3e374790612425b0f0e63fdeb215ea4"
+  }
+]
