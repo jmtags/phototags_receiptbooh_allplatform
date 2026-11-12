@@ -25,6 +25,8 @@ Each installation uses a saved browser identity. A different browser, the instal
 
 New purchases show the QR inside the activation dialog. Closing it does not cancel a purchase: use Resume license payment to reopen it, including after reloading. On a phone, save the QR and import it in a banking app if supported, or scan it from another device. An expired QR can be replaced only after server-side cancellation of the old intent is confirmed. Historical hosted purchases remain recoverable using their original checkout.
 
+If Resume license payment shows a PayMongo link instead of a QR, it is an earlier hosted checkout. Enter the receipt email and select Switch to in-app QR. The server replaces it only after PayMongo confirms that unpaid checkout has expired; paid or processing purchases are preserved. New QR requests do not silently fall back to hosted checkout when setup is incomplete. Refresh or apply the app update without clearing site data.
+
 The Light service requires migration `202611120001_light_inline_qr.sql` and the `payment.paid` event on its separate webhook for this flow. Its website repository documents the rollout in `docs/LIGHT_INLINE_QR.md`. Retain `checkout_session.payment.paid` for existing purchases and leave the APK webhook unchanged. New PayMongo payment descriptions include PhotoTags Light license, plan and reference.
 
 ## Settings organization

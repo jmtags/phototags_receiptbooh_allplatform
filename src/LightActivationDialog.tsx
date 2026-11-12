@@ -9,17 +9,19 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
   const [planId, setPlanId] = useState("");
   const success = !!l.completedPayment;
   const failed = l.payment?.status === "failed";
+  const hosted = !!l.payment?.checkoutUrl;
+  const setupReady = l.paymentSetup?.inlineQr !== false;
   const selected = l.plans.find(p => p.id === planId);
   const expired = !!l.payment?.expiresAt && Date.parse(l.payment.expiresAt) <= Date.now();
-  const canPay = online && !l.busy && agreed && !!selected && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const canPay = setupReady && online && !l.busy && agreed && !!selected && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   useEffect(() => {
     const modal = dialog.current!; modal.showModal();
     const overflow = document.body.style.overflow; document.body.style.overflow = "hidden";
     return () => { modal.close(); document.body.style.overflow = overflow; };
   }, []);
   useEffect(() => { title.current?.focus(); }, [step, success]);
-  async function pay() {
-    const result = await l.checkout(planId || l.payment?.planId || "", email.trim(), agreed || !!l.pendingPaymentId);
+  async function pay(replaceHosted = false) {
+    const result = await l.checkout(planId || l.payment?.planId || "", email.trim(), agreed || !!l.pendingPaymentId, replaceHosted);
     if (result?.paymentId) setStep(2);
   }
   return <dialog ref={dialog} className="light-activation-dialog" aria-labelledby="light-activation-title" onCancel={e => { e.preventDefault(); onClose(); }}>
@@ -52,6 +54,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
           <label className="field">Receipt email<input type="email" autoComplete="email" maxLength={254} value={email} onChange={e => setEmail(e.target.value)} required /></label>
           <p className="field-help">Payment is for a PhotoTags Light license on this installation. Renewals add time to your current active license.</p>
           {l.plansError && <p role="alert">{l.plansError}</p>}
+          {!setupReady && <p role="alert">{l.paymentSetup?.status === "light_inline_qr_not_configured" ? "QR setup is incomplete. Your host must apply the Light QR migration in Supabase." : "The Light QR payment service needs configuration. Ask your host to check the existing Light service."}</p>}
         </>}
         {step === 2 && <>
           {l.payment?.qrImageUrl && !expired && !failed ? <div className="light-qr-payment">
@@ -61,16 +64,17 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
             <p>Scan with a participating bank or e-wallet app. Your license updates here after payment is verified.</p>
             <a className="text-link" href={l.payment.qrImageUrl} download="PhotoTags-Light-payment.png">Save QR image</a>
             <small>QR valid until {new Date(l.payment.expiresAt!).toLocaleTimeString()}. On the same phone, save the QR and import it in your banking app if supported.</small>
-          </div> : <p>{failed ? "This payment was cancelled. Close this dialog to choose a new license payment." : expired ? "This QR code has expired. Check payment before generating a replacement." : "Checking your pending payment. Keep this app open; you can safely close and resume this dialog."}</p>}
+          </div> : <p>{failed ? "This payment was cancelled. Close this dialog to choose a new license payment." : expired ? "This QR code has expired. Check payment before generating a replacement." : hosted ? "Your earlier attempt used hosted checkout, so it has no in-app QR image. You can switch an unpaid attempt to QR below." : "Checking your pending payment. Keep this app open; you can safely close and resume this dialog."}</p>}
           {l.payment?.reference && <p className="light-payment-reference">Reference: {l.payment.reference}</p>}
-          {l.payment?.checkoutUrl && <p>This payment uses hosted checkout. <a href={l.payment.checkoutUrl} target="_blank" rel="noreferrer">Complete payment at PayMongo</a>. Return here for automatic license activation.</p>}
-          {expired && <label className="field">Receipt email<input type="email" value={email} onChange={e => setEmail(e.target.value)} /></label>}
+          {l.payment?.checkoutUrl && <p>You can also <a href={l.payment.checkoutUrl} target="_blank" rel="noreferrer">complete the earlier payment at PayMongo</a>. Payment is always verified before activation.</p>}
+          {hosted && <p className="field-help">Switching first closes the unpaid hosted checkout. A paid or processing payment will be preserved.</p>}
+          {(expired || hosted) && <label className="field">Receipt email<input type="email" value={email} onChange={e => setEmail(e.target.value)} /></label>}
         </>}
         <p role="status" className="light-dialog-status">{!online ? "You are offline. Reconnect to continue payment." : l.busy ? "Checking with the license service…" : l.message}</p>
       </>}
     </div>
     <footer className="light-dialog-actions">
-      {success ? <button className="button button-primary" onClick={onClose}>Done</button> : step === 0 ? <button className="button button-primary" disabled={!agreed || !online} onClick={() => { void l.loadPlans(); setStep(1); }}>Agree & continue <ArrowRight size={17} aria-hidden="true" /></button> : step === 1 ? <><button className="button button-secondary" disabled={l.busy} onClick={() => setStep(0)}><ArrowLeft size={17} aria-hidden="true" />Back</button><button className="button button-primary" disabled={!canPay} onClick={() => void pay()}>{l.busy ? <LoaderCircle className="spinner" size={17} aria-hidden="true" /> : null}Show payment QR</button></> : <><button className="button button-secondary" disabled={l.busy || !online} onClick={() => void l.refresh()}><RefreshCw size={17} aria-hidden="true" />Check payment</button>{expired && <button className="button button-primary" disabled={l.busy || !online || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)} onClick={() => void pay()}>Generate a new QR</button>}</>}
+      {success ? <button className="button button-primary" onClick={onClose}>Done</button> : step === 0 ? <button className="button button-primary" disabled={!agreed || !online} onClick={() => { void l.loadPlans(); setStep(1); }}>Agree & continue <ArrowRight size={17} aria-hidden="true" /></button> : step === 1 ? <><button className="button button-secondary" disabled={l.busy} onClick={() => setStep(0)}><ArrowLeft size={17} aria-hidden="true" />Back</button><button className="button button-primary" disabled={!canPay} onClick={() => void pay()}>{l.busy ? <LoaderCircle className="spinner" size={17} aria-hidden="true" /> : null}Show payment QR</button></> : <><button className="button button-secondary" disabled={l.busy || !online} onClick={() => void l.refresh()}><RefreshCw size={17} aria-hidden="true" />Check payment</button>{(expired || hosted) && <button className="button button-primary" disabled={!setupReady || l.busy || !online || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)} onClick={() => void pay(hosted)}>{hosted ? "Switch to in-app QR" : "Generate a new QR"}</button>}</>}
     </footer>
   </dialog>;
 }
