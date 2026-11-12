@@ -6,9 +6,8 @@ import {
   LockKeyhole,
   Printer,
   ShieldCheck,
-  SlidersHorizontal,
 } from "lucide-react";
-import { profiles, type Profile } from "./receipt";
+import { profiles } from "./receipt";
 import type { BoothModel } from "./useBooth";
 
 export function HostSettings({ booth: b }: { booth: BoothModel }) {
@@ -74,81 +73,13 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
       )}
 
       <div className="host-details-grid">
-        {b.tab === "output" && (
-          <section
-            className="host-panel"
-            aria-labelledby="output-settings-heading"
-          >
-            <div className="host-panel-title">
-              <SlidersHorizontal size={22} aria-hidden="true" />
-              <div>
-                <span className="section-kicker">Device configuration</span>
-                <h2 id="output-settings-heading">Receipt output</h2>
-              </div>
-            </div>
-            <p className="host-intro">
-              Set the output for this station before guests enter the kiosk.
-            </p>
-            <label className="field">
-              Printer profile
-              <select
-                name="host-profile"
-                value={b.profile}
-                disabled={b.busy || !!b.job}
-                onChange={(e) => b.setProfile(e.target.value as Profile)}
-              >
-                {Object.entries(profiles).map(([id, p]) => (
-                  <option key={id} value={id}>
-                    {p.name} · {p.width} dots
-                  </option>
-                ))}
-              </select>
-            </label>
-            {b.profile === "g80" && (
-              <label className="field">
-                G80 photo tone
-                <select
-                  name="host-tone"
-                  value={b.gamma}
-                  disabled={b.busy || !!b.job}
-                  onChange={(e) => b.setGamma(+e.target.value)}
-                >
-                  <option value="1">Natural</option>
-                  <option value="1.5">Lighter photos</option>
-                  <option value="2">Lightest photos</option>
-                </select>
-              </label>
-            )}
-            <label className="check-label host-output-toggle">
-              <input
-                type="checkbox"
-                checked={b.thermalView}
-                disabled={b.busy || !!b.job}
-                onChange={(e) => b.setThermalView(e.target.checked)}
-              />
-              <span>Thermal preview & PNG export</span>
-            </label>
-            <p className="field-help">
-              Thermal mode previews the black-and-white printer bitmap. Turn it
-              off for a color preview and PNG. Printer output always uses the
-              selected thermal profile.
-            </p>
-            <div className="host-output-spec">
-              <span>{profiles[b.profile].width} dots</span>
-              <span>{profiles[b.profile].mm} mm printable width</span>
-              <span>One copy per print action</span>
-            </div>
-          </section>
-        )}
-        {b.tab === "about" && (
-          <section
-            className="host-panel host-system"
-            aria-labelledby="system-heading"
-          >
+        {b.tab === "booth" && (
+          <details className="host-panel host-system">
+            <summary>About the system</summary>
             <div className="host-panel-title">
               <Layers3 size={22} aria-hidden="true" />
               <div>
-                <span className="section-kicker">About the system</span>
+                <span className="section-kicker">Guest experience</span>
                 <h2 id="system-heading">One station. Four simple steps.</h2>
               </div>
             </div>
@@ -162,7 +93,7 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
                 ["Choose shots", "Select 1, 2, 3 or 4 photos."],
                 [
                   "Capture",
-                  "A separate countdown for every shot, with local photo upload available.",
+                  "A separate countdown for every shot.",
                 ],
                 [
                   "Decorate",
@@ -190,7 +121,7 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
                 browse, download, reprint or delete saved sessions in Settings.
               </p>
             </div>
-          </section>
+          </details>
         )}
       </div>
       {b.tab === "booth" && (
@@ -200,6 +131,7 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
             <h2 id="event-heading">Before you welcome guests</h2>
           </div>
           <ol>
+            {b.lightLicense.enabled && <li>Activate this installation and check its offline license expiry.</li>}
             <li>Check the offline package on this device.</li>
             <li>Select the printer queue and inspect one test receipt.</li>
             <li>Launch the kiosk and allow camera access when prompted.</li>

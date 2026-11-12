@@ -1055,6 +1055,16 @@
   align-items: center;
   gap: 14px;
 }
+.host-system > summary {
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 650;
+  color: var(--ink);
+  padding: 4px 0;
+}
+.host-system[open] > summary {
+  margin-bottom: 24px;
+}
 .host-panel-title > svg {
   color: #496184;
 }

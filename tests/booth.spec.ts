@@ -29,25 +29,28 @@ test("host settings replace the duplicate studio and configure the station", asy
     );
   await expect(page.locator('input[name="kiosk-photo"]')).toHaveCount(0);
   await expect(page.locator("video")).toHaveCount(0);
+  const settingsNav = page.getByRole("navigation", { name: "Settings sections" });
+  await expect(settingsNav.getByRole("button", { name: "Receipt output", exact: true })).toHaveCount(0);
+  await expect(settingsNav.getByRole("button", { name: "About the system", exact: true })).toHaveCount(0);
   await page
-    .getByRole("button", { name: "About the system", exact: true })
+    .getByText("About the system", { exact: true })
     .click();
   await expect(
     page.getByRole("heading", { name: "One station. Four simple steps." }),
   ).toBeVisible();
   await page
-    .getByRole("button", { name: "Receipt output", exact: true })
+    .getByRole("button", { name: "Printer connection", exact: true })
     .click();
   await page.getByLabel("Printer profile").selectOption("g80");
-  await expect(page.getByLabel("G80 photo tone")).toBeVisible();
-  await page.getByLabel("G80 photo tone").selectOption("2");
+  await expect(page.getByLabel("Photo lightness")).toBeVisible();
+  await page.getByLabel("Photo lightness").selectOption("2");
   await page.getByLabel("Thermal preview & PNG export").uncheck();
   await page.reload();
   await page
-    .getByRole("button", { name: "Receipt output", exact: true })
+    .getByRole("button", { name: "Printer connection", exact: true })
     .click();
   await expect(page.getByLabel("Printer profile")).toHaveValue("g80");
-  await expect(page.getByLabel("G80 photo tone")).toHaveValue("2");
+  await expect(page.getByLabel("Photo lightness")).toHaveValue("2");
   await expect(
     page.getByLabel("Thermal preview & PNG export"),
   ).not.toBeChecked();

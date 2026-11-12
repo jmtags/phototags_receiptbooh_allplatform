@@ -12,13 +12,13 @@ test("studio views pass automated accessibility and keyboard checks", async ({
   await page.keyboard.press("Enter");
   await expect(page.locator("main")).toBeFocused();
   await page
-    .getByRole("button", { name: "Receipt output", exact: true })
+    .getByRole("button", { name: "Printer connection", exact: true })
     .click();
   await page.getByLabel("Printer profile").focus();
   await page.keyboard.press("ArrowDown");
   await page.keyboard.press("Enter");
   await expect(page.getByLabel("Printer profile")).toHaveValue("g80");
-  await expect(page.getByLabel("G80 photo tone")).toBeVisible();
+  await expect(page.getByLabel("Photo lightness")).toBeVisible();
   for (const view of [
     "Light license",
     "Overview",
@@ -27,8 +27,6 @@ test("studio views pass automated accessibility and keyboard checks", async ({
     "Event themes",
     "Photo history",
     "Security",
-    "Receipt output",
-    "About the system",
     "Printer connection",
     "Offline & installation",
   ]) {

@@ -21,14 +21,23 @@ export function LightLicenseSettings({ booth: b }: { booth: BoothModel }) {
       </form>
       <h3>Buy or renew PhotoTags Light</h3>
       <p>Purchases apply to this installation. Renewal adds the purchased time to its current active license period.</p>
-      <p>On iPhone or iPad, return to this installed Home Screen app after payment and tap Check license / payment.</p>
       <label className="field">Receipt email<input type="email" maxLength={254} value={email} onChange={e => setEmail(e.target.value)} /></label>
       <label className="light-agreement"><input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />I accept the <a href="https://www.phototags.app/light" target="_blank" rel="noreferrer">PhotoTags Light license terms</a>.</label>
       <div className="light-plan-grid">{l.plans.map(plan => <article key={plan.id}><h4>{plan.name}</h4><p>{new Intl.NumberFormat(undefined, { style: "currency", currency: plan.currency }).format(plan.amount / 100)}</p><p>{plan.duration_days ? `${plan.duration_days} days` : "Lifetime"} · {plan.max_installations} installation(s)</p><button className="button button-primary" disabled={l.busy || !b.online || !agreed || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)} onClick={() => void l.checkout(plan.id, email, agreed)}>Continue to payment</button></article>)}</div>
       {!l.plans.length && <p>No Light plans are currently on sale. Ask your host for a Light license key or refresh the plans.</p>}
       {l.plansError && <p className="field-help">{l.plansError}</p>}
       <button className="button button-quiet" disabled={!b.online || l.busy} onClick={() => void l.loadPlans()}>Refresh Light plans</button>
-      <p className="field-help">An installation is this app's saved browser identity, not a hardware ID. Clearing site data may require your host to transfer the license. Activate from the installed Home Screen app on iPhone/iPad. Reconnect before the offline permit expires; blocking or transferring a license takes effect offline when its current permit expires.</p>
+      <details className="technical-details">
+        <summary>Activation & offline guide</summary>
+        <ol>
+          <li>Open the app on the device you will use. On iPhone or iPad, install it on the Home Screen and open that app first.</li>
+          <li>Enter a Light license key above, or enter your email, accept the terms and choose a plan to pay.</li>
+          <li>After payment, return to this same app and tap Check license / payment. Wait for License active.</li>
+          <li>In Offline &amp; installation, prepare the offline files. Reopen the app without internet and test Launch kiosk before the event.</li>
+        </ol>
+        <p>Reconnect before Offline access until expires. Each installation has its own saved browser identity; clearing site data or switching browsers may require a license transfer by your host.</p>
+        <p>Blocking or transferring a license takes effect offline when its current permit expires.</p>
+      </details>
     </>}
   </section>;
 }

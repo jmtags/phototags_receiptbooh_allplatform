@@ -11,3 +11,18 @@ Kiosk launch and new print submissions require a valid, installation-bound permi
 The default offline window is seven days, capped by the plan expiry. A lifetime plan still requires periodic checks. Revocations/transfers cannot immediately invalidate permits on disconnected devices; administrators can see the most recently issued permit expiry. This is installation licensing with client-side protection, not hardware identification or tamper-proof offline DRM.
 
 Source rollout does not enable licensing or run production migrations. Complete the website/service test-mode flow and real-device acceptance before enabling enforcement in a production booth.
+
+## Activate an installation
+
+1. Open the booth on the device and browser that will run the event. On iPhone/iPad, install it on the Home Screen first and open that installed app.
+2. For a host-issued key, sign in to the website's `/admin`, open PhotoTags Light > Licenses, choose a plan and customer email, then select Create Light license. This issues a key; it does not collect payment or mark a payment paid.
+3. In the booth, open Settings > Light license. Enter a recognizable installation name, paste the `PTL-...` key and select Activate Light license. Wait for License active and check the expiry dates.
+4. Alternatively, purchase from that same booth's Light license page: enter an email, accept the terms and choose a plan. After completing payment, return to the original app and select Check license / payment. The service verifies the payment before issuing access.
+5. Open Offline & installation, select Prepare / check offline files and wait for Ready for offline use. Close and reopen the installed app without internet, then test Launch kiosk. Offline files and an unexpired license permit are both required.
+6. In the website's PhotoTags Light > Installations, verify the installation is linked to the expected license. For a purchase, also check Payments shows paid. A successful checkout redirect alone does not confirm fulfillment.
+
+Each installation uses a saved browser identity. A different browser, the installed Home Screen app, or cleared site data may create a different installation. For a transfer, use Installations > Release for transfer, then activate the same key on the new installation. The old offline permit may remain valid until the expiry shown in admin.
+
+## Settings organization
+
+Printer connection contains the printer profile, photo lightness, thermal preview/export option, QZ host, queue and printer test. About the system is an expandable section in Overview. Branding, camera, themes, history, security and offline installation retain their own sections.

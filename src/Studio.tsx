@@ -4,8 +4,6 @@ import {
   LayoutDashboard,
   Palette,
   Layers3,
-  SlidersHorizontal,
-  Info,
   ArrowUpRight,
   Camera,
   CheckCircle2,
@@ -93,28 +91,16 @@ export function Studio({
       description: "Protect kiosk exits with a six-digit host PIN.",
     },
     {
-      id: "output",
-      label: "Receipt output",
-      icon: SlidersHorizontal,
-      description: "Choose the printer profile and image tone.",
-    },
-    {
       id: "print",
       label: "Printer connection",
       icon: Printer,
-      description: "Connect the local print helper and select a queue.",
+      description: "Set receipt output, connect your printer and run a test.",
     },
     {
       id: "help",
       label: "Offline & installation",
       icon: ShieldCheck,
       description: "Prepare this device for offline events.",
-    },
-    {
-      id: "about",
-      label: "About the system",
-      icon: Info,
-      description: "How the booth works and how your photos are handled.",
     },
   ];
   const current =
@@ -263,7 +249,7 @@ export function Studio({
             <CameraSettings booth={b} />
           ) : b.tab === "security" ? (
             <SecuritySettings booth={b} />
-          ) : ["booth", "output", "about"].includes(b.tab) ? (
+          ) : b.tab === "booth" ? (
             <HostSettings booth={b} />
           ) : b.tab === "print" ? (
             <div className="setup-layout">
@@ -290,7 +276,7 @@ export function Studio({
                     <select
                       name="print-profile"
                       value={b.profile}
-                      disabled={b.working || !!b.job}
+                      disabled={b.busy || !!b.job}
                       onChange={(e) => b.setProfile(e.target.value as Profile)}
                     >
                       <option value="deli">Deli ES423 · 384 dots</option>
@@ -331,6 +317,23 @@ export function Studio({
                   thermal preview, thermal PNG export and printed receipt. Color
                   PNGs keep their original tones.
                 </p>
+                <label className="check-label host-output-toggle">
+                  <input
+                    type="checkbox"
+                    checked={b.thermalView}
+                    disabled={b.busy || !!b.job}
+                    onChange={(e) => b.setThermalView(e.target.checked)}
+                  />
+                  <span>Thermal preview & PNG export</span>
+                </label>
+                <p className="field-help">
+                  Turn off for color previews and PNGs. Printing always uses the
+                  selected thermal profile.
+                </p>
+                <div className="host-output-spec">
+                  <span>{profiles[b.profile].width} dots</span>
+                  <span>{profiles[b.profile].mm} mm printable width</span>
+                </div>
                 <p className="field-help">
                   Use localhost on this computer, or a certificate-trusted
                   hostname for a configured LAN bridge.
