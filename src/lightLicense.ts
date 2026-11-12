@@ -54,7 +54,7 @@ export function installationIdentity(): Promise<Identity> {
     return validateIdentity((await storage<Identity>("identity"))!);
   })().catch(error => { identityPromise = undefined; throw error; });
 }
-class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " ")); } }
+class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " ")); } }
 async function api(route: string, body?: object): Promise<Reply> {
   if (!apiOrigin) throw new Error("Light license service is not configured. Ask your host to finish setup.");
   const origin = new URL(apiOrigin);
@@ -190,9 +190,9 @@ export function useLightLicense() {
     window.addEventListener("focus", poll); document.addEventListener("visibilitychange", poll);
     return () => { clearInterval(timer); window.removeEventListener("focus", poll); document.removeEventListener("visibilitychange", poll); };
   }, [pendingPaymentId, identity, name]);
-  async function checkout(planId: string, email: string, acceptedAgreement: boolean, replaceHosted = false) {
+  async function checkout(planId: string, email: string, acceptedAgreement: boolean, replaceHosted = false, billingName = "") {
     setCompletedPayment("");
-    const result = await run("qr-checkout", { planId, email, acceptedAgreement, replaceHosted });
+    const result = await run("qr-checkout", { planId, email, acceptedAgreement, replaceHosted, billingName });
     if (result?.paymentId) {
       localStorage.setItem("phototags.light.payment", result.paymentId); setPendingPaymentId(result.paymentId);
       const url = new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null, "", url);
