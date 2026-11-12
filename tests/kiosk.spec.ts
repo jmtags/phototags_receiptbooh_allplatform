@@ -83,9 +83,10 @@ test("offline full-screen guest journey has gated steps, export, keyboard focus 
     kiosk.getByRole("button", { name: "Continue to themes" }),
   ).toBeEnabled();
   await kiosk.getByRole("button", { name: "Continue to themes" }).click();
+  await expect(kiosk.getByRole("button",{name:"Super Snap",exact:true})).toHaveAttribute("aria-pressed","true");
   await expect(
     kiosk.getByRole("button", { name: "Review receipt" }),
-  ).toBeDisabled();
+  ).toBeEnabled();
   await kiosk.getByRole("button", { name: "Wanted", exact: true }).click();
   await expect(
     kiosk.getByRole("button", { name: "Review receipt" }),
@@ -100,6 +101,10 @@ test("offline full-screen guest journey has gated steps, export, keyboard focus 
   const printBox = (await printButton.boundingBox())!;
   const receiptBox = (await kiosk.getByRole("img", { name: "Your final receipt" }).boundingBox())!;
   const panelBox = (await kiosk.locator(".kiosk-final-preview").boundingBox())!;
+  const counterBox=(await kiosk.getByRole("timer",{name:"Session reset countdown"}).boundingBox())!;
+  const restartBox=(await kiosk.locator(".kiosk-footer").getByRole("button",{name:"Start over",exact:true}).boundingBox())!;
+  expect(Math.abs(counterBox.y+counterBox.height/2-restartBox.y-restartBox.height/2)).toBeLessThan(8);
+  expect(restartBox.x-counterBox.x-counterBox.width).toBeLessThan(20);
   const downloadBox=(await kiosk.locator(".photo-download-card").boundingBox())!;
   if(info.project.name==="desktop")expect(downloadBox.x).toBeGreaterThanOrEqual(panelBox.x+panelBox.width);
   expect(printBox.y).toBeGreaterThanOrEqual(receiptBox.y + receiptBox.height);
@@ -357,7 +362,8 @@ test("Step 4 countdown starts over without printing and saves kiosk settings", a
   await page.reload();await page.getByRole("button",{name:"Kiosk session",exact:true}).click();
   await expect(page.getByLabel("Automatic start-over timer")).toHaveValue("30");
   await expect(page.getByRole("switch",{name:"Automatically generate download QRs"})).not.toBeChecked();
-  const kiosk=await toThemes(page);await kiosk.getByRole("button",{name:"Super Snap",exact:true}).click();
+  const kiosk=await toThemes(page);
+  await expect(kiosk.getByRole("button",{name:"Super Snap",exact:true})).toHaveAttribute("aria-pressed","true");
   await kiosk.getByRole("button",{name:"Review receipt"}).click();
   const counter=kiosk.getByRole("timer",{name:"Session reset countdown"});await expect(counter).toContainText("0:30");
   await page.clock.install();await page.clock.fastForward(29000);await expect(counter).toContainText("0:01");

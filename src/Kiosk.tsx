@@ -139,6 +139,7 @@ export function Kiosk({
     if (b.busy || b.job) return;
     stopAutoCapture();
     b.setError("");
+    if(next===3 && !chosenTheme && b.availableThemes[0]){b.setTemplateId(b.availableThemes[0].id);setChosenTheme(true);}
     setStep(next);
   }
   function start() {
@@ -693,7 +694,6 @@ export function Kiosk({
                       </p>
                     </div>
                   </div>
-                  {b.kioskResetSeconds>0 && <div className="kiosk-reset-counter" role="timer" aria-label="Session reset countdown">{b.job||b.busy ? <span>Countdown paused for print review</span> : <><span>Starting over in</span><strong>{Math.floor((resetRemaining??b.kioskResetSeconds)/60)}:{String((resetRemaining??b.kioskResetSeconds)%60).padStart(2,"0")}</strong></>}</div>}
                   <PhotoDownloadQr booth={b} />
                   {b.job ? (
                     <div className="kiosk-job" role="status">
@@ -740,10 +740,6 @@ export function Kiosk({
                     </div>
                   ) : (
                     <>
-                      <p className="kiosk-print-description">
-                        A little receipt for a big memory. Save it, print it,
-                        make it yours.
-                      </p>
                       {b.printer ? (
                         <p className="kiosk-printer-ready">
                           <Printer aria-hidden="true" size={16} />
@@ -802,10 +798,10 @@ export function Kiosk({
             <ArrowLeft aria-hidden="true" size={20} />
             {step === 1 ? "Start over" : "Back"}
           </button>
-          <span className="kiosk-footer-note">
+          {step<4 && <span className="kiosk-footer-note">
             <LockKeyhole aria-hidden="true" size={14} />
             {b.autoDownloadQr ? "Download links prepared in Step 4." : "Saved here. Shared only when you choose."}
-          </span>
+          </span>}
           {step < 4 ? (
             <button
               className="button button-primary kiosk-next"
@@ -820,6 +816,8 @@ export function Kiosk({
               <ArrowRight aria-hidden="true" size={21} />
             </button>
           ) : (
+            <div className="kiosk-footer-end">
+              {b.kioskResetSeconds>0 && <div className="kiosk-reset-counter" role="timer" aria-label="Session reset countdown">{b.job||b.busy ? <span>Timer paused</span> : <><span>Starting over in</span><strong>{Math.floor((resetRemaining??b.kioskResetSeconds)/60)}:{String((resetRemaining??b.kioskResetSeconds)%60).padStart(2,"0")}</strong></>}</div>}
             <button
               className="button kiosk-back"
               disabled={b.busy || !!b.job}
@@ -828,6 +826,7 @@ export function Kiosk({
               <RotateCcw aria-hidden="true" size={18} />
               Start over
             </button>
+            </div>
           )}
         </footer>
       )}

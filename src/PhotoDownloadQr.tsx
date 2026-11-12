@@ -11,7 +11,6 @@ export function PhotoDownloadQr({ booth: b }: { booth: BoothModel }) {
   const assets=[{id:"receipt",label:"Decorated receipt",source:b.preview},...b.photos.flatMap((photo,index)=>photo?[{id:`raw-${index}`,label:b.photos.length===1?"Raw photo":`Raw photo ${index+1}`,source:photo}]:[])];
   return <section className="photo-download-card" aria-labelledby="photo-download-heading">
     <h3 id="photo-download-heading"><QrCode size={20} aria-hidden="true"/>Scan to keep your photos</h3>
-    <p className="field-help">{b.autoDownloadQr?"Preparing your receipt and raw photo download links automatically.":"Choose Get QR below to upload that image."} Anyone with a link can download that image for 30 minutes.</p>
     <div className="photo-download-grid">{assets.map(asset=><DownloadTile key={asset.id} source={asset.source} label={asset.label} booth={b} cache={cache}/>)}</div>
     {(!b.online||!b.lightLicense.enabled||!b.lightLicense.allowed)&&<p role="status">{!b.online?"Online downloads need an internet connection. Local saving and printing are still available.":"Activate a Light license to use online downloads."}</p>}
   </section>;
@@ -50,6 +49,6 @@ function DownloadTile({source,label,booth:b,cache}:{source:string;label:string;b
   const shared=state.source===source&&state.shared&&Date.parse(state.shared.expiresAt)>Date.now()?state.shared:undefined;
   return <div className="photo-download-tile" role="group" aria-label={label}>
     <strong>{label}</strong>
-    {shared?<><img src={shared.qr} alt={`Scan to download ${label.toLowerCase()}`} width="160" height="160"/><a href={shared.url} target="_blank" rel="noreferrer">Open {label.toLowerCase()}</a><small>Until {new Date(shared.expiresAt).toLocaleTimeString()}</small></>:state.busy?<div className="photo-download-pending" role="status"><LoaderCircle className="spinner" size={24} aria-hidden="true"/><span>Preparing QR...</span></div>:<><button className="button button-secondary" disabled={!ready} onClick={()=>void upload()}>{state.error?"Retry QR":"Get QR"}<span className="sr-only"> for {label.toLowerCase()}</span></button>{state.error&&<p role="status">{state.error}</p>}</>}
+    {shared?<><img src={shared.qr} alt={`Scan to download ${label.toLowerCase()}`} width="160" height="160"/></>:state.busy?<div className="photo-download-pending" role="status"><LoaderCircle className="spinner" size={24} aria-hidden="true"/><span>Preparing QR...</span></div>:<><button className="button button-secondary" disabled={!ready} onClick={()=>void upload()}>{state.error?"Retry QR":"Get QR"}<span className="sr-only"> for {label.toLowerCase()}</span></button>{state.error&&<p role="status">{state.error}</p>}</>}
   </div>;
 }
