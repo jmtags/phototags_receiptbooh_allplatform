@@ -20,6 +20,7 @@ import type { BoothModel } from "./useBooth";
 import { ReceiptEditor } from "./ReceiptEditor";
 import { brandStyle, welcomeBackground } from "./branding";
 import { PinGate } from "./PinGate";
+import { PhotoDownloadQr } from "./PhotoDownloadQr";
 
 const steps = ["Choose layout", "Take a photo", "Choose theme", "Print & keep"];
 
@@ -308,7 +309,7 @@ export function Kiosk({
             </div>
             <div className="kiosk-private">
               <LockKeyhole aria-hidden="true" size={14} />
-              Your photos stay on this device.
+              Your photos stay here unless you choose online download.
             </div>
           </section>
         ) : (
@@ -772,6 +773,7 @@ export function Kiosk({
                     <Download aria-hidden="true" size={19} />
                     Save receipt PNG
                   </button>
+                  <PhotoDownloadQr booth={b} />
                   <button
                     className="button button-quiet kiosk-finish"
                     disabled={!!b.job || b.busy}
@@ -798,7 +800,7 @@ export function Kiosk({
           </button>
           <span className="kiosk-footer-note">
             <LockKeyhole aria-hidden="true" size={14} />
-            Made here. Stays here.
+            Saved here. Shared only when you choose.
           </span>
           {step < 4 ? (
             <button

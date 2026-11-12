@@ -15,7 +15,7 @@ function providerFailureText(failure?: ProviderFailure) {
 function incompleteQrText(payment: Partial<LightPayment>) {
   return payment.setupStage === "intent_not_recorded" ? "QR setup stopped before its payment intent was recorded. Host review is required before retrying; do not pay again." : `QR setup did not finish${payment.providerStatus ? ` (PayMongo: ${payment.providerStatus})` : ""}. Select Show payment QR to retry. The previous unpaid attempt will be checked and closed first.`;
 }
-type Reply = Partial<LightPayment> & { providerFailure?: ProviderFailure; paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
+type Reply = Partial<LightPayment> & { signedUploadUrl?: string; qrUrl?: string; code?: string; providerFailure?: ProviderFailure; paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
 const DB = "phototags-light-license";
 async function storage<T>(key: string, value?: T): Promise<T | undefined> {
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -246,6 +246,11 @@ export function useLightLicense() {
     name, plans, plansError, paymentSetup, tick, payment, paymentError, pendingPaymentId, completedPayment, cancelPayment,
     beginActivation() { setCompletedPayment(""); setPaymentError(""); },
     setName(value: string) { setName(value); localStorage.setItem("phototags.light.name", value); },
+    async reservePhotoDownload() {
+      const result=await run("photo-upload",{acceptedUpload:true});
+      if(!result?.ok || !result.signedUploadUrl || !result.qrUrl || !result.expiresAt) throw new Error(result?.status === "light_photo_rate_limited" ? "Too many uploads. Please wait before trying again." : "Online photo upload is unavailable. Reconnect and try again; your local photo is saved.");
+      return {signedUploadUrl:result.signedUploadUrl,qrUrl:result.qrUrl,expiresAt:result.expiresAt};
+    },
     refresh, activate: (licenseKey: string) => activeLicense() ? Promise.resolve(undefined) : run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
 }
 export type LightLicenseModel = ReturnType<typeof useLightLicense>;
