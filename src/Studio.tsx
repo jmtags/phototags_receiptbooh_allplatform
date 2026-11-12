@@ -117,11 +117,11 @@ export function Studio({
         <button
           className="brand"
           onClick={() => b.navigate("booth")}
-          aria-label="PhotoTags Settings"
+          aria-label="PhotoTags LRB Settings"
         >
           <img src="/icons/icon-192.png" alt="" width="40" height="40" />
-          <span translate="no">PhotoTags</span>
-          <span className="product-name">Receipt Booth</span>
+          <span translate="no">PhotoTags LRB</span>
+          <span className="product-name">Receipt Photobooth</span>
         </button>
         <button
           className="button button-primary launch-kiosk-button"
@@ -159,7 +159,7 @@ export function Studio({
           <div className="page-heading">
             <div>
               <div className="breadcrumb">
-                <span>PhotoTags</span>
+                <span>PhotoTags LRB</span>
                 <ChevronRight aria-hidden="true" size={12} />
                 <span>{current.label}</span>
               </div>
@@ -624,13 +624,13 @@ export function Studio({
                 {b.installPrompt ? (
                   <button className="button button-primary" onClick={b.install}>
                     <Download aria-hidden="true" size={17} />
-                    Install Receipt Booth
+                    Install PhotoTags LRB
                   </button>
                 ) : (
                   <details className="manual-install">
                     <summary className="button button-primary">
                       <Download aria-hidden="true" size={17} />
-                      Install Receipt Booth
+                      Install PhotoTags LRB
                     </summary>
                     <div className="manual-install-steps">
                       <h3>On iPhone or iPad</h3>
@@ -686,7 +686,7 @@ export function Studio({
               Made for the moments in between.
             </span>
             <span>
-              PhotoTags Receipt Booth
+              PhotoTags Light RB (Receipt Photobooth)
               <span className="footer-dot" />
               {active
                 ? "Capture. Create. Keep."

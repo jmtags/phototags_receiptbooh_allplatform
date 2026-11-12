@@ -84,7 +84,7 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
               </div>
             </div>
             <p className="host-intro">
-              PhotoTags Receipt Booth turns a photo session into a decorated
+              PhotoTags Light RB (Receipt Photobooth) turns a photo session into a decorated
               receipt. Guests create in the kiosk; this page handles station
               settings.
             </p>

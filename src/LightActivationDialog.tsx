@@ -38,7 +38,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
   }
   return <dialog ref={dialog} className="light-activation-dialog" aria-labelledby="light-activation-title" onCancel={e => { e.preventDefault(); onClose(); }}>
     <header className="light-dialog-header">
-      <div><span className="section-kicker">PhotoTags Light</span><h2 id="light-activation-title" ref={title} tabIndex={-1}>{success ? "Your booth is licensed" : ["Before you activate", "Choose your license", failed ? "Payment attempt closed" : hosted ? "Resume your payment" : "Scan to activate"][step]}</h2></div>
+      <div><span className="section-kicker">PhotoTags LRB</span><h2 id="light-activation-title" ref={title} tabIndex={-1}>{success ? "Your booth is licensed" : ["Before you activate", "Choose your license", failed ? "Payment attempt closed" : hosted ? "Resume your payment" : "Scan to activate"][step]}</h2></div>
       <button className="icon-button" aria-label="Close license activation" onClick={onClose}><X size={21} aria-hidden="true" /></button>
     </header>
     {!success && <ol className="light-dialog-steps" aria-label="Activation progress">{["Terms", "Plan", "Payment"].map((label, i) => <li key={label} aria-current={i === step ? "step" : undefined}><span>{i < step ? "✓" : i + 1}</span>{label}</li>)}</ol>}
@@ -54,7 +54,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
             <p>Keep proof of payment. Contact <a href="mailto:support@phototags.app">support@phototags.app</a> for activation, transfers or payment issues. Access is granted only after server verification of payment.</p>
             <p>These terms supplement the <a href="https://www.phototags.app/use-policy" target="_blank" rel="noreferrer">use policy</a> and <a href="https://www.phototags.app/privacy-policy" target="_blank" rel="noreferrer">privacy policy</a>.</p>
           </div>
-          <label className="light-agreement"><input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />I agree to the PhotoTags Light license terms.</label>
+          <label className="light-agreement"><input type="checkbox" checked={agreed} onChange={e => setAgreed(e.target.checked)} />I agree to the PhotoTags LRB license terms.</label>
         </>}
         {step === 1 && <>
           <fieldset className="light-plan-picker"><legend>License plan</legend>{l.plans.map(plan => <label className={`light-plan-choice ${planId === plan.id ? "selected" : ""}`} key={plan.id}>
@@ -65,17 +65,17 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
           {!l.plans.length && <p>No plans are currently available. Ask your host for a license key.</p>}
           <label className="field">Payer name<input type="text" autoComplete="name" maxLength={120} value={billingName} onChange={e => setBillingName(e.target.value)} required /></label>
           <label className="field">Receipt email<input type="email" autoComplete="email" maxLength={254} value={email} onChange={e => { emailEdited.current = true; setEmail(e.target.value); }} required /></label>
-          <p className="field-help">Payment is for a PhotoTags Light license on this installation. One active license is allowed per installation.</p>
+          <p className="field-help">Payment is for a PhotoTags LRB license on this installation. One active license is allowed per installation.</p>
           {l.plansError && <p role="alert">{l.plansError}</p>}
           {!setupReady && <p role="alert">{l.paymentSetup?.status === "light_inline_qr_not_configured" ? "QR setup is incomplete. Your host must apply the Light QR migration in Supabase." : "The Light QR payment service needs configuration. Ask your host to check the existing Light service."}</p>}
         </>}
         {step === 2 && <>
           {l.payment?.qrImageUrl && !expired && !failed ? <div className="light-qr-payment">
             <p className="light-qr-amount">{new Intl.NumberFormat(undefined, { style: "currency", currency: l.payment.currency || "PHP" }).format((l.payment.amount || 0) / 100)}</p>
-            <p>PhotoTags Light license · {l.plans.find(p => p.id === l.payment?.planId)?.name || l.payment.planId}</p>
-            <img src={l.payment.qrImageUrl} alt="QR Ph code for PhotoTags Light license payment" width="280" height="280" />
+            <p>PhotoTags LRB license · {l.plans.find(p => p.id === l.payment?.planId)?.name || l.payment.planId}</p>
+            <img src={l.payment.qrImageUrl} alt="QR Ph code for PhotoTags LRB license payment" width="280" height="280" />
             <p>Scan with a participating bank or e-wallet app. Your license updates here after payment is verified.</p>
-            <a className="text-link" href={l.payment.qrImageUrl} download="PhotoTags-Light-payment.png">Save QR image</a>
+            <a className="text-link" href={l.payment.qrImageUrl} download="PhotoTags-LRB-payment.png">Save QR image</a>
             <small>QR valid until {new Date(l.payment.expiresAt!).toLocaleTimeString()}. On the same phone, save the QR and import it in your banking app if supported.</small>
           </div> : <p>{failed ? "This payment was cancelled. Close this dialog to choose a new license payment." : expired ? "This QR code has expired. Check payment before generating a replacement." : hosted ? "Your earlier attempt used hosted checkout, so it has no in-app QR image. You can switch an unpaid attempt to QR below." : l.payment?.status === "processing" ? "Your payment is processing. Your license will update automatically after confirmation." : "The payment has no QR image to scan. Cancel & start over to retry QR generation. If this continues, ask your host to check the Light service logs."}</p>}
           {l.payment?.reference && <p className="light-payment-reference">Reference: {l.payment.reference}</p>}

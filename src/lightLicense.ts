@@ -93,7 +93,7 @@ export function useLightLicense() {
   const [pendingPaymentId, setPendingPaymentId] = useState(() => {
     try { return new URL(location.href).searchParams.get("light_payment") || localStorage.getItem("phototags.light.payment") || ""; } catch { return ""; }
   });
-  const [name, setName] = useState(() => { try { return localStorage.getItem("phototags.light.name") || "My PhotoTags Light booth"; } catch { return "My PhotoTags Light booth"; } });
+  const [name, setName] = useState(() => { try { return localStorage.getItem("phototags.light.name") || "My PhotoTags LRB booth"; } catch { return "My PhotoTags LRB booth"; } });
   const [tick, setTick] = useState(Date.now());
   const latest = useRef(0), claimsRef = useRef<LightPermit | undefined>(undefined), inFlight = useRef(false);
   const trustedUntil = useRef(0);
@@ -112,7 +112,7 @@ export function useLightLicense() {
       trustedUntil.current = Date.now(); await storage("lastClock", trustedUntil.current);
       claimsRef.current = p; setClaims(p); setMessage(p.plan==="trial" ? `Your 1-day free trial is active until ${new Date(p.licenseExpiresAt!).toLocaleString()}. Prints and downloads are watermarked.` : "License active. Offline permit saved on this installation.");
     } else if (result.status === "unlicensed") {
-      await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined); setMessage(result.trialUsed ? "Your free trial has ended. Activate a paid Light license to continue." : "Activate a PhotoTags Light license to launch this booth.");
+      await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined); setMessage(result.trialUsed ? "Your free trial has ended. Activate a paid Light license to continue." : "Activate a PhotoTags LRB license to launch this booth.");
     }
   }
   async function run(action: string, data: object = {}, background = false): Promise<Reply | undefined> {

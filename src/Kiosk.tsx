@@ -220,7 +220,7 @@ export function Kiosk({
       ref={dialog}
       className={`kiosk-dialog ${step === 3 ? "is-theme-step" : ""} ${step === 2 ? `is-camera-step ${cameraExpanded ? "is-camera-expanded" : ""}` : ""}`}
       style={brandStyle(b.branding)}
-      aria-label="PhotoTags guest kiosk"
+      aria-label="PhotoTags LRB guest kiosk"
       onCancel={(e) => {
         e.preventDefault();
         if (exitTarget) cancelUnlock();

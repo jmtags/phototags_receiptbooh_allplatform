@@ -1,4 +1,6 @@
-# PhotoTags Receipt Booth
+# PhotoTags Light RB (Receipt Photobooth)
+
+Short name: **PhotoTags LRB**.
 
 Independent, local-first React / TypeScript / Vite PWA. One-to-four-photo booth with five original Android receipt designs and 176 original stickers; Deli ES423 (384 dots) and VOZY G80 (576 dots) rendering. Android APK source remains unchanged. Light licensing integrates with isolated website components and a separate Light API service.
 
@@ -25,7 +27,7 @@ Open **http://localhost:4173** on this computer. Development: `npm run dev`. Pre
 4. In Offline & installation, check **Ready for offline use** and request persistent storage. Reopen and verify on the intended device before an event. All five shipped templates, 176 stickers, shot-layout previews and printing JS are cached. Initial setup and updates need internet. If files are missing, end the session and repair the package while online.
 5. Install using Chrome/Edge's install command; macOS Safari Add to Dock where available; iPhone/iPad Safari Share → Add to Home Screen. Ending a session clears the kiosk workspace. Captured photos and finished receipts remain in local Photo history until deleted or this site?s browser data is cleared.
 
-On iPhone/iPad, **Settings > Offline & installation > Install Receipt Booth** opens manual Safari instructions when an automatic browser install prompt is unavailable. Use Safari's Share menu > Add to Home Screen, enable Open as Web App if offered, and tap Add. Open the new icon while online, prepare/check offline files, and wait for Ready for offline use before disconnecting. Installing an icon and preparing the offline package are separate steps. The same guide includes desktop browser installation options.
+On iPhone/iPad, **Settings > Offline & installation > Install PhotoTags LRB** opens manual Safari instructions when an automatic browser install prompt is unavailable. Use Safari's Share menu > Add to Home Screen, enable Open as Web App if offered, and tap Add. Open the new icon while online, prepare/check offline files, and wait for Ready for offline use before disconnecting. Installing an icon and preparing the offline package are separate steps. The same guide includes desktop browser installation options.
 
 ## Kiosk branding
 
@@ -122,6 +124,6 @@ Use **Open saved ZIP** to restore a saved archive on Windows, macOS or iOS for b
 Browser behavior references: [File System Access](https://developer.chrome.com/docs/capabilities/web-apis/file-system-access), [Web Share](https://w3c.github.io/web-share/), [Apple Files downloads](https://support.apple.com/en-au/102440). Physical iOS/macOS save dialogs require acceptance testing on those devices.
 
 
-## PhotoTags Light licensing
+## PhotoTags LRB licensing
 
 The Light client supports installation-key registration, activation, plan checkout and signed offline permits. Enforcement defaults to disabled until the separate Light service, migration and public verification key are configured. [Light setup and behavior](docs/LIGHT_LICENSING.md). Android licensing and payments use their existing process.

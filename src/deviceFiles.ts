@@ -201,7 +201,7 @@ function parseManifest(bytes: Uint8Array): Manifest {
     !m.photos.some(Boolean) ||
     (m.receipt !== null && m.receipt !== "receipt.png")
   )
-    throw new Error("This is not a valid PhotoTags saved session.");
+    throw new Error("This is not a valid PhotoTags LRB saved session.");
   return m;
 }
 async function decodeRecord(
@@ -298,7 +298,7 @@ export function makeDeviceArchive(
   const zipped = zipSync(files, { level: 0 });
   return new File(
     [new Uint8Array(zipped).buffer],
-    `PhotoTags-${safeName(label)}.zip`,
+    `PhotoTags-LRB-${safeName(label)}.zip`,
     { type: "application/zip" },
   );
 }
@@ -337,6 +337,6 @@ export async function readDeviceArchive(file: File): Promise<ImportedRecord[]> {
       records.set(record.record.id, record);
   }
   if (!records.size)
-    throw new Error("This ZIP contains no PhotoTags saved sessions.");
+    throw new Error("This ZIP contains no PhotoTags LRB saved sessions.");
   return [...records.values()];
 }

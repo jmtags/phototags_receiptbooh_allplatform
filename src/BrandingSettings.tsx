@@ -79,7 +79,7 @@ export function BrandingSettings({ booth: b }: { booth: BoothModel }) {
       setDraft(b.saveBranding(value));
       setMessage(
         reset
-          ? "Default PhotoTags branding restored."
+          ? "Default PhotoTags LRB branding restored."
           : "Branding saved. Your kiosk welcome screen is ready.",
       );
     } catch (e) {

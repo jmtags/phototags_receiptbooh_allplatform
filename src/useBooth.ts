@@ -792,7 +792,7 @@ export function useBooth() {
   }
   async function submitPrint(prepareBytes: () => Promise<Uint8Array>) {
     if (!lightLicense.hasAccess()) {
-      setError("A valid PhotoTags Light license is required to print. Open Light license in Settings.");
+      setError("A valid PhotoTags LRB license is required to print. Open Light license in Settings.");
       return;
     }
     if (printLock.current || job || !printer || busy) return;
@@ -851,7 +851,7 @@ export function useBooth() {
     if (complete && preview && !rendering)
       download(
         preview,
-        `PhotoTags-${template.id}-${profiles[profile].width}.png`,
+        `PhotoTags-LRB-${template.id}-${profiles[profile].width}.png`,
       );
   }
   async function prepare() {
@@ -906,7 +906,7 @@ export function useBooth() {
     if (bytes.current)
       download(
         new Blob([new Uint8Array(bytes.current).buffer]),
-        `PhotoTags-${profile}.bin`,
+        `PhotoTags-LRB-${profile}.bin`,
       );
   }
   function repair() {

@@ -2,6 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 import { readFile } from "node:fs/promises";
 import { unzipSync, zipSync, strToU8 } from "fflate";
 import AxeBuilder from "@axe-core/playwright";
+import { takePhotos } from "./camera-fixture";
 
 async function createReceipt(page: Page, count = 1) {
   await page.getByRole("button", { name: "Launch kiosk", exact: true }).click();
@@ -16,13 +17,7 @@ async function createReceipt(page: Page, count = 1) {
     })
     .click();
   await kiosk.getByRole("button", { name: "Continue to camera" }).click();
-  await kiosk
-    .locator('input[name="kiosk-photo"]')
-    .setInputFiles(
-      count === 2
-        ? ["public/icons/icon-192.png", "public/icons/icon-512.png"]
-        : "public/icons/icon-512.png",
-    );
+  await takePhotos(page,count);
   await kiosk.getByRole("button", { name: "Continue to themes" }).click();
   await kiosk.getByRole("button", { name: "Super Snap", exact: true }).click();
   await kiosk.getByRole("button", { name: "Review receipt" }).click();
@@ -95,7 +90,7 @@ test("Files fallback creates a real date-folder ZIP, shares on a user click and 
     .click();
   await expect
     .poll(() => page.evaluate(() => (window as any).shared?.name))
-    .toBe("PhotoTags-Winter event.zip");
+    .toBe("PhotoTags-LRB-Winter event.zip");
   expect(await page.evaluate(() => (window as any).shared.active)).toBe(true);
   expect(await page.evaluate(() => (window as any).shared.count)).toBe(1);
   const downloaded = page.waitForEvent("download");

@@ -14,7 +14,7 @@ export function LightLicenseWall({booth,onClose}:{booth:BoothModel;onClose:()=>v
   },[]);
   return <dialog ref={dialog} className="light-activation-dialog" aria-labelledby="light-launch-title" onCancel={event=>{event.preventDefault();onClose();}}>
     <header className="light-dialog-header">
-      <div><span className="section-kicker">PhotoTags Light</span><h2 ref={title} tabIndex={-1} id="light-launch-title">Activate to launch your booth</h2></div>
+      <div><span className="section-kicker">PhotoTags LRB</span><h2 ref={title} tabIndex={-1} id="light-launch-title">Activate to launch your booth</h2></div>
       <button className="icon-button" aria-label="Close license wall" onClick={onClose}><X size={21} aria-hidden="true"/></button>
     </header>
     <div className="light-dialog-body"><p>{booth.lightLicense.trialAvailable&&!booth.lightLicense.trialUsed?"Start your free trial or activate a Light license to continue.":"Activate a Light license to continue."} Your booth opens automatically when access is ready.</p><LightLicenseSettings booth={booth}/></div>

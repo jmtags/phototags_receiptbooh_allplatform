@@ -1,7 +1,7 @@
 import { useState, type CSSProperties } from "react";
 
 export const defaultBranding = {
-  name: "PhotoTags",
+  name: "PhotoTags LRB",
   tagline: "Your moment, made to keep.",
   headline: "Good times start here.",
   message: "A photo, a little personality, and a receipt to keep.",
@@ -56,9 +56,11 @@ export function welcomeBackground(branding: Branding): CSSProperties {
 function loadBranding(): Branding {
   try {
     const stored = JSON.parse(localStorage.getItem(brandingKey) || "null");
-    return stored && typeof stored === "object"
-      ? cleanBranding(stored)
-      : { ...defaultBranding };
+    if (!stored || typeof stored !== "object") return { ...defaultBranding };
+    const branding=cleanBranding(stored);
+    const oldDefaults=branding.name==="PhotoTags"&&Object.entries(defaultBranding).every(([key,value])=>key==="name"||branding[key as keyof Branding]===value);
+    if(oldDefaults)branding.name=defaultBranding.name;
+    return branding;
   } catch {
     return { ...defaultBranding };
   }

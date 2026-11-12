@@ -77,7 +77,7 @@ test("saved branding customizes the offline kiosk and can be restored", async ({
   await context.setOffline(true);
   await page.reload();
   await page.getByRole("button", { name: "Launch kiosk", exact: true }).click();
-  const kiosk = page.getByRole("dialog", { name: "PhotoTags guest kiosk" });
+  const kiosk = page.getByRole("dialog", { name: "PhotoTags LRB guest kiosk" });
   await expect(kiosk.locator(".kiosk-header")).toHaveCount(0);
   await expect(kiosk.locator(".has-brand-background")).toHaveCount(1);
   expect(
@@ -131,7 +131,7 @@ test("saved branding customizes the offline kiosk and can be restored", async ({
     .getByRole("button", { name: "Restore default branding" })
     .click();
   await expect(settings.getByRole("status")).toContainText(
-    "Default PhotoTags branding restored",
+    "Default PhotoTags LRB branding restored",
   );
   await page.reload();
   await page.getByRole("button", { name: "Launch kiosk", exact: true }).click();

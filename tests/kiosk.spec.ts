@@ -13,7 +13,7 @@ async function fallbackFullscreen(page: Page) {
 }
 async function launch(page: Page) {
   await page.getByRole("button", { name: "Launch kiosk", exact: true }).click();
-  const kiosk = page.getByRole("dialog", { name: "PhotoTags guest kiosk" });
+  const kiosk = page.getByRole("dialog", { name: "PhotoTags LRB guest kiosk" });
   await expect(kiosk).toBeVisible();
   return kiosk;
 }
