@@ -6,7 +6,8 @@ const apiOrigin = import.meta.env.VITE_LIGHT_API_ORIGIN || "";
 const publicKeyText = import.meta.env.VITE_LIGHT_PUBLIC_KEY_JWK || "";
 type Identity = { id: string; privateKey: CryptoKey; publicKey: JsonWebKey; keyHash: string };
 export type LightPlan = { id: string; name: string; amount: number; currency: string; duration_days: number | null; max_installations: number };
-type Reply = { ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
+export type LightPayment = { paymentId: string; status: string; planId?: string; amount?: number; currency?: string; reference?: string; qrImageUrl?: string; expiresAt?: string; checkoutUrl?: string };
+type Reply = Partial<LightPayment> & { ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
 const DB = "phototags-light-license";
 async function storage<T>(key: string, value?: T): Promise<T | undefined> {
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -52,7 +53,7 @@ export function installationIdentity(): Promise<Identity> {
     return validateIdentity((await storage<Identity>("identity"))!);
   })().catch(error => { identityPromise = undefined; throw error; });
 }
-class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(code.replace(/_/g, " ")); } }
+class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " ")); } }
 async function api(route: string, body?: object): Promise<Reply> {
   if (!apiOrigin) throw new Error("Light license service is not configured. Ask your host to finish setup.");
   const origin = new URL(apiOrigin);
@@ -75,6 +76,11 @@ export function useLightLicense() {
   const [busy, setBusy] = useState(false), [loaded, setLoaded] = useState(!lightLicensingEnabled);
   const [plans, setPlans] = useState<LightPlan[]>([]);
   const [plansError, setPlansError] = useState("");
+  const [payment, setPayment] = useState<LightPayment>();
+  const [completedPayment, setCompletedPayment] = useState("");
+  const [pendingPaymentId, setPendingPaymentId] = useState(() => {
+    try { return new URL(location.href).searchParams.get("light_payment") || localStorage.getItem("phototags.light.payment") || ""; } catch { return ""; }
+  });
   const [name, setName] = useState(() => { try { return localStorage.getItem("phototags.light.name") || "My PhotoTags Light booth"; } catch { return "My PhotoTags Light booth"; } });
   const [tick, setTick] = useState(Date.now());
   const latest = useRef(0), claimsRef = useRef<LightPermit | undefined>(undefined), inFlight = useRef(false);
@@ -102,7 +108,10 @@ export function useLightLicense() {
       if (!publicKeyText) throw new Error("Light license verification key is not configured. Ask your host to finish setup.");
       const id = identity || await installationIdentity(); setIdentity(id);
       const result = await authenticated(action, id, { ...metadata(), ...data });
-      if (generation === latest.current) await accept(result, id);
+      if (generation === latest.current) {
+        await accept(result, id);
+        if (result.paymentId && result.status) setPayment(previous => ({ ...previous, ...result, paymentId: result.paymentId!, status: result.status! }));
+      }
       return result;
     } catch (error) {
       if (generation !== latest.current) return;
@@ -110,17 +119,25 @@ export function useLightLicense() {
         await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined);
       }
       setMessage(`${(error as Error).message}${valid() ? " Your saved offline permit remains usable until its expiry." : ""}`);
+      return { ok: false, status: error instanceof ApiError ? error.code : "license_request_failed" } satisfies Reply;
     } finally { inFlight.current = false; if (generation === latest.current) { setBusy(false); setLoaded(true); setTick(Date.now()); } }
   }
   async function refresh() {
     const paymentId = new URL(location.href).searchParams.get("light_payment") || localStorage.getItem("phototags.light.payment");
     if (paymentId) {
       const r = await run("payment-status", { paymentId });
-      if (r?.status === "licensed") {
+      if (r?.status === "licensed" && r.permit) {
         localStorage.removeItem("phototags.light.payment");
+        setPendingPaymentId(""); setPayment(undefined); setCompletedPayment(paymentId);
         const url = new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null, "", url);
-      } else await run("check");
-    } else await run("check");
+      } else if (r?.status === "failed") {
+        localStorage.removeItem("phototags.light.payment"); setPendingPaymentId("");
+        setMessage("This payment was cancelled. You can generate a new QR code.");
+      }
+      if (r && r.status !== "licensed" && !claimsRef.current) await run("check");
+      return r;
+    }
+    return run("check");
   }
   useEffect(() => {
     if (!lightLicensingEnabled) return;
@@ -158,18 +175,38 @@ export function useLightLicense() {
   async function loadPlans() {
     try { setPlans((await api("plans")).plans || []); setPlansError(""); } catch (e) { setPlansError(`Could not load Light plans: ${(e as Error).message}`); }
   }
+  useEffect(() => {
+    if (!lightLicensingEnabled || !pendingPaymentId) return;
+    const poll = () => { if (navigator.onLine && document.visibilityState === "visible") void refresh(); };
+    const timer = setInterval(poll, 6000);
+    window.addEventListener("focus", poll); document.addEventListener("visibilitychange", poll);
+    return () => { clearInterval(timer); window.removeEventListener("focus", poll); document.removeEventListener("visibilitychange", poll); };
+  }, [pendingPaymentId, identity, name]);
   async function checkout(planId: string, email: string, acceptedAgreement: boolean) {
-    const result = await run("checkout", { planId, email, acceptedAgreement });
-    if (result?.checkoutUrl && result.paymentId) {
-      const url = new URL(result.checkoutUrl);
-      if (url.protocol !== "https:" || !url.hostname.endsWith(".paymongo.com")) { setMessage("Checkout address was rejected."); return; }
-      localStorage.setItem("phototags.light.payment", result.paymentId); location.assign(url.href);
+    setCompletedPayment("");
+    let result = await run("qr-checkout", { planId, email, acceptedAgreement });
+    // During a staged rollout, preserve payment access on the previous service.
+    // These failures occur before QR reservation/provider creation; never retry an uncertain creation.
+    if (result && !result.ok && ["invalid_challenge_request", "light_route_not_found", "light_inline_qr_not_configured"].includes(result.status || "")) {
+      const hosted = await run("checkout", { planId, email, acceptedAgreement });
+      if (hosted?.checkoutUrl && hosted.paymentId) {
+        const url = new URL(hosted.checkoutUrl);
+        if (url.protocol !== "https:" || !url.hostname.endsWith(".paymongo.com")) { setMessage("Checkout address was rejected."); return; }
+        result = { ...hosted, status: "hosted_pending" }; setPayment(result as LightPayment);
+        setMessage("In-app QR setup is being completed. You can finish this payment using the PayMongo link below.");
+      }
+    }
+    if (result?.paymentId) {
+      localStorage.setItem("phototags.light.payment", result.paymentId); setPendingPaymentId(result.paymentId);
+      if (result.status === "paid") await refresh();
+      return result;
     }
   }
   return { enabled: lightLicensingEnabled, allowed: !lightLicensingEnabled || loaded && valid(), hasAccess: valid,
     loaded, busy, identityId: identity?.id || "", claims,
     message: claims && Date.now() >= claims.exp * 1000 ? "Your offline license permit has expired. Connect and check your license to continue." : message,
-    name, plans, plansError, tick,
+    name, plans, plansError, tick, payment, pendingPaymentId, completedPayment,
+    beginActivation() { setCompletedPayment(""); },
     setName(value: string) { setName(value); localStorage.setItem("phototags.light.name", value); },
     refresh, activate: (licenseKey: string) => run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
 }

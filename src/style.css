@@ -3641,6 +3641,60 @@ h2 {
 .light-license-settings { max-width: 960px; background: white; border: 1px solid var(--line); border-radius: 16px; padding: 28px; line-height: 1.7; }
 .light-license-settings form, .light-license-settings h3 { margin-top: 24px; }
 .light-license-settings .field { margin: 16px 0; }
+.light-activate-cta { width: 100%; min-height: 76px; margin: 12px 0; font-size: 18px; justify-content: center; gap: 15px; }
+.light-manual-key-row { display: flex; gap: 10px; align-items: stretch; }
+.light-manual-key-row input { flex: 1; min-width: 0; }
+.light-manual-key-row button { flex-shrink: 0; }
+.light-installation-id, .light-payment-reference { overflow-wrap: anywhere; font-size: 11px; color: #626575; }
+.light-activation-dialog { box-sizing: border-box; width: min(660px, calc(100vw - 28px)); max-height: calc(100dvh - 28px); padding: 0; border: 1px solid rgba(255,255,255,.75); border-radius: 24px; color: var(--ink); background: #fff; box-shadow: 0 28px 100px #11182740; }
+.light-activation-dialog::backdrop { background: #11182780; backdrop-filter: blur(12px); }
+.light-activation-dialog[open] { display: flex; flex-direction: column; }
+.light-dialog-header { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: 26px 28px 18px; flex-shrink: 0; }
+.light-dialog-header h2 { font-size: 26px; letter-spacing: -.8px; margin: 5px 0 0; }
+.light-dialog-header h2:focus { outline: none; }
+.light-dialog-steps { display: flex; list-style: none; padding: 0 28px 18px; margin: 0; gap: 20px; flex-shrink: 0; border-bottom: 1px solid var(--line); }
+.light-dialog-steps li { display: flex; align-items: center; gap: 7px; color: #626575; font-size: 12px; }
+.light-dialog-steps li span { display: grid; place-items: center; width: 25px; height: 25px; border: 1px solid var(--line); border-radius: 50%; }
+.light-dialog-steps li[aria-current] { color: var(--blue); font-weight: 700; }
+.light-dialog-steps li[aria-current] span { background: var(--blue); border-color: var(--blue); color: white; }
+.light-dialog-body { padding: 24px 28px; overflow-y: auto; min-height: 0; line-height: 1.7; overscroll-behavior: contain; }
+.light-dialog-body h3 { font-size: 18px; margin: 0 0 14px; }
+.light-terms-copy { font-size: 13px; color: #505b70; }
+.light-terms-copy p { margin: 0 0 14px; }
+.light-dialog-body .light-agreement { margin: 22px 0 0; }
+.light-dialog-body .field { display: grid; gap: 7px; margin-top: 24px; }
+.light-dialog-body .field-help { margin-top: 12px; }
+.light-dialog-status { font-size: 12px; color: #505b70; margin-top: 20px; }
+.light-plan-picker { border: 0; padding: 0; margin: 0; min-width: 0; }
+.light-plan-picker legend { font-size: 13px; margin-bottom: 12px; }
+.light-plan-choice { display: flex; align-items: center; gap: 12px; padding: 18px; border: 1px solid var(--line); border-radius: 14px; margin: 10px 0; cursor: pointer; }
+.light-plan-choice.selected { background: #f1f4ff; border-color: var(--blue); }
+.light-plan-choice input { width: 18px; height: 18px; flex-shrink: 0; accent-color: var(--blue); }
+.light-plan-choice > span { flex: 1; min-width: 0; }
+.light-plan-choice strong { display: block; font-size: 14px; }
+.light-plan-choice small { display: block; font-size: 11px; color: #626575; }
+.light-plan-choice b { font-size: 19px; }
+.light-dialog-actions { display: flex; justify-content: flex-end; gap: 10px; padding: 18px 28px; border-top: 1px solid var(--line); background: #fafbff; flex-shrink: 0; }
+.light-qr-payment { text-align: center; }
+.light-qr-payment .light-qr-amount { font-size: 32px; font-weight: 750; letter-spacing: -1px; margin: 0; }
+.light-qr-payment img { display: block; max-width: 100%; height: auto; margin: 18px auto; background: white; }
+.light-qr-payment p { font-size: 13px; }
+.light-qr-payment small { display: block; font-size: 11px; color: #626575; margin-top: 14px; }
+.light-payment-success { text-align: center; padding: 24px 0; }
+.light-payment-success > svg { color: #00866c; margin-bottom: 16px; }
+@media(max-width:600px) {
+  .light-manual-key-row { flex-wrap: wrap; }
+  .light-manual-key-row input { flex-basis: 100%; }
+  .light-manual-key-row button { width: 100%; }
+  .light-dialog-header { padding: 20px 18px 16px; }
+  .light-dialog-header h2 { font-size: 23px; }
+  .light-dialog-steps { padding: 0 18px 16px; gap: 15px; }
+  .light-dialog-body { padding: 20px 18px; }
+  .light-dialog-actions { padding: 14px 18px; flex-wrap: wrap; }
+  .light-dialog-actions .button { flex: 1; }
+  .light-plan-choice { padding: 14px 10px; gap: 8px; }
+  .light-plan-choice b { font-size: 17px; }
+}
 .light-license-facts { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 14px; margin: 20px 0; }
 .light-license-facts dt { color: #54607b; font-size: 12px; }
 .light-license-facts dd { margin: 0; overflow-wrap: anywhere; font-size: 14px; }
