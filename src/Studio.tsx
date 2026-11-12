@@ -24,11 +24,13 @@ import {
   Smartphone,
   WifiOff,
   X,
+  Timer,
 } from "lucide-react";
 import { profiles, type Profile } from "./receipt";
 import { HostSettings } from "./HostSettings";
 import { BrandingSettings } from "./BrandingSettings";
 import { CameraSettings } from "./CameraSettings";
+import { KioskSessionSettings } from "./KioskSessionSettings";
 import { ThemeSettings } from "./ThemeSettings";
 import { SecuritySettings } from "./SecuritySettings";
 import { HistorySettings } from "./HistorySettings";
@@ -64,6 +66,7 @@ export function Studio({
       icon: Palette,
       description: "Personalize the kiosk welcome screen.",
     },
+    {id:"session",label:"Kiosk session",icon:Timer,description:"Automatic download QRs and the Step 4 start-over countdown."},
     {
       id: "camera",
       label: "Camera",
@@ -245,6 +248,8 @@ export function Studio({
             <BrandingSettings booth={b} />
           ) : b.tab === "themes" ? (
             <ThemeSettings booth={b} />
+          ) : b.tab === "session" ? (
+            <KioskSessionSettings booth={b} />
           ) : b.tab === "camera" ? (
             <CameraSettings booth={b} />
           ) : b.tab === "security" ? (

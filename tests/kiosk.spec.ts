@@ -100,6 +100,8 @@ test("offline full-screen guest journey has gated steps, export, keyboard focus 
   const printBox = (await printButton.boundingBox())!;
   const receiptBox = (await kiosk.getByRole("img", { name: "Your final receipt" }).boundingBox())!;
   const panelBox = (await kiosk.locator(".kiosk-final-preview").boundingBox())!;
+  const downloadBox=(await kiosk.locator(".photo-download-card").boundingBox())!;
+  if(info.project.name==="desktop")expect(downloadBox.x).toBeGreaterThanOrEqual(panelBox.x+panelBox.width);
   expect(printBox.y).toBeGreaterThanOrEqual(receiptBox.y + receiptBox.height);
   expect(printBox.x + printBox.width).toBeGreaterThan(panelBox.x + panelBox.width / 2);
   await expect(
@@ -241,6 +243,10 @@ test("kiosk submits once, requires host review and clears the guest photo for th
     kiosk.getByRole("button", { name: "Finish session", exact: true }),
   ).toBeDisabled();
   expect(prints).toBe(1);
+  await page.clock.install();await page.clock.fastForward(125000);
+  await expect(kiosk.getByRole("heading", { name: "Sent to the print helper." })).toBeVisible();
+  await expect(kiosk.getByRole("timer", { name: "Session reset countdown" })).toContainText("paused");
+  await page.clock.resume();
   await kiosk.getByRole("button", { name: "Host: review this print" }).click();
   await kiosk.getByRole("button", { name: "I checked the printer" }).click();
   await kiosk
@@ -338,4 +344,36 @@ test("native fullscreen paints the kiosk above the studio", async ({
   await expect
     .poll(() => page.evaluate(() => !!document.fullscreenElement))
     .toBeFalsy();
+});
+
+
+test("Step 4 countdown starts over without printing and saves kiosk settings", async ({page})=>{
+  await fallbackFullscreen(page);await page.goto("/");
+  await page.getByRole("button",{name:"Kiosk session",exact:true}).click();
+  await expect(page.getByLabel("Automatic start-over timer")).toHaveValue("120");
+  await expect(page.getByRole("switch",{name:"Automatically generate download QRs"})).toBeChecked();
+  await page.getByLabel("Automatic start-over timer").selectOption("30");
+  await page.getByRole("switch",{name:"Automatically generate download QRs"}).uncheck();
+  await page.reload();await page.getByRole("button",{name:"Kiosk session",exact:true}).click();
+  await expect(page.getByLabel("Automatic start-over timer")).toHaveValue("30");
+  await expect(page.getByRole("switch",{name:"Automatically generate download QRs"})).not.toBeChecked();
+  const kiosk=await toThemes(page);await kiosk.getByRole("button",{name:"Super Snap",exact:true}).click();
+  await kiosk.getByRole("button",{name:"Review receipt"}).click();
+  const counter=kiosk.getByRole("timer",{name:"Session reset countdown"});await expect(counter).toContainText("0:30");
+  await page.clock.install();await page.clock.fastForward(29000);await expect(counter).toContainText("0:01");
+  await page.clock.fastForward(1500);await expect(kiosk.getByRole("button",{name:"Start",exact:true})).toBeVisible();
+  await expect(kiosk.getByRole("img",{name:"Your final receipt"})).toHaveCount(0);
+  await page.clock.resume();await kiosk.getByRole("button",{name:"Start",exact:true}).click();
+  await kiosk.getByRole("button",{name:"1 shot",exact:true}).click();await kiosk.getByRole("button",{name:"Continue to camera"}).click();
+  await expect(kiosk.locator(".shot-gallery img")).toHaveCount(0);
+});
+
+
+test("host can disable the automatic start-over countdown",async({page})=>{
+  await fallbackFullscreen(page);await page.goto("/");await page.getByRole("button",{name:"Kiosk session",exact:true}).click();
+  await page.getByLabel("Automatic start-over timer").selectOption("0");
+  const kiosk=await toThemes(page);await kiosk.getByRole("button",{name:"Super Snap",exact:true}).click();await kiosk.getByRole("button",{name:"Review receipt"}).click();
+  await expect(kiosk.getByRole("timer",{name:"Session reset countdown"})).toHaveCount(0);
+  await page.clock.install();await page.clock.fastForward(180000);
+  await expect(kiosk.getByRole("img",{name:"Your final receipt"})).toBeVisible();
 });

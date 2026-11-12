@@ -3,6 +3,7 @@ import { useBranding } from "./branding";
 import { useEventThemes } from "./eventThemes";
 import { useSecurity } from "./security";
 import { useLightLicense } from "./lightLicense";
+import { useKioskSettings } from "./kioskSettings";
 import { localDate, readHistoryAssets, usePhotoHistory } from "./history";
 import {
   compose,
@@ -247,6 +248,8 @@ export function useBooth() {
     bytes = useRef<Uint8Array | null>(null),
     printLock = useRef(false);
   const busy = count > 0 || working;
+  const kioskSettings=useKioskSettings(busy||!!job);
+  const photoDownloadCache=useRef(new Map<string,{qr:string;url:string;expiresAt:string}>());
   // Gate output immediately when inputs change, until this exact revision is rendered.
   const composition = useMemo(
     () => ({}),
@@ -827,6 +830,7 @@ export function useBooth() {
     }
   }
   function newSession() {
+    photoDownloadCache.current.clear();
     historySession.current = null;
     setRetakesUsed(0);
     stopCamera();
@@ -915,6 +919,8 @@ export function useBooth() {
     ...photoHistory,
     printHistoryReceipt,
     captureEvent,
+    ...kioskSettings,
+    photoDownloadCache:photoDownloadCache.current,
     ...security,
     ...themeLibrary,
     availableThemes,

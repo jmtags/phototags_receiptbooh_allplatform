@@ -24,6 +24,7 @@ test("studio views pass automated accessibility and keyboard checks", async ({
     "Overview",
     "Branding",
     "Camera",
+    "Kiosk session",
     "Event themes",
     "Photo history",
     "Security",

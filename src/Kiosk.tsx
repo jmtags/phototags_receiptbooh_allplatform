@@ -21,6 +21,7 @@ import { ReceiptEditor } from "./ReceiptEditor";
 import { brandStyle, welcomeBackground } from "./branding";
 import { PinGate } from "./PinGate";
 import { PhotoDownloadQr } from "./PhotoDownloadQr";
+import { useKioskCountdown } from "./useKioskCountdown";
 
 const steps = ["Choose layout", "Take a photo", "Choose theme", "Print & keep"];
 
@@ -177,8 +178,10 @@ export function Kiosk({
     setChosenTheme(false);
     setHostReview(false);
     setConfirm(null);
+    setExitTarget(null);
     setStep(0);
   }
+  const resetRemaining=useKioskCountdown(step===4&&!b.busy&&!b.job,b.kioskResetSeconds,finish);
   const titles = [
     "Good times start here.",
     "How many shots?",
@@ -309,7 +312,7 @@ export function Kiosk({
             </div>
             <div className="kiosk-private">
               <LockKeyhole aria-hidden="true" size={14} />
-              Your photos stay here unless you choose online download.
+              {b.autoDownloadQr ? "Download links are prepared automatically in the final step." : "Your photos stay here unless you choose online download."}
             </div>
           </section>
         ) : (
@@ -690,6 +693,8 @@ export function Kiosk({
                       </p>
                     </div>
                   </div>
+                  {b.kioskResetSeconds>0 && <div className="kiosk-reset-counter" role="timer" aria-label="Session reset countdown">{b.job||b.busy ? <span>Countdown paused for print review</span> : <><span>Starting over in</span><strong>{Math.floor((resetRemaining??b.kioskResetSeconds)/60)}:{String((resetRemaining??b.kioskResetSeconds)%60).padStart(2,"0")}</strong></>}</div>}
+                  <PhotoDownloadQr booth={b} />
                   {b.job ? (
                     <div className="kiosk-job" role="status">
                       <Printer aria-hidden="true" size={27} />
@@ -773,7 +778,6 @@ export function Kiosk({
                     <Download aria-hidden="true" size={19} />
                     Save receipt PNG
                   </button>
-                  <PhotoDownloadQr booth={b} />
                   <button
                     className="button button-quiet kiosk-finish"
                     disabled={!!b.job || b.busy}
@@ -800,7 +804,7 @@ export function Kiosk({
           </button>
           <span className="kiosk-footer-note">
             <LockKeyhole aria-hidden="true" size={14} />
-            Saved here. Shared only when you choose.
+            {b.autoDownloadQr ? "Download links prepared in Step 4." : "Saved here. Shared only when you choose."}
           </span>
           {step < 4 ? (
             <button
