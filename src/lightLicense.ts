@@ -61,7 +61,7 @@ export function installationIdentity(): Promise<Identity> {
     return validateIdentity((await storage<Identity>("identity"))!);
   })().catch(error => { identityPromise = undefined; throw error; });
 }
-class ApiError extends Error { constructor(public code: string, public httpStatus: number, public paymentId?: string, failure?: ProviderFailure) { super(providerFailureText(failure) || (["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " "))); } }
+class ApiError extends Error { constructor(public code: string, public httpStatus: number, public paymentId?: string, failure?: ProviderFailure) { super(providerFailureText(failure) || (["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_already_licensed" ? "This installation already has an active Light license. Activation is available after it expires." : code === "light_payment_pending" ? "Resolve the unfinished payment before activating a manual license key." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " "))); } }
 async function api(route: string, body?: object): Promise<Reply> {
   if (!apiOrigin) throw new Error("Light license service is not configured. Ask your host to finish setup.");
   const origin = new URL(apiOrigin);
@@ -101,6 +101,7 @@ export function useLightLicense() {
     return !lightLicensingEnabled || !!claimsRef.current && Date.now() < claimsRef.current.exp * 1000 &&
       Date.now() >= trustedUntil.current - 300000;
   }
+  function activeLicense() { return !!claimsRef.current && (!claimsRef.current.licenseExpiresAt || Date.parse(claimsRef.current.licenseExpiresAt) > Date.now()); }
   function metadata() { return { name, platform: /iPad|iPhone/.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1 ? "iOS/iPadOS" : navigator.platform || "Web" }; }
   async function accept(result: Reply, id: Identity) {
     if (result.permit) {
@@ -210,6 +211,7 @@ export function useLightLicense() {
     return () => { clearInterval(timer); window.removeEventListener("focus", poll); document.removeEventListener("visibilitychange", poll); };
   }, [pendingPaymentId, identity, name, payment?.status]);
   async function checkout(planId: string, email: string, acceptedAgreement: boolean, replaceHosted = false, billingName = "") {
+    if (activeLicense()) { setPaymentError("This installation already has an active Light license."); return; }
     setCompletedPayment("");
     const result = await run("qr-checkout", { planId, email, acceptedAgreement, replaceHosted, billingName });
     if (result?.paymentId) {
@@ -232,18 +234,18 @@ export function useLightLicense() {
     if (result?.ok && result.status === "cancelled") {
       localStorage.removeItem("phototags.light.payment"); setPendingPaymentId(""); setPayment(undefined); setCompletedPayment(""); setPaymentError("");
       const url=new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null,"",url);
-      setMessage(valid() ? "Your license remains active. Choose a plan to renew." : "Previous unpaid attempt closed. Choose a license plan to activate.");
+      setMessage(valid() ? "Your existing license remains active. Another activation is disabled until expiry." : "Previous unpaid attempt closed. Choose a license plan to activate.");
       return true;
     }
     if (result?.status === "payment_processing") setPaymentError("Payment is still processing. Wait for automatic confirmation; a new purchase has not been started.");
     return false;
   }
-  return { enabled: lightLicensingEnabled, allowed: !lightLicensingEnabled || loaded && valid(), hasAccess: valid,
+  return { enabled: lightLicensingEnabled, allowed: !lightLicensingEnabled || loaded && valid(), activeLicense: activeLicense(), hasAccess: valid,
     loaded, busy, identityId: identity?.id || "", claims,
     message: claims && Date.now() >= claims.exp * 1000 ? "Your offline license permit has expired. Connect and check your license to continue." : message,
     name, plans, plansError, paymentSetup, tick, payment, paymentError, pendingPaymentId, completedPayment, cancelPayment,
     beginActivation() { setCompletedPayment(""); setPaymentError(""); },
     setName(value: string) { setName(value); localStorage.setItem("phototags.light.name", value); },
-    refresh, activate: (licenseKey: string) => run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
+    refresh, activate: (licenseKey: string) => activeLicense() ? Promise.resolve(undefined) : run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
 }
 export type LightLicenseModel = ReturnType<typeof useLightLicense>;

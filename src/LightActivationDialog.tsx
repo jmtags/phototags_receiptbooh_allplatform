@@ -10,7 +10,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
   const [generating, setGenerating] = useState(false);
   const emailEdited = useRef(false);
   const [planId, setPlanId] = useState("");
-  const success = !!l.completedPayment;
+  const success = !!l.completedPayment || l.activeLicense;
   const failed = l.payment?.status === "failed";
   const hosted = !!l.payment?.checkoutUrl;
   const setupReady = l.paymentSetup?.inlineQr !== false;
@@ -50,7 +50,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
             <p>A Light license covers the purchased number of registered browser installations. Android APK licenses are a separate product and do not activate this booth.</p>
             <p>Clearing app data or changing browsers may require a host-assisted transfer. On iPhone or iPad, install the booth on the Home Screen and activate inside that app.</p>
             <p>First activation and renewal require internet. Offline use requires downloaded app files and an unexpired signed license permit. Reconnect before the offline permit expires; lifetime licenses also require periodic checks.</p>
-            <p>Revocation and transfers cannot invalidate permits on devices that remain offline before permit expiry. Paid renewals extend this installation's current active license period; each purchase creates a separately tracked Light license record.</p>
+            <p>Revocation and transfers cannot invalidate permits on devices that remain offline before permit expiry. Another purchase or manual activation is disabled while this installation has an active license. Activation becomes available again after expiry.</p>
             <p>Keep proof of payment. Contact <a href="mailto:support@phototags.app">support@phototags.app</a> for activation, transfers or payment issues. Access is granted only after server verification of payment.</p>
             <p>These terms supplement the <a href="https://www.phototags.app/use-policy" target="_blank" rel="noreferrer">use policy</a> and <a href="https://www.phototags.app/privacy-policy" target="_blank" rel="noreferrer">privacy policy</a>.</p>
           </div>
@@ -65,7 +65,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
           {!l.plans.length && <p>No plans are currently available. Ask your host for a license key.</p>}
           <label className="field">Payer name<input type="text" autoComplete="name" maxLength={120} value={billingName} onChange={e => setBillingName(e.target.value)} required /></label>
           <label className="field">Receipt email<input type="email" autoComplete="email" maxLength={254} value={email} onChange={e => { emailEdited.current = true; setEmail(e.target.value); }} required /></label>
-          <p className="field-help">Payment is for a PhotoTags Light license on this installation. Renewals add time to your current active license.</p>
+          <p className="field-help">Payment is for a PhotoTags Light license on this installation. One active license is allowed per installation.</p>
           {l.plansError && <p role="alert">{l.plansError}</p>}
           {!setupReady && <p role="alert">{l.paymentSetup?.status === "light_inline_qr_not_configured" ? "QR setup is incomplete. Your host must apply the Light QR migration in Supabase." : "The Light QR payment service needs configuration. Ask your host to check the existing Light service."}</p>}
         </>}

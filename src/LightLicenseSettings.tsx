@@ -8,7 +8,7 @@ export function LightLicenseSettings({ booth: b }: { booth: BoothModel }) {
   const [key, setKey] = useState(""), [open, setOpen] = useState(false);
   useEffect(() => { if (l.enabled) void l.loadPlans(); }, []);
   const planName = l.plans.find(p => p.id === l.claims?.plan)?.name || l.claims?.plan;
-  const lifetime = l.allowed && !!l.claims && !l.claims.licenseExpiresAt;
+  const active = l.activeLicense;
   return <section className="light-license-settings">
     <div className="setup-section-title"><span className="setup-icon"><ShieldCheck aria-hidden="true" size={23} /></span><div><h2>PhotoTags Light license</h2><p>{l.claims && l.allowed ? planName : "Activate this installation for your next event."}</p></div></div>
     <p className={`offline-box ${l.allowed && l.enabled ? "prepared" : ""}`} role="status">{l.message}</p>
@@ -18,10 +18,11 @@ export function LightLicenseSettings({ booth: b }: { booth: BoothModel }) {
         <div><dt>License expiry</dt><dd>{l.claims ? l.claims.licenseExpiresAt ? new Date(l.claims.licenseExpiresAt).toLocaleString() : "Lifetime" : "?"}</dd></div>
         <div><dt>Offline access until</dt><dd>{l.claims ? new Date(l.claims.exp * 1000).toLocaleString() : "Online activation required"}</dd></div>
       </dl>
-      {(!lifetime || l.pendingPaymentId) && <button className="button button-primary light-activate-cta" disabled={!b.online || !l.identityId || l.busy} onClick={() => { l.beginActivation(); setOpen(true); }}><ShieldCheck size={23} aria-hidden="true" />{l.allowed ? "Renew license" : "Activate license"}<ArrowRight size={21} aria-hidden="true" /></button>}
-      <form onSubmit={e => { e.preventDefault(); void l.activate(key); }}>
+      <button className="button button-primary light-activate-cta" disabled={active || !l.loaded || !b.online || !l.identityId || l.busy} onClick={() => { l.beginActivation(); setOpen(true); }}><ShieldCheck size={23} aria-hidden="true" />{active ? "License active" : "Activate license"}<ArrowRight size={21} aria-hidden="true" /></button>
+      {active && <p className="field-help">This installation is already licensed. Another license can be activated after the current license expires.</p>}
+      <form onSubmit={e => { e.preventDefault(); if (!active) void l.activate(key); }}>
         <label className="field" htmlFor="light-manual-key">Have a Light license key?</label>
-        <div className="light-manual-key-row"><input id="light-manual-key" aria-label="Light license key" value={key} onChange={e => setKey(e.target.value)} placeholder="PTL-..." autoComplete="off" required /><button className="button button-secondary" disabled={l.busy || !b.online || !l.identityId}><KeyRound size={17} aria-hidden="true" />Activate Light license</button></div>
+        <div className="light-manual-key-row"><input id="light-manual-key" aria-label="Light license key" disabled={active} value={key} onChange={e => setKey(e.target.value)} placeholder="PTL-..." autoComplete="off" required /><button className="button button-secondary" disabled={active || !l.loaded || l.busy || !b.online || !l.identityId}><KeyRound size={17} aria-hidden="true" />Activate Light license</button></div>
       </form>
       <details className="technical-details">
         <summary>Installation & offline access</summary>
