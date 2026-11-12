@@ -3648,6 +3648,7 @@ h2 {
 .light-installation-id, .light-payment-reference { overflow-wrap: anywhere; font-size: 11px; color: #626575; }
 .light-activation-dialog { box-sizing: border-box; width: min(660px, calc(100vw - 28px)); max-height: calc(100dvh - 28px); padding: 0; border: 1px solid rgba(255,255,255,.75); border-radius: 24px; color: var(--ink); background: #fff; box-shadow: 0 28px 100px #11182740; }
 .light-activation-dialog::backdrop { background: #11182780; backdrop-filter: blur(12px); }
+body:has(.light-activation-dialog[open]) { overflow: hidden; }
 .light-activation-dialog[open] { display: flex; flex-direction: column; }
 .light-dialog-header { display: flex; justify-content: space-between; align-items: start; gap: 12px; padding: 26px 28px 18px; flex-shrink: 0; }
 .light-dialog-header h2 { font-size: 26px; letter-spacing: -.8px; margin: 5px 0 0; }

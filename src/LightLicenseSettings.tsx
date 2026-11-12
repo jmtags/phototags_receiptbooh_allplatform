@@ -1,10 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import { ArrowRight, KeyRound, RefreshCw, ShieldCheck } from "lucide-react";
 import { LightActivationDialog } from "./LightActivationDialog";
 import type { BoothModel } from "./useBooth";
 
 export function LightLicenseSettings({ booth: b }: { booth: BoothModel }) {
   const l = b.lightLicense;
+  const keyId=useId();
   const [key, setKey] = useState(""), [open, setOpen] = useState(false);
   useEffect(() => { if (l.enabled) void l.loadPlans(); }, []);
   const planName = l.isTrial ? "1-day free trial" : l.plans.find(p => p.id === l.claims?.plan)?.name || l.claims?.plan;
@@ -22,8 +23,8 @@ export function LightLicenseSettings({ booth: b }: { booth: BoothModel }) {
       <button className="button button-primary light-activate-cta" disabled={active || !l.loaded || !b.online || !l.identityId || l.busy} onClick={() => { l.beginActivation(); setOpen(true); }}><ShieldCheck size={23} aria-hidden="true" />{active ? "License active" : l.isTrial ? "Buy a Light license" : "Activate license"}<ArrowRight size={21} aria-hidden="true" /></button>
       {active && <p className="field-help">This installation is already licensed. Another license can be activated after the current license expires.</p>}
       <form onSubmit={e => { e.preventDefault(); if (!active) void l.activate(key); }}>
-        <label className="field" htmlFor="light-manual-key">Have a Light license key?</label>
-        <div className="light-manual-key-row"><input id="light-manual-key" aria-label="Light license key" disabled={active} value={key} onChange={e => setKey(e.target.value)} placeholder="PTL-..." autoComplete="off" required /><button className="button button-secondary" disabled={active || !l.loaded || l.busy || !b.online || !l.identityId}><KeyRound size={17} aria-hidden="true" />Activate Light license</button></div>
+        <label className="field" htmlFor={keyId}>Have a Light license key?</label>
+        <div className="light-manual-key-row"><input id={keyId} aria-label="Light license key" disabled={active} value={key} onChange={e => setKey(e.target.value)} placeholder="PTL-..." autoComplete="off" required /><button className="button button-secondary" disabled={active || !l.loaded || l.busy || !b.online || !l.identityId}><KeyRound size={17} aria-hidden="true" />Activate Light license</button></div>
       </form>
       <details className="technical-details">
         <summary>Installation & offline access</summary>

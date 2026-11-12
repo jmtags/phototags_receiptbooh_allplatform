@@ -3,14 +3,16 @@ import { useEffect, useRef, useState } from "react";
 import { Studio } from "./Studio";
 import { Kiosk } from "./Kiosk";
 import { useBooth } from "./useBooth";
+import { LightLicenseWall } from "./LightLicenseWall";
 import "./style.css";
 function App() {
   const booth = useBooth();
   const [kiosk, setKiosk] = useState(false);
+  const [licenseWall,setLicenseWall]=useState(false);
   const ownsFullscreen = useRef(false);
   async function launch() {
     if (!booth.lightLicense.hasAccess()) {
-      booth.navigate("license");
+      setLicenseWall(true);
       return;
     }
     booth.stopCamera();
@@ -45,9 +47,15 @@ function App() {
   useEffect(() => {
     if (kiosk && booth.lightLicense.enabled && !booth.lightLicense.allowed) {
       close();
-      booth.navigate("license");
+      setLicenseWall(true);
     }
   }, [kiosk, booth.lightLicense.allowed]);
+  useEffect(()=>{
+    if(licenseWall&&booth.lightLicense.loaded&&booth.lightLicense.allowed){
+      setLicenseWall(false);
+      void launch();
+    }
+  },[licenseWall,booth.lightLicense.loaded,booth.lightLicense.allowed]);
   return (
     <>
       <Studio
@@ -61,6 +69,7 @@ function App() {
           onSetup={() => close(true)}
         />
       )}
+      {licenseWall&&<LightLicenseWall booth={booth} onClose={()=>setLicenseWall(false)}/>}
     </>
   );
 }
