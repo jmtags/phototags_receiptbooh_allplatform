@@ -15,7 +15,7 @@ function providerFailureText(failure?: ProviderFailure) {
 function incompleteQrText(payment: Partial<LightPayment>) {
   return payment.setupStage === "intent_not_recorded" ? "QR setup stopped before its payment intent was recorded. Host review is required before retrying; do not pay again." : `QR setup did not finish${payment.providerStatus ? ` (PayMongo: ${payment.providerStatus})` : ""}. Select Show payment QR to retry. The previous unpaid attempt will be checked and closed first.`;
 }
-type Reply = Partial<LightPayment> & { signedUploadUrl?: string; qrUrl?: string; code?: string; providerFailure?: ProviderFailure; paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
+type Reply = Partial<LightPayment> & { signedUploadUrl?: string; qrUrl?: string; code?: string; watermarkRequired?: boolean; trialAvailable?: boolean; trialUsed?: boolean; trialExpiresAt?: string; providerFailure?: ProviderFailure; paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
 const DB = "phototags-light-license";
 async function storage<T>(key: string, value?: T): Promise<T | undefined> {
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -61,7 +61,7 @@ export function installationIdentity(): Promise<Identity> {
     return validateIdentity((await storage<Identity>("identity"))!);
   })().catch(error => { identityPromise = undefined; throw error; });
 }
-class ApiError extends Error { constructor(public code: string, public httpStatus: number, public paymentId?: string, failure?: ProviderFailure) { super(providerFailureText(failure) || (["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_already_licensed" ? "This installation already has an active Light license. Activation is available after it expires." : code === "light_payment_pending" ? "Resolve the unfinished payment before activating a manual license key." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " "))); } }
+class ApiError extends Error { constructor(public code: string, public httpStatus: number, public paymentId?: string, failure?: ProviderFailure) { super(providerFailureText(failure) || (["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_already_licensed" ? "This installation already has an active Light license. Activation is available after it expires." : code === "light_payment_pending" ? "Resolve the unfinished payment before activating a manual license key." : code === "light_trial_not_configured" ? "The Light trial needs its database migration. Ask your host to finish setup." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " "))); } }
 async function api(route: string, body?: object): Promise<Reply> {
   if (!apiOrigin) throw new Error("Light license service is not configured. Ask your host to finish setup.");
   const origin = new URL(apiOrigin);
@@ -84,6 +84,7 @@ export function useLightLicense() {
   const [busy, setBusy] = useState(false), [loaded, setLoaded] = useState(!lightLicensingEnabled);
   const [plans, setPlans] = useState<LightPlan[]>([]);
   const [plansError, setPlansError] = useState("");
+  const [trialAvailable,setTrialAvailable]=useState(false),[trialUsed,setTrialUsed]=useState(false);
   const [paymentSetup, setPaymentSetup] = useState<PaymentSetup>();
   const [payment, setPayment] = useState<LightPayment>();
   const [paymentError, setPaymentError] = useState("");
@@ -101,16 +102,17 @@ export function useLightLicense() {
     return !lightLicensingEnabled || !!claimsRef.current && Date.now() < claimsRef.current.exp * 1000 &&
       Date.now() >= trustedUntil.current - 300000;
   }
-  function activeLicense() { return !!claimsRef.current && (!claimsRef.current.licenseExpiresAt || Date.parse(claimsRef.current.licenseExpiresAt) > Date.now()); }
+  function activeLicense() { return !!claimsRef.current && claimsRef.current.plan!=="trial" && (!claimsRef.current.licenseExpiresAt || Date.parse(claimsRef.current.licenseExpiresAt) > Date.now()); }
   function metadata() { return { name, platform: /iPad|iPhone/.test(navigator.userAgent) || navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1 ? "iOS/iPadOS" : navigator.platform || "Web" }; }
   async function accept(result: Reply, id: Identity) {
+    if(typeof result.trialUsed==="boolean")setTrialUsed(result.trialUsed);
     if (result.permit) {
       const p = await verifyLightPermit(result.permit, JSON.parse(publicKeyText), id.id, id.keyHash);
       await storage("permit", result.permit);
       trustedUntil.current = Date.now(); await storage("lastClock", trustedUntil.current);
-      claimsRef.current = p; setClaims(p); setMessage("License active. Offline permit saved on this installation.");
+      claimsRef.current = p; setClaims(p); setMessage(p.plan==="trial" ? `Your 1-day free trial is active until ${new Date(p.licenseExpiresAt!).toLocaleString()}. Prints and downloads are watermarked.` : "License active. Offline permit saved on this installation.");
     } else if (result.status === "unlicensed") {
-      await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined); setMessage("Activate a PhotoTags Light license to launch this booth.");
+      await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined); setMessage(result.trialUsed ? "Your free trial has ended. Activate a paid Light license to continue." : "Activate a PhotoTags Light license to launch this booth.");
     }
   }
   async function run(action: string, data: object = {}, background = false): Promise<Reply | undefined> {
@@ -201,7 +203,7 @@ export function useLightLicense() {
     return () => { window.removeEventListener("online", online); clearInterval(timer); };
   }, [identity, name]);
   async function loadPlans() {
-    try { const result=await api("plans"); setPlans(result.plans || []); setPaymentSetup(result.paymentSetup); setPlansError(""); } catch (e) { setPlansError(`Could not load Light plans: ${(e as Error).message}`); }
+    try { const result=await api("plans"); setPlans(result.plans || []); setPaymentSetup(result.paymentSetup); setTrialAvailable(result.trialAvailable===true); setPlansError(""); } catch (e) { setPlansError(`Could not load Light plans: ${(e as Error).message}`); }
   }
   useEffect(() => {
     if (!lightLicensingEnabled || !pendingPaymentId || payment?.status === "qr_setup_incomplete") return;
@@ -234,22 +236,22 @@ export function useLightLicense() {
     if (result?.ok && result.status === "cancelled") {
       localStorage.removeItem("phototags.light.payment"); setPendingPaymentId(""); setPayment(undefined); setCompletedPayment(""); setPaymentError("");
       const url=new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null,"",url);
-      setMessage(valid() ? "Your existing license remains active. Another activation is disabled until expiry." : "Previous unpaid attempt closed. Choose a license plan to activate.");
+      setMessage(valid() ? claimsRef.current?.plan==="trial" ? "Your free trial remains active. You can choose a paid license." : "Your existing license remains active. Another activation is disabled until expiry." : "Previous unpaid attempt closed. Choose a license plan to activate.");
       return true;
     }
     if (result?.status === "payment_processing") setPaymentError("Payment is still processing. Wait for automatic confirmation; a new purchase has not been started.");
     return false;
   }
-  return { enabled: lightLicensingEnabled, allowed: !lightLicensingEnabled || loaded && valid(), activeLicense: activeLicense(), hasAccess: valid,
+  return { enabled: lightLicensingEnabled, allowed: !lightLicensingEnabled || loaded && valid(), activeLicense: activeLicense(), isTrial: claims?.plan==="trial", trialAvailable, trialUsed, startTrial:()=>run("start-trial",{acceptedTrial:true}), hasAccess: valid,
     loaded, busy, identityId: identity?.id || "", claims,
-    message: claims && Date.now() >= claims.exp * 1000 ? "Your offline license permit has expired. Connect and check your license to continue." : message,
+    message: claims && Date.now() >= claims.exp * 1000 ? (claims.plan==="trial" ? "Your 1-day free trial has ended. Activate a paid Light license to continue." : "Your offline license permit has expired. Connect and check your license to continue.") : message,
     name, plans, plansError, paymentSetup, tick, payment, paymentError, pendingPaymentId, completedPayment, cancelPayment,
     beginActivation() { setCompletedPayment(""); setPaymentError(""); },
     setName(value: string) { setName(value); localStorage.setItem("phototags.light.name", value); },
     async reservePhotoDownload() {
       const result=await run("photo-upload",{acceptedUpload:true});
       if(!result?.ok || !result.signedUploadUrl || !result.qrUrl || !result.expiresAt) throw new Error(result?.status === "light_photo_rate_limited" ? "Too many uploads. Please wait before trying again." : "Online photo upload is unavailable. Reconnect and try again; your local photo is saved.");
-      return {signedUploadUrl:result.signedUploadUrl,qrUrl:result.qrUrl,expiresAt:result.expiresAt};
+      return {signedUploadUrl:result.signedUploadUrl,qrUrl:result.qrUrl,expiresAt:result.expiresAt,watermarkRequired:result.watermarkRequired===true};
     },
     refresh, activate: (licenseKey: string) => activeLicense() ? Promise.resolve(undefined) : run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
 }

@@ -153,12 +153,14 @@ export async function compose(
   mirror = false,
   layout: PhotoLayout = "portrait",
   content?: ReceiptContent,
+  outputWidth: number = profiles[profile].width,
 ) {
   const bg = await image(artwork(template));
   const c = document.createElement("canvas");
-  c.width = profiles[profile].width;
+  c.width = Math.max(1,Math.min(1600,Math.round(outputWidth)));
   c.height = Math.round((c.width * bg.naturalHeight) / bg.naturalWidth);
   const ctx = c.getContext("2d", { willReadFrequently: true })!;
+  ctx.imageSmoothingEnabled=true;ctx.imageSmoothingQuality="high";
   ctx.fillStyle = "#fff";
   ctx.fillRect(0, 0, c.width, c.height);
   ctx.drawImage(bg, 0, 0, c.width, c.height);

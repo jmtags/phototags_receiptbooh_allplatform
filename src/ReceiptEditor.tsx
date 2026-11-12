@@ -428,7 +428,7 @@ export function ReceiptEditor({
           >
             {b.preview && (
               <img
-                src={b.preview}
+                src={b.editorPreview||b.preview}
                 alt="Your themed receipt preview"
                 width={b.receiptSize.width}
                 height={b.receiptSize.height}

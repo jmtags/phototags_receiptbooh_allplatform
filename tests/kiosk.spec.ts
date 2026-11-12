@@ -83,6 +83,7 @@ test("offline full-screen guest journey has gated steps, export, keyboard focus 
     kiosk.getByRole("button", { name: "Continue to themes" }),
   ).toBeEnabled();
   await kiosk.getByRole("button", { name: "Continue to themes" }).click();
+  await expect(kiosk.getByRole("img",{name:"Your themed receipt preview"})).toHaveJSProperty("naturalWidth",1200);
   await expect(kiosk.getByRole("button",{name:"Super Snap",exact:true})).toHaveAttribute("aria-pressed","true");
   await expect(
     kiosk.getByRole("button", { name: "Review receipt" }),

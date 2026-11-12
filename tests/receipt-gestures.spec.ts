@@ -1,6 +1,7 @@
 import { test, expect } from "@playwright/test";
 import ts from "typescript";
 import { readFile } from "node:fs/promises";
+import { takePhotos } from "./camera-fixture";
 
 test("native two-finger gestures resize and rotate photos and stickers without a bottom control panel", async ({
   page,
@@ -15,9 +16,7 @@ test("native two-finger gestures resize and rotate photos and stickers without a
   await kiosk.getByRole("button", { name: "Start", exact: true }).click();
   await kiosk.getByRole("button", { name: "1 shot", exact: true }).click();
   await kiosk.getByRole("button", { name: "Continue to camera" }).click();
-  await kiosk
-    .locator('input[name="kiosk-photo"]')
-    .setInputFiles("public/icons/icon-512.png");
+  await takePhotos(page);
   await kiosk.getByRole("button", { name: "Continue to themes" }).click();
   await kiosk.getByRole("button", { name: "Super Snap", exact: true }).click();
   await expect(kiosk.locator(".decoration-controls")).toHaveCount(0);
@@ -135,8 +134,11 @@ test("native two-finger gestures resize and rotate photos and stickers without a
   await ready();
   await expect.poll(() => preview.getAttribute("src")).not.toBe(original);
   expect(rotated).not.toBe(original);
-  const composed = await preview.getAttribute("src");
+  await expect(preview).toHaveJSProperty("naturalWidth",1200);
   await kiosk.getByRole("button", { name: "Review receipt" }).click();
+  const finalPreview=kiosk.getByRole("img",{name:"Your final receipt",exact:true});
+  await expect(finalPreview).toHaveJSProperty("naturalWidth",384);
+  const composed=await finalPreview.getAttribute("src");
   const download = page.waitForEvent("download");
   await kiosk.getByRole("button", { name: "Save receipt PNG" }).click();
   const file = await download;

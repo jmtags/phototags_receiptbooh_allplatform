@@ -3,6 +3,7 @@ import { useBranding } from "./branding";
 import { useEventThemes } from "./eventThemes";
 import { useSecurity } from "./security";
 import { useLightLicense } from "./lightLicense";
+import { applyTrialWatermark } from "./trialWatermark";
 import { useKioskSettings } from "./kioskSettings";
 import { localDate, readHistoryAssets, usePhotoHistory } from "./history";
 import {
@@ -214,6 +215,7 @@ export function useBooth() {
   );
   const [receiptSize, setReceiptSize] = useState({ width: 384, height: 922 });
   const [preview, setPreview] = useState("");
+  const [editorPreview,setEditorPreview]=useState("");
   const [dimensions, setDimensions] = useState("");
   const photo = photos[activePhoto] ?? null;
   const zoom = placements[activePhoto]?.zoom ?? 1,
@@ -263,6 +265,7 @@ export function useBooth() {
       profile,
       gamma,
       thermalView,
+      lightLicense.isTrial,
       layout,
     ],
   );
@@ -449,15 +452,14 @@ export function useBooth() {
     let active = true;
     canvas.current = null;
     bytes.current = null;
-    compose(template, photos[0] ?? null, profile, 1, false, layout, {
-      photos,
-      placements,
-      shotCount,
-      stickers,
-      strokes,
-    })
-      .then((c) => {
-        if (!active) return;
+    const content={photos,placements,shotCount,stickers,strokes};
+    Promise.all([
+      compose(template,photos[0]??null,profile,1,false,layout,content),
+      compose(template,photos[0]??null,profile,1,false,layout,content,1200),
+    ]).then(([c,editor])=>{
+        if(!active)return;
+        if(lightLicense.isTrial){applyTrialWatermark(c);applyTrialWatermark(editor);}
+        setEditorPreview(editor.toDataURL("image/png"));
         const result = thermal(c, profile, gamma);
         canvas.current = c;
         bytes.current = result.bytes;
@@ -470,7 +472,7 @@ export function useBooth() {
         if (active) {
           setError(e.message);
           setRenderedComposition(composition);
-          setPreview("");
+          setPreview("");setEditorPreview("");
         }
       });
     return () => {
@@ -486,6 +488,7 @@ export function useBooth() {
     profile,
     gamma,
     thermalView,
+    lightLicense.isTrial,
     layout,
   ]);
   function stopCamera() {
@@ -783,6 +786,7 @@ export function useBooth() {
       output
         .getContext("2d")!
         .drawImage(img, 0, 0, output.width, output.height);
+      if(lightLicense.isTrial)applyTrialWatermark(output);
       return thermal(output, profile, gamma).bytes;
     });
   }
@@ -970,6 +974,7 @@ export function useBooth() {
     setMirror,
     photo,
     preview,
+    editorPreview,
     dimensions,
     thermalView,
     setThermalView,

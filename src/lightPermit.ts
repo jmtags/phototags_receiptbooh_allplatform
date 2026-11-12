@@ -1,6 +1,6 @@
 export type LightPermit = {
   product: "phototags_light"; type: "permit"; sub: string; keyHash: string;
-  licenseId: string; plan: string; iat: number; exp: number; licenseExpiresAt: string | null;
+  licenseId: string; plan: string; trial?: boolean; watermarkRequired?: boolean; iat: number; exp: number; licenseExpiresAt: string | null;
 };
 export function decode64(value: string): Uint8Array<ArrayBuffer> {
   return Uint8Array.from(atob(value.replace(/-/g, "+").replace(/_/g, "/")), c => c.charCodeAt(0));
@@ -26,6 +26,7 @@ export async function verifyLightPermit(token: string, jwk: JsonWebKey, id: stri
   if (p.product !== "phototags_light" || p.type !== "permit" || p.sub !== id || p.keyHash !== keyHash ||
       !Number.isFinite(p.iat) || !Number.isFinite(p.exp) || p.exp <= p.iat || p.exp * 1000 <= now || p.iat * 1000 > now + 300000 ||
       p.exp - p.iat > 30 * 86400 || typeof p.licenseId !== "string" || typeof p.plan !== "string" ||
+      p.plan === "trial" && (p.trial !== true || p.watermarkRequired !== true || p.exp-p.iat>86400 || p.licenseExpiresAt===null) ||
       p.licenseExpiresAt !== null && (!Number.isFinite(Date.parse(p.licenseExpiresAt)) || Date.parse(p.licenseExpiresAt) < p.exp * 1000)) throw new Error("License permit expired or belongs to another installation. Connect to refresh your license.");
   return p;
 }
