@@ -6,9 +6,16 @@ const apiOrigin = import.meta.env.VITE_LIGHT_API_ORIGIN || "";
 const publicKeyText = import.meta.env.VITE_LIGHT_PUBLIC_KEY_JWK || "";
 type Identity = { id: string; privateKey: CryptoKey; publicKey: JsonWebKey; keyHash: string };
 export type LightPlan = { id: string; name: string; amount: number; currency: string; duration_days: number | null; max_installations: number };
-export type LightPayment = { paymentId: string; status: string; receiptEmail?: string; planId?: string; amount?: number; currency?: string; reference?: string; qrImageUrl?: string; expiresAt?: string; checkoutUrl?: string };
+export type LightPayment = { paymentId: string; status: string; receiptEmail?: string; planId?: string; amount?: number; currency?: string; reference?: string; qrImageUrl?: string; expiresAt?: string; checkoutUrl?: string; setupStage?: string; providerStatus?: string };
 type PaymentSetup = { inlineQr: boolean; status: string; version: string };
-type Reply = Partial<LightPayment> & { paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
+type ProviderFailure = { stage?: string; httpStatus?: number; code?: string; field?: string };
+function providerFailureText(failure?: ProviderFailure) {
+  return failure ? `PayMongo QR setup failed at ${failure.stage || "provider request"}: ${failure.code || "request rejected"}${failure.field ? ` (${failure.field})` : ""}${failure.httpStatus ? `, HTTP ${failure.httpStatus}` : ""}. Please share this message with your host.` : "";
+}
+function incompleteQrText(payment: Partial<LightPayment>) {
+  return payment.setupStage === "intent_not_recorded" ? "QR setup stopped before its payment intent was recorded. Host review is required before retrying; do not pay again." : `QR setup did not finish${payment.providerStatus ? ` (PayMongo: ${payment.providerStatus})` : ""}. Select Show payment QR to retry. The previous unpaid attempt will be checked and closed first.`;
+}
+type Reply = Partial<LightPayment> & { providerFailure?: ProviderFailure; paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
 const DB = "phototags-light-license";
 async function storage<T>(key: string, value?: T): Promise<T | undefined> {
   const db = await new Promise<IDBDatabase>((resolve, reject) => {
@@ -54,14 +61,14 @@ export function installationIdentity(): Promise<Identity> {
     return validateIdentity((await storage<Identity>("identity"))!);
   })().catch(error => { identityPromise = undefined; throw error; });
 }
-class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " ")); } }
+class ApiError extends Error { constructor(public code: string, public httpStatus: number, public paymentId?: string, failure?: ProviderFailure) { super(providerFailureText(failure) || (["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_billing_name_required" ? "Enter the payer name to generate your payment QR." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " "))); } }
 async function api(route: string, body?: object): Promise<Reply> {
   if (!apiOrigin) throw new Error("Light license service is not configured. Ask your host to finish setup.");
   const origin = new URL(apiOrigin);
   if (origin.protocol !== "https:" && origin.hostname !== "localhost" && origin.hostname !== "127.0.0.1") throw new Error("License server must use HTTPS.");
   const response = await fetch(`${origin.origin}/api/light?route=${route}`, { method: body ? "POST" : "GET", headers: { "Content-Type": "application/json" }, body: body ? JSON.stringify(body) : undefined, cache: "no-store", signal: AbortSignal.timeout(20000) });
   const result = await response.json();
-  if (!response.ok || !result.ok) throw new ApiError(result.status || "license_server_unavailable", response.status);
+  if (!response.ok || !result.ok) throw new ApiError(result.status || "license_server_unavailable", response.status, result.paymentId, result.providerFailure);
   return result;
 }
 async function authenticated(action: string, identity: Identity, data: object): Promise<Reply> {
@@ -89,6 +96,7 @@ export function useLightLicense() {
   const [tick, setTick] = useState(Date.now());
   const latest = useRef(0), claimsRef = useRef<LightPermit | undefined>(undefined), inFlight = useRef(false);
   const trustedUntil = useRef(0);
+  const activeRequest = useRef<Promise<void>>(Promise.resolve());
   function valid() {
     return !lightLicensingEnabled || !!claimsRef.current && Date.now() < claimsRef.current.exp * 1000 &&
       Date.now() >= trustedUntil.current - 300000;
@@ -104,17 +112,24 @@ export function useLightLicense() {
       await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined); setMessage("Activate a PhotoTags Light license to launch this booth.");
     }
   }
-  async function run(action: string, data: object = {}) {
-    if (!lightLicensingEnabled || inFlight.current) return;
+  async function run(action: string, data: object = {}, background = false): Promise<Reply | undefined> {
+    if (!lightLicensingEnabled) return;
+    if (inFlight.current) {
+      if (background) return;
+      await activeRequest.current;
+      return run(action, data, background);
+    }
     inFlight.current = true;
-    const generation = ++latest.current; setBusy(true);
+    let release!: () => void;
+    activeRequest.current = new Promise<void>(resolve => { release = resolve; });
+    const generation = ++latest.current; if (!background) setBusy(true);
     try {
       if (!publicKeyText) throw new Error("Light license verification key is not configured. Ask your host to finish setup.");
       const id = identity || await installationIdentity(); setIdentity(id);
       const result = await authenticated(action, id, { ...metadata(), ...data });
       if (generation === latest.current) {
         await accept(result, id);
-        if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError(result.status === "qr_setup_incomplete" ? "QR setup did not finish. Select Show payment QR to retry. The previous unpaid attempt will be checked and closed first." : "");
+        if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError(previous => result.status === "qr_setup_incomplete" ? previous.startsWith("PayMongo QR setup failed") ? previous : incompleteQrText(result) : "");
         if (result.paymentId && result.status) setPayment({ ...result, paymentId: result.paymentId!, status: result.status! });
       }
       return result;
@@ -123,15 +138,19 @@ export function useLightLicense() {
       if (error instanceof ApiError && ["installation_blocked", "installation_key_mismatch", "invalid_installation_proof"].includes(error.code)) {
         await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined);
       }
+      if (action === "qr-checkout" && error instanceof ApiError && error.paymentId && /^[0-9a-f-]{36}$/i.test(error.paymentId)) {
+        localStorage.setItem("phototags.light.payment", error.paymentId); setPendingPaymentId(error.paymentId);
+        setPayment({paymentId:error.paymentId,status:"setup_failed"});
+      }
       if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError((error as Error).message);
       setMessage(`${(error as Error).message}${valid() ? " Your saved offline permit remains usable until its expiry." : ""}`);
       return { ok: false, status: error instanceof ApiError ? error.code : "license_request_failed" } satisfies Reply;
-    } finally { inFlight.current = false; if (generation === latest.current) { setBusy(false); setLoaded(true); setTick(Date.now()); } }
+    } finally { inFlight.current = false; release(); if (generation === latest.current) { if (!background) setBusy(false); setLoaded(true); setTick(Date.now()); } }
   }
-  async function refresh() {
+  async function refresh(background = false) {
     const paymentId = new URL(location.href).searchParams.get("light_payment") || localStorage.getItem("phototags.light.payment");
     if (paymentId) {
-      const r = await run("payment-status", { paymentId });
+      const r = await run("payment-status", { paymentId }, background);
       if (r?.status === "licensed" && r.permit) {
         localStorage.removeItem("phototags.light.payment");
         setPendingPaymentId(""); setPayment(undefined); setCompletedPayment(paymentId);
@@ -141,11 +160,11 @@ export function useLightLicense() {
         setMessage("This payment was cancelled. You can generate a new QR code.");
       }
       if (r?.ok && r.status !== "licensed" && !claimsRef.current && Date.now()-lastPendingLicenseCheck.current>=60000) {
-        lastPendingLicenseCheck.current=Date.now(); await run("check");
+        lastPendingLicenseCheck.current=Date.now(); await run("check", {}, background);
       }
       return r;
     }
-    return run("check");
+    return run("check", {}, background);
   }
   useEffect(() => {
     if (!lightLicensingEnabled) return;
@@ -175,21 +194,21 @@ export function useLightLicense() {
   }, []);
   useEffect(() => {
     if (!lightLicensingEnabled) return;
-    const online = () => { void refresh(); };
+    const online = () => { void refresh(true); };
     window.addEventListener("online", online);
-    const timer = setInterval(() => { if (navigator.onLine) void refresh(); }, 15 * 60000);
+    const timer = setInterval(() => { if (navigator.onLine) void refresh(true); }, 15 * 60000);
     return () => { window.removeEventListener("online", online); clearInterval(timer); };
   }, [identity, name]);
   async function loadPlans() {
     try { const result=await api("plans"); setPlans(result.plans || []); setPaymentSetup(result.paymentSetup); setPlansError(""); } catch (e) { setPlansError(`Could not load Light plans: ${(e as Error).message}`); }
   }
   useEffect(() => {
-    if (!lightLicensingEnabled || !pendingPaymentId) return;
-    const poll = () => { if (navigator.onLine && document.visibilityState === "visible") void refresh(); };
+    if (!lightLicensingEnabled || !pendingPaymentId || payment?.status === "qr_setup_incomplete") return;
+    const poll = () => { if (navigator.onLine && document.visibilityState === "visible") void refresh(true); };
     const timer = setInterval(poll, 6000);
     window.addEventListener("focus", poll); document.addEventListener("visibilitychange", poll);
     return () => { clearInterval(timer); window.removeEventListener("focus", poll); document.removeEventListener("visibilitychange", poll); };
-  }, [pendingPaymentId, identity, name]);
+  }, [pendingPaymentId, identity, name, payment?.status]);
   async function checkout(planId: string, email: string, acceptedAgreement: boolean, replaceHosted = false, billingName = "") {
     setCompletedPayment("");
     const result = await run("qr-checkout", { planId, email, acceptedAgreement, replaceHosted, billingName });

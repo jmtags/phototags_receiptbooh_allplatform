@@ -7,6 +7,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
   const [step, setStep] = useState(0);
   const [agreed, setAgreed] = useState(false), [email, setEmail] = useState(l.payment?.receiptEmail || "");
   const [billingName, setBillingName] = useState("");
+  const [generating, setGenerating] = useState(false);
   const emailEdited = useRef(false);
   const [planId, setPlanId] = useState("");
   const success = !!l.completedPayment;
@@ -15,7 +16,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
   const setupReady = l.paymentSetup?.inlineQr !== false;
   const selected = l.plans.find(p => p.id === planId);
   const expired = !!l.payment?.expiresAt && Date.parse(l.payment.expiresAt) <= Date.now();
-  const canPay = setupReady && online && !l.busy && agreed && !!selected && !!billingName.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const canPay = setupReady && online && !l.busy && !generating && agreed && !!selected && !!billingName.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
   useEffect(() => {
     const modal = dialog.current!; modal.showModal();
     const overflow = document.body.style.overflow; document.body.style.overflow = "hidden";
@@ -27,9 +28,13 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
     if (await l.cancelPayment()) { setAgreed(false); setPlanId(""); setStep(0); }
   }
   async function pay(replaceHosted = false) {
-    if (step === 1 && l.pendingPaymentId && !await l.cancelPayment()) return;
-    const result = await l.checkout(planId || l.payment?.planId || "", email.trim(), agreed || !!l.pendingPaymentId, replaceHosted, billingName.trim());
-    if (result?.paymentId && (result.qrImageUrl || result.checkoutUrl || ["processing", "hosted_processing", "paid"].includes(result.status || ""))) setStep(2);
+    if (generating) return;
+    setGenerating(true);
+    try {
+      if (step === 1 && l.pendingPaymentId && !await l.cancelPayment()) return;
+      const result = await l.checkout(planId || l.payment?.planId || "", email.trim(), agreed || !!l.pendingPaymentId, replaceHosted, billingName.trim());
+      if (result?.paymentId && (result.qrImageUrl || result.checkoutUrl || ["processing", "hosted_processing", "paid"].includes(result.status || ""))) setStep(2);
+    } finally { setGenerating(false); }
   }
   return <dialog ref={dialog} className="light-activation-dialog" aria-labelledby="light-activation-title" onCancel={e => { e.preventDefault(); onClose(); }}>
     <header className="light-dialog-header">
@@ -82,7 +87,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
       </>}
     </div>
     <footer className="light-dialog-actions">
-      {success ? <button className="button button-primary" onClick={onClose}>Done</button> : step === 0 ? <button className="button button-primary" disabled={!agreed || !online} onClick={() => { void l.loadPlans(); setStep(1); }}>Agree & continue <ArrowRight size={17} aria-hidden="true" /></button> : step === 1 ? <><button className="button button-secondary" disabled={l.busy} onClick={() => setStep(0)}><ArrowLeft size={17} aria-hidden="true" />Back</button><button className="button button-primary" disabled={!canPay} onClick={() => void pay()}>{l.busy ? <LoaderCircle className="spinner" size={17} aria-hidden="true" /> : null}Show payment QR</button></> : <><button className="button button-quiet" disabled={l.busy || !online} onClick={() => void startOver()}>Cancel &amp; start over</button><button className="button button-secondary" disabled={l.busy || !online} onClick={() => void l.refresh()}><RefreshCw size={17} aria-hidden="true" />Refresh status</button>{(expired || hosted) && <button className="button button-primary" disabled={!setupReady || l.busy || !online || !billingName.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)} onClick={() => void pay(hosted)}>{hosted ? "Switch to in-app QR" : "Generate a new QR"}</button>}</>}
+      {success ? <button className="button button-primary" onClick={onClose}>Done</button> : step === 0 ? <button className="button button-primary" disabled={!agreed || !online} onClick={() => { void l.loadPlans(); setStep(1); }}>Agree & continue <ArrowRight size={17} aria-hidden="true" /></button> : step === 1 ? <><button className="button button-secondary" disabled={l.busy} onClick={() => setStep(0)}><ArrowLeft size={17} aria-hidden="true" />Back</button><button className="button button-primary" disabled={!canPay} onClick={() => void pay()}>{generating ? <LoaderCircle className="spinner" size={17} aria-hidden="true" /> : null}{generating ? "Generating QR..." : "Show payment QR"}</button></> : <><button className="button button-quiet" disabled={l.busy || !online} onClick={() => void startOver()}>Cancel &amp; start over</button><button className="button button-secondary" disabled={l.busy || !online} onClick={() => void l.refresh()}><RefreshCw size={17} aria-hidden="true" />Refresh status</button>{(expired || hosted) && <button className="button button-primary" disabled={!setupReady || l.busy || !online || !billingName.trim() || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)} onClick={() => void pay(hosted)}>{hosted ? "Switch to in-app QR" : "Generate a new QR"}</button>}</>}
     </footer>
   </dialog>;
 }
