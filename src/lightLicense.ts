@@ -6,7 +6,7 @@ const apiOrigin = import.meta.env.VITE_LIGHT_API_ORIGIN || "";
 const publicKeyText = import.meta.env.VITE_LIGHT_PUBLIC_KEY_JWK || "";
 type Identity = { id: string; privateKey: CryptoKey; publicKey: JsonWebKey; keyHash: string };
 export type LightPlan = { id: string; name: string; amount: number; currency: string; duration_days: number | null; max_installations: number };
-export type LightPayment = { paymentId: string; status: string; planId?: string; amount?: number; currency?: string; reference?: string; qrImageUrl?: string; expiresAt?: string; checkoutUrl?: string };
+export type LightPayment = { paymentId: string; status: string; receiptEmail?: string; planId?: string; amount?: number; currency?: string; reference?: string; qrImageUrl?: string; expiresAt?: string; checkoutUrl?: string };
 type PaymentSetup = { inlineQr: boolean; status: string; version: string };
 type Reply = Partial<LightPayment> & { paymentSetup?: PaymentSetup; ok: boolean; status?: string; permit?: string | null; challenge?: string; plans?: LightPlan[]; checkoutUrl?: string; paymentId?: string };
 const DB = "phototags-light-license";
@@ -79,6 +79,8 @@ export function useLightLicense() {
   const [plansError, setPlansError] = useState("");
   const [paymentSetup, setPaymentSetup] = useState<PaymentSetup>();
   const [payment, setPayment] = useState<LightPayment>();
+  const [paymentError, setPaymentError] = useState("");
+  const lastPendingLicenseCheck = useRef(0);
   const [completedPayment, setCompletedPayment] = useState("");
   const [pendingPaymentId, setPendingPaymentId] = useState(() => {
     try { return new URL(location.href).searchParams.get("light_payment") || localStorage.getItem("phototags.light.payment") || ""; } catch { return ""; }
@@ -112,6 +114,7 @@ export function useLightLicense() {
       const result = await authenticated(action, id, { ...metadata(), ...data });
       if (generation === latest.current) {
         await accept(result, id);
+        if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError("");
         if (result.paymentId && result.status) setPayment({ ...result, paymentId: result.paymentId!, status: result.status! });
       }
       return result;
@@ -120,6 +123,7 @@ export function useLightLicense() {
       if (error instanceof ApiError && ["installation_blocked", "installation_key_mismatch", "invalid_installation_proof"].includes(error.code)) {
         await storage("permit", ""); claimsRef.current = undefined; setClaims(undefined);
       }
+      if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError((error as Error).message);
       setMessage(`${(error as Error).message}${valid() ? " Your saved offline permit remains usable until its expiry." : ""}`);
       return { ok: false, status: error instanceof ApiError ? error.code : "license_request_failed" } satisfies Reply;
     } finally { inFlight.current = false; if (generation === latest.current) { setBusy(false); setLoaded(true); setTick(Date.now()); } }
@@ -136,7 +140,9 @@ export function useLightLicense() {
         localStorage.removeItem("phototags.light.payment"); setPendingPaymentId("");
         setMessage("This payment was cancelled. You can generate a new QR code.");
       }
-      if (r && r.status !== "licensed" && !claimsRef.current) await run("check");
+      if (r?.ok && r.status !== "licensed" && !claimsRef.current && Date.now()-lastPendingLicenseCheck.current>=60000) {
+        lastPendingLicenseCheck.current=Date.now(); await run("check");
+      }
       return r;
     }
     return run("check");
@@ -195,11 +201,28 @@ export function useLightLicense() {
       return result;
     }
   }
+  async function cancelPayment() {
+    const id = localStorage.getItem("phototags.light.payment") || pendingPaymentId;
+    const result = id ? await run("cancel-payment", { paymentId:id }) : { ok:true,status:"cancelled" };
+    if (result?.status === "licensed" && "permit" in result && result.permit) {
+      localStorage.removeItem("phototags.light.payment"); setPendingPaymentId(""); setPayment(undefined); setCompletedPayment(id);
+      const url=new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null,"",url);
+      return false;
+    }
+    if (result?.ok && result.status === "cancelled") {
+      localStorage.removeItem("phototags.light.payment"); setPendingPaymentId(""); setPayment(undefined); setCompletedPayment(""); setPaymentError("");
+      const url=new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null,"",url);
+      setMessage(valid() ? "Your license remains active. Choose a plan to renew." : "Previous unpaid attempt closed. Choose a license plan to activate.");
+      return true;
+    }
+    if (result?.status === "payment_processing") setPaymentError("Payment is still processing. Wait for automatic confirmation; a new purchase has not been started.");
+    return false;
+  }
   return { enabled: lightLicensingEnabled, allowed: !lightLicensingEnabled || loaded && valid(), hasAccess: valid,
     loaded, busy, identityId: identity?.id || "", claims,
     message: claims && Date.now() >= claims.exp * 1000 ? "Your offline license permit has expired. Connect and check your license to continue." : message,
-    name, plans, plansError, paymentSetup, tick, payment, pendingPaymentId, completedPayment,
-    beginActivation() { setCompletedPayment(""); },
+    name, plans, plansError, paymentSetup, tick, payment, paymentError, pendingPaymentId, completedPayment, cancelPayment,
+    beginActivation() { setCompletedPayment(""); setPaymentError(""); },
     setName(value: string) { setName(value); localStorage.setItem("phototags.light.name", value); },
     refresh, activate: (licenseKey: string) => run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
 }
