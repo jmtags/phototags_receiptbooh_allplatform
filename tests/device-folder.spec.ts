@@ -5,6 +5,7 @@ import AxeBuilder from "@axe-core/playwright";
 import { takePhotos } from "./camera-fixture";
 
 async function createReceipt(page: Page, count = 1) {
+  await closeFolder(page);
   await page.getByRole("button", { name: "Launch kiosk", exact: true }).click();
   const kiosk = page.locator(".kiosk-dialog");
   await kiosk
@@ -17,7 +18,7 @@ async function createReceipt(page: Page, count = 1) {
     })
     .click();
   await kiosk.getByRole("button", { name: "Continue to camera" }).click();
-  await takePhotos(page,count);
+  await takePhotos(page, count);
   await kiosk.getByRole("button", { name: "Continue to themes" }).click();
   await kiosk.getByRole("button", { name: "Super Snap", exact: true }).click();
   await kiosk.getByRole("button", { name: "Review receipt" }).click();
@@ -25,13 +26,47 @@ async function createReceipt(page: Page, count = 1) {
     .getByRole("button", { name: "Finish session", exact: true })
     .click();
   await kiosk.getByRole("button", { name: "Exit kiosk", exact: true }).click();
+  await historyPage(page);
+  await expect(page.locator(".history-folder-card").first()).toBeVisible();
+}
+
+async function closeFolder(page: Page) {
+  const modal = page.locator(".history-modal");
+  if (await modal.count())
+    await modal.getByRole("button", { name: "Close photo folder" }).click();
+}
+async function historyPage(page: Page) {
+  await closeFolder(page);
   await page
     .getByRole("button", { name: "Photo history", exact: true })
     .click();
-  await expect(
-    page.getByRole("img", { name: "Saved receipt preview" }),
-  ).toBeVisible();
+  const storage = page.locator(".history-storage");
+  if (!(await storage.evaluate((el: HTMLDetailsElement) => el.open)))
+    await storage.locator("summary").first().click();
 }
+async function openGallery(page: Page) {
+  const modal = page.locator(".history-modal");
+  if (!(await modal.count()))
+    await page
+      .getByRole("button", { name: /^Open folder / })
+      .first()
+      .click();
+  const back = modal.getByRole("button", { name: "Back to folder" });
+  if (await back.count()) await back.click();
+  const options = modal.locator(".history-folder-options");
+  if (!(await options.evaluate((el: HTMLDetailsElement) => el.open)))
+    await options.locator("summary").click();
+  return modal;
+}
+async function selectReceipt(page: Page) {
+  const modal = await openGallery(page);
+  await modal
+    .getByRole("button", { name: /^View receipt from / })
+    .first()
+    .click();
+  return modal;
+}
+
 async function setup(page: Page) {
   await page.addInitScript(() => {
     HTMLElement.prototype.requestFullscreen = () =>
@@ -72,6 +107,7 @@ test("Files fallback creates a real date-folder ZIP, shares on a user click and 
   await expect(
     page.getByRole("button", { name: "Choose local folder", exact: true }),
   ).toHaveCount(0);
+  await openGallery(page);
   await page
     .getByRole("button", { name: "Rename folder", exact: true })
     .click();
@@ -79,9 +115,11 @@ test("Files fallback creates a real date-folder ZIP, shares on a user click and 
   await page
     .getByRole("button", { name: "Save folder name", exact: true })
     .click();
+  await selectReceipt(page);
   const source = await page
     .getByRole("img", { name: "Saved receipt preview" })
     .getAttribute("src");
+  await openGallery(page);
   await page
     .getByRole("button", { name: "Prepare folder for Files", exact: true })
     .click();
@@ -124,43 +162,64 @@ test("Files fallback creates a real date-folder ZIP, shares on a user click and 
   expect(
     Buffer.from(await page.evaluate(() => (window as any).shared.bytes)),
   ).toEqual(zipped);
+  await selectReceipt(page);
   await expect(
-    page.getByRole("button", { name: "Save image to Files", exact: true }),
+    page.getByRole("button", { name: "Share image", exact: true }),
   ).toBeVisible();
   await page.screenshot({
     path: `artifacts/device-files-${info.project.name}.png`,
     fullPage: true,
   });
   await page
+    .locator(".history-modal")
+    .getByText("More options", { exact: true })
+    .click();
+  await page
     .getByRole("button", { name: "Delete saved session", exact: true })
     .click();
   await page
     .getByRole("button", { name: "Delete permanently", exact: true })
     .click();
-  await expect(page.locator(".history-card")).toHaveCount(0);
+  await expect(page.locator(".history-folder-card")).toHaveCount(0);
   await context.setOffline(true);
   await page.reload();
-  await page
-    .getByRole("button", { name: "Photo history", exact: true })
-    .click();
+  await historyPage(page);
   await page.getByLabel("Open saved ZIP", { exact: true }).setInputFiles(path);
-  await expect(page.locator(".history-card")).toHaveCount(1);
+  await expect(page.locator(".history-folder-card")).toHaveCount(1);
+  await selectReceipt(page);
   await expect(
     page.getByRole("heading", { name: "Winter event", exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("img", { name: "Saved receipt preview" }),
   ).toHaveAttribute("src", source!);
+  await openGallery(page);
   await expect(
-    page.getByRole("button", { name: "View photo 2", exact: true }),
+    page.getByRole("button", { name: /^View photo 2 from / }),
   ).toBeVisible();
-  const olderManifest = JSON.parse(Buffer.from(files[manifestPath]).toString("utf8"));
+  await closeFolder(page);
+  const olderManifest = JSON.parse(
+    Buffer.from(files[manifestPath]).toString("utf8"),
+  );
   olderManifest.entry.updatedAt = "2020-01-01T00:00:00.000Z";
   olderManifest.entry.theme = "Outdated receipt";
-  const older = zipSync({ ...files, [manifestPath]: strToU8(JSON.stringify(olderManifest)) }, { level: 0 });
-  await page.getByLabel("Open saved ZIP", { exact: true }).setInputFiles({ name: "older.zip", mimeType: "application/zip", buffer: Buffer.from(older) });
-  await expect(page.getByText("Opened 0 saved sessions.", { exact: true })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Outdated receipt", exact: true })).toHaveCount(0);
+  const older = zipSync(
+    { ...files, [manifestPath]: strToU8(JSON.stringify(olderManifest)) },
+    { level: 0 },
+  );
+  await page
+    .getByLabel("Open saved ZIP", { exact: true })
+    .setInputFiles({
+      name: "older.zip",
+      mimeType: "application/zip",
+      buffer: Buffer.from(older),
+    });
+  await expect(
+    page.getByText("Opened 0 saved sessions.", { exact: true }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("heading", { name: "Outdated receipt", exact: true }),
+  ).toHaveCount(0);
   expect(
     (
       await new AxeBuilder({ page })
@@ -230,9 +289,7 @@ test("native directory writes, folder restore, permissions and reprints use real
     }),
   );
   await page.goto("/");
-  await page
-    .getByRole("button", { name: "Photo history", exact: true })
-    .click();
+  await historyPage(page);
   await page
     .getByRole("button", { name: "Choose local folder", exact: true })
     .click();
@@ -275,6 +332,7 @@ test("native directory writes, folder restore, permissions and reprints use real
   await expect
     .poll(async () => (await manifests()).filter((m) => m.receipt).length)
     .toBe(1);
+  await openGallery(page);
   await page
     .getByRole("button", { name: "Rename folder", exact: true })
     .click();
@@ -282,6 +340,7 @@ test("native directory writes, folder restore, permissions and reprints use real
   await page
     .getByRole("button", { name: "Save folder name", exact: true })
     .click();
+  await closeFolder(page);
   await expect
     .poll(
       async () =>
@@ -289,9 +348,7 @@ test("native directory writes, folder restore, permissions and reprints use real
     )
     .toBe(1);
   await page.reload();
-  await page
-    .getByRole("button", { name: "Photo history", exact: true })
-    .click();
+  await historyPage(page);
   await expect(
     page.getByText("Automatic saving on", { exact: true }),
   ).toBeVisible();
@@ -311,17 +368,17 @@ test("native directory writes, folder restore, permissions and reprints use real
     db.close();
   });
   await page.reload();
-  await page
-    .getByRole("button", { name: "Photo history", exact: true })
-    .click();
-  await expect(page.locator(".history-card")).toHaveCount(0);
+  await historyPage(page);
+  await expect(page.locator(".history-folder-card")).toHaveCount(0);
   await page
     .getByRole("button", { name: "Change local folder", exact: true })
     .click();
-  await expect(page.locator(".history-card")).toHaveCount(1);
+  await expect(page.locator(".history-folder-card")).toHaveCount(1);
+  await selectReceipt(page);
   await expect(
     page.getByRole("img", { name: "Saved receipt preview" }),
   ).toBeVisible();
+  await closeFolder(page);
   await page.evaluate(() => {
     (window as any).cancelPicker = true;
   });
@@ -363,7 +420,9 @@ test("native directory writes, folder restore, permissions and reprints use real
     })
     .click();
   await expect(page.getByRole("alert")).toContainText("Device storage is full");
-  await expect(page.locator(".history-card")).toHaveCount(2);
+  await expect(page.locator(".history-folder-card")).toContainText(
+    "2 sessions",
+  );
   await page.evaluate(() => {
     (window as any).diskFull = false;
   });
@@ -380,14 +439,15 @@ test("native directory writes, folder restore, permissions and reprints use real
     .getByRole("button", { name: "Connect & find printer queues" })
     .click();
   await page.getByLabel("Raw printer queue").selectOption("PhotoTags RAW");
-  await page
-    .getByRole("button", { name: "Photo history", exact: true })
-    .click();
+  await historyPage(page);
+  await selectReceipt(page);
   await page
     .getByRole("button", { name: "Reprint receipt", exact: true })
     .click();
   await expect(
-    page.getByRole("button", { name: "I checked the printer", exact: true }),
+    page
+      .locator(".history-modal")
+      .getByRole("button", { name: "I checked the printer", exact: true }),
   ).toBeEnabled();
   expect(prints).toBe(1);
   await page.screenshot({
@@ -422,7 +482,7 @@ test("invalid archives leave existing history intact and unavailable sharing kee
     buffer: Buffer.from("invalid"),
   });
   await expect(page.getByRole("alert")).toBeVisible();
-  await expect(page.locator(".history-card")).toHaveCount(1);
+  await expect(page.locator(".history-folder-card")).toHaveCount(1);
   const unsafe = zipSync({ "../escape/session.json": strToU8("{}") });
   await page.getByLabel("Open saved ZIP", { exact: true }).setInputFiles({
     name: "unsafe.zip",
@@ -430,7 +490,8 @@ test("invalid archives leave existing history intact and unavailable sharing kee
     buffer: Buffer.from(unsafe),
   });
   await expect(page.getByRole("alert")).toContainText("invalid path");
-  await expect(page.locator(".history-card")).toHaveCount(1);
+  await expect(page.locator(".history-folder-card")).toHaveCount(1);
+  await openGallery(page);
   await page
     .getByRole("button", { name: "Prepare folder for Files", exact: true })
     .click();
@@ -483,9 +544,8 @@ test("the device-folder upgrade preserves existing version-one history", async (
     };
   });
   await page.goto("/");
-  await page
-    .getByRole("button", { name: "Photo history", exact: true })
-    .click();
+  await historyPage(page);
+  await selectReceipt(page);
   await expect(
     page.getByRole("heading", { name: "Legacy event", exact: true }),
   ).toBeVisible();
@@ -495,8 +555,9 @@ test("the device-folder upgrade preserves existing version-one history", async (
     "src",
     await page.evaluate(() => (window as any).legacyPhoto),
   );
+  await openGallery(page);
   await expect(
-    page.getByRole("button", { name: "View photo 1", exact: true }),
+    page.getByRole("button", { name: /^View photo 1 from / }),
   ).toBeVisible();
   await expect
     .poll(() =>

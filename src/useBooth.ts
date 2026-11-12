@@ -769,13 +769,14 @@ export function useBooth() {
       return;
     await submitPrint(async () => new Uint8Array(bytes.current!));
   }
-  async function printHistoryReceipt(id: string) {
+  async function printHistoryReceipt(id: string, photoIndex = -1) {
     if (busy || job || !printer || printLock.current) return;
     await submitPrint(async () => {
       const saved = await readHistoryAssets(id);
-      if (!saved.receipt)
-        throw new Error("This session has no finished receipt to reprint.");
-      const img = await image(saved.receipt);
+      const source=photoIndex===-1?saved.receipt:saved.photos[photoIndex];
+      if (!source)
+        throw new Error("This saved image is no longer available to reprint.");
+      const img = await image(source);
       const output = document.createElement("canvas");
       output.width = profiles[profile].width;
       output.height = Math.round(
