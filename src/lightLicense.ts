@@ -253,6 +253,10 @@ export function useLightLicense() {
       if(!result?.ok || !result.signedUploadUrl || !result.qrUrl || !result.expiresAt) throw new Error(result?.status === "light_photo_rate_limited" ? "Too many uploads. Please wait before trying again." : "Online photo upload is unavailable. Reconnect and try again; your local photo is saved.");
       return {signedUploadUrl:result.signedUploadUrl,qrUrl:result.qrUrl,expiresAt:result.expiresAt,watermarkRequired:result.watermarkRequired===true};
     },
+    async reportUsage(data:object){
+      if(!lightLicensingEnabled||!identity)return;
+      try{await authenticated("usage",identity,{...metadata(),...data});}catch{/* Usage reporting never changes a license or interrupts the booth. */}
+    },
     refresh, activate: (licenseKey: string) => activeLicense() ? Promise.resolve(undefined) : run("activate", { licenseKey: licenseKey.trim().toUpperCase() }), loadPlans, checkout };
 }
 export type LightLicenseModel = ReturnType<typeof useLightLicense>;

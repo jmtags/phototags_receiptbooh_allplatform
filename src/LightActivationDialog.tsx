@@ -47,6 +47,7 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
         {step === 0 && <>
           <h3>Light license terms</h3>
           <div className="light-terms-copy">
+            <p>Usage reporting sends app opens, device/browser information, available camera labels and selected printer details to the host's Light admin. Photos, PINs, MAC addresses and raw camera device IDs are not included in usage reports.</p>
             <p>A Light license covers the purchased number of registered browser installations. Android APK licenses are a separate product and do not activate this booth.</p>
             <p>Clearing app data or changing browsers may require a host-assisted transfer. On iPhone or iPad, install the booth on the Home Screen and activate inside that app.</p>
             <p>First activation and renewal require internet. Offline use requires downloaded app files and an unexpired signed license permit. Reconnect before the offline permit expires; lifetime licenses also require periodic checks.</p>

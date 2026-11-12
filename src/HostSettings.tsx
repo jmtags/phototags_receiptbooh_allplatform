@@ -88,6 +88,7 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
               receipt. Guests create in the kiosk; this page handles station
               settings.
             </p>
+            <p className="field-help">Usage reporting sends app opens, device/browser information, camera labels when available, and selected printer details to the host's Light admin. It does not send photos, PINs, MAC addresses or raw camera device IDs.</p>
             <ol className="host-flow">
               {[
                 ["Choose shots", "Select 1, 2, 3 or 4 photos."],

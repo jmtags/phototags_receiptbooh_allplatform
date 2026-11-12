@@ -4,11 +4,13 @@ import { Studio } from "./Studio";
 import { Kiosk } from "./Kiosk";
 import { useBooth } from "./useBooth";
 import { LightLicenseWall } from "./LightLicenseWall";
+import { useLightUsage } from "./lightUsage";
 import "./style.css";
 function App() {
   const booth = useBooth();
   const [kiosk, setKiosk] = useState(false);
   const [licenseWall,setLicenseWall]=useState(false);
+  useLightUsage(booth,kiosk);
   const ownsFullscreen = useRef(false);
   async function launch() {
     if (!booth.lightLicense.hasAccess()) {
