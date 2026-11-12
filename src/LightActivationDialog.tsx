@@ -4,10 +4,10 @@ import type { LightLicenseModel } from "./lightLicense";
 
 export function LightActivationDialog({ license: l, online, onClose }: { license: LightLicenseModel; online: boolean; onClose: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null), title = useRef<HTMLHeadingElement>(null);
-  const [step, setStep] = useState(l.pendingPaymentId ? 2 : 0);
+  const [step, setStep] = useState(0);
   const [agreed, setAgreed] = useState(false), [email, setEmail] = useState(l.payment?.receiptEmail || "");
-  const emailEdited = useRef(false), resumed = useRef(!!l.pendingPaymentId);
-  const [planId, setPlanId] = useState(l.payment?.planId || "");
+  const emailEdited = useRef(false);
+  const [planId, setPlanId] = useState("");
   const success = !!l.completedPayment;
   const failed = l.payment?.status === "failed";
   const hosted = !!l.payment?.checkoutUrl;
@@ -23,11 +23,12 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
   useEffect(() => { title.current?.focus(); }, [step, success]);
   useEffect(() => { if (!emailEdited.current && l.payment?.receiptEmail) setEmail(l.payment.receiptEmail); }, [l.payment?.receiptEmail]);
   async function startOver() {
-    if (await l.cancelPayment()) { resumed.current=false; setAgreed(false); setPlanId(""); setStep(0); }
+    if (await l.cancelPayment()) { setAgreed(false); setPlanId(""); setStep(0); }
   }
   async function pay(replaceHosted = false) {
+    if (step === 1 && l.pendingPaymentId && !await l.cancelPayment()) return;
     const result = await l.checkout(planId || l.payment?.planId || "", email.trim(), agreed || !!l.pendingPaymentId, replaceHosted);
-    if (result?.paymentId) setStep(2);
+    if (result?.paymentId && (result.qrImageUrl || result.checkoutUrl || ["processing", "hosted_processing", "paid"].includes(result.status || ""))) setStep(2);
   }
   return <dialog ref={dialog} className="light-activation-dialog" aria-labelledby="light-activation-title" onCancel={e => { e.preventDefault(); onClose(); }}>
     <header className="light-dialog-header">
@@ -62,7 +63,6 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
           {!setupReady && <p role="alert">{l.paymentSetup?.status === "light_inline_qr_not_configured" ? "QR setup is incomplete. Your host must apply the Light QR migration in Supabase." : "The Light QR payment service needs configuration. Ask your host to check the existing Light service."}</p>}
         </>}
         {step === 2 && <>
-          {resumed.current && <p className="field-help">You are resuming an unfinished purchase. Terms and plan selection were saved. Use Cancel &amp; start over to choose a different plan.</p>}
           {l.payment?.qrImageUrl && !expired && !failed ? <div className="light-qr-payment">
             <p className="light-qr-amount">{new Intl.NumberFormat(undefined, { style: "currency", currency: l.payment.currency || "PHP" }).format((l.payment.amount || 0) / 100)}</p>
             <p>PhotoTags Light license · {l.plans.find(p => p.id === l.payment?.planId)?.name || l.payment.planId}</p>
@@ -70,13 +70,13 @@ export function LightActivationDialog({ license: l, online, onClose }: { license
             <p>Scan with a participating bank or e-wallet app. Your license updates here after payment is verified.</p>
             <a className="text-link" href={l.payment.qrImageUrl} download="PhotoTags-Light-payment.png">Save QR image</a>
             <small>QR valid until {new Date(l.payment.expiresAt!).toLocaleTimeString()}. On the same phone, save the QR and import it in your banking app if supported.</small>
-          </div> : <p>{failed ? "This payment was cancelled. Close this dialog to choose a new license payment." : expired ? "This QR code has expired. Check payment before generating a replacement." : hosted ? "Your earlier attempt used hosted checkout, so it has no in-app QR image. You can switch an unpaid attempt to QR below." : "Checking your pending payment. Keep this app open; you can safely close and resume this dialog."}</p>}
+          </div> : <p>{failed ? "This payment was cancelled. Close this dialog to choose a new license payment." : expired ? "This QR code has expired. Check payment before generating a replacement." : hosted ? "Your earlier attempt used hosted checkout, so it has no in-app QR image. You can switch an unpaid attempt to QR below." : l.payment?.status === "processing" ? "Your payment is processing. Your license will update automatically after confirmation." : "The payment has no QR image to scan. Cancel & start over to retry QR generation. If this continues, ask your host to check the Light service logs."}</p>}
           {l.payment?.reference && <p className="light-payment-reference">Reference: {l.payment.reference}</p>}
           {l.payment?.checkoutUrl && <p>You can also <a href={l.payment.checkoutUrl} target="_blank" rel="noreferrer">complete the earlier payment at PayMongo</a>. Payment is always verified before activation.</p>}
           {hosted && <p className="field-help">Switching first closes the unpaid hosted checkout. A paid or processing payment will be preserved.</p>}
           {(expired || hosted) && <label className="field">Receipt email<input type="email" value={email} onChange={e => { emailEdited.current = true; setEmail(e.target.value); }} /></label>}
         </>}
-        <p role="status" className="light-dialog-status">{!online ? "You are offline. Reconnect to continue payment." : l.paymentError || (step === 2 ? failed ? "This attempt is closed. Start over to choose a license plan." : hosted ? "This earlier payment has not been verified yet. Confirmation updates automatically. You can switch an unpaid attempt to QR." : "Waiting for payment confirmation. This page updates automatically after payment." : l.busy ? "Contacting the license service..." : "")}</p>
+        <p role="status" className="light-dialog-status">{!online ? "You are offline. Reconnect to continue payment." : l.paymentError || (step === 2 ? failed ? "This attempt is closed. Start over to choose a license plan." : hosted ? "This earlier payment has not been verified yet. Confirmation updates automatically. You can switch an unpaid attempt to QR." : l.payment?.qrImageUrl || l.payment?.status === "processing" ? "Waiting for payment confirmation. This page updates automatically after payment." : "QR setup is incomplete. Cancel & start over to retry." : l.busy ? "Contacting the license service..." : "")}</p>
       </>}
     </div>
     <footer className="light-dialog-actions">

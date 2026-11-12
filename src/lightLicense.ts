@@ -54,7 +54,7 @@ export function installationIdentity(): Promise<Identity> {
     return validateIdentity((await storage<Identity>("identity"))!);
   })().catch(error => { identityPromise = undefined; throw error; });
 }
-class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " ")); } }
+class ApiError extends Error { constructor(public code: string, public httpStatus: number) { super(["invalid_challenge_request", "light_route_not_found"].includes(code) ? "In-app QR needs the latest Light service deployment. Ask your host to update the existing Light service." : code === "light_checkout_pending_host_review" ? "This unfinished attempt needs host review before another payment can be created. Ask your host to check Light service logs; do not pay a second time." : code === "light_inline_qr_not_configured" ? "In-app QR payments need a Light service database update. Ask your host to finish setup." : code.replace(/_/g, " ")); } }
 async function api(route: string, body?: object): Promise<Reply> {
   if (!apiOrigin) throw new Error("Light license service is not configured. Ask your host to finish setup.");
   const origin = new URL(apiOrigin);
@@ -114,7 +114,7 @@ export function useLightLicense() {
       const result = await authenticated(action, id, { ...metadata(), ...data });
       if (generation === latest.current) {
         await accept(result, id);
-        if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError("");
+        if (["qr-checkout","payment-status","cancel-payment"].includes(action)) setPaymentError(result.status === "qr_setup_incomplete" ? "QR setup did not finish. Select Show payment QR to retry. The previous unpaid attempt will be checked and closed first." : "");
         if (result.paymentId && result.status) setPayment({ ...result, paymentId: result.paymentId!, status: result.status! });
       }
       return result;
@@ -196,6 +196,7 @@ export function useLightLicense() {
     if (result?.paymentId) {
       localStorage.setItem("phototags.light.payment", result.paymentId); setPendingPaymentId(result.paymentId);
       const url = new URL(location.href); url.searchParams.delete("light_payment"); history.replaceState(null, "", url);
+      if (!result.qrImageUrl && !result.checkoutUrl && !["paid", "processing"].includes(result.status || "")) setPaymentError("QR setup did not finish. Select Show payment QR to retry. The previous unpaid attempt will be checked and closed first.");
       if (result.status === "hosted_processing") setMessage("Your earlier payment is still being confirmed. Wait for verification before switching to a new QR.");
       if (result.status === "paid") await refresh();
       return result;

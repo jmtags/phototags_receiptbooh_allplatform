@@ -18,7 +18,7 @@ export function LightLicenseSettings({ booth: b }: { booth: BoothModel }) {
         <div><dt>License expiry</dt><dd>{l.claims ? l.claims.licenseExpiresAt ? new Date(l.claims.licenseExpiresAt).toLocaleString() : "Lifetime" : "?"}</dd></div>
         <div><dt>Offline access until</dt><dd>{l.claims ? new Date(l.claims.exp * 1000).toLocaleString() : "Online activation required"}</dd></div>
       </dl>
-      {(!lifetime || l.pendingPaymentId) && <button className="button button-primary light-activate-cta" disabled={!b.online || !l.identityId || l.busy} onClick={() => { l.beginActivation(); setOpen(true); }}><ShieldCheck size={23} aria-hidden="true" />{l.pendingPaymentId ? "Resume license payment" : l.allowed ? "Renew license" : "Activate license"}<ArrowRight size={21} aria-hidden="true" /></button>}
+      {(!lifetime || l.pendingPaymentId) && <button className="button button-primary light-activate-cta" disabled={!b.online || !l.identityId || l.busy} onClick={() => { l.beginActivation(); setOpen(true); }}><ShieldCheck size={23} aria-hidden="true" />{l.allowed ? "Renew license" : "Activate license"}<ArrowRight size={21} aria-hidden="true" /></button>}
       <form onSubmit={e => { e.preventDefault(); void l.activate(key); }}>
         <label className="field" htmlFor="light-manual-key">Have a Light license key?</label>
         <div className="light-manual-key-row"><input id="light-manual-key" aria-label="Light license key" value={key} onChange={e => setKey(e.target.value)} placeholder="PTL-..." autoComplete="off" required /><button className="button button-secondary" disabled={l.busy || !b.online || !l.identityId}><KeyRound size={17} aria-hidden="true" />Activate Light license</button></div>
