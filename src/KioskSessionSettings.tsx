@@ -8,7 +8,7 @@ export function KioskSessionSettings({booth:b}:{booth:BoothModel}){
     </select></label>
     <p className="field-help">The countdown begins in Step 4. At zero, the booth returns to Start and clears the guest session. Saved photo history stays available. The timer pauses while printing or awaiting host review.</p>
     <div className="auto-capture-setting"><label className="check-label"><input type="checkbox" role="switch" checked={b.autoDownloadQr} disabled={b.busy||!!b.job} onChange={e=>b.setAutoDownloadQr(e.target.checked)}/><span><QrCode size={17} aria-hidden="true"/> Automatically generate download QRs</span></label>
-    <p className="field-help">Entering Step 4 uploads the decorated receipt and each raw photo, then shows their QR codes beside the preview. This needs internet and an active Light license. Anyone with a link can download that image for 30 minutes. Turn this off to generate links manually.</p></div>
+    <p className="field-help">Entering Step 4 uploads only the decorated receipt and shows its download QR beside the preview. This needs internet and an active Light license. Anyone with a link can download that image for 30 minutes. Turn this off to generate the receipt link manually.</p></div>
     <p role="status">{b.kioskSettingsError||"Saved on this device."}</p>
   </section>;
 }

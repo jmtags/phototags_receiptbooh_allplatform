@@ -313,7 +313,7 @@ export function Kiosk({
             </div>
             <div className="kiosk-private">
               <LockKeyhole aria-hidden="true" size={14} />
-              {b.autoDownloadQr ? "Download links are prepared automatically in the final step." : "Your photos stay here unless you choose online download."}
+              {b.autoDownloadQr ? "Your decorated receipt download is prepared automatically in the final step." : "Your photos stay here unless you choose online download."}
             </div>
           </section>
         ) : (

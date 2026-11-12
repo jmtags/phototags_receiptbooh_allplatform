@@ -9,10 +9,9 @@ type UploadState = { busy: boolean; source?: string; shared?: SharedPhoto; error
 export function PhotoDownloadQr({ booth: b }: { booth: BoothModel }) {
   const fallbackCache=useRef(new Map<string,SharedPhoto>());
   const cache=b.photoDownloadCache||fallbackCache.current;
-  const assets=[{id:"receipt",label:"Decorated receipt",source:b.editorPreview||b.preview},...b.photos.flatMap((photo,index)=>photo?[{id:`raw-${index}`,label:b.photos.length===1?"Raw photo":`Raw photo ${index+1}`,source:photo}]:[])];
   return <section className="photo-download-card" aria-labelledby="photo-download-heading">
-    <h3 id="photo-download-heading"><QrCode size={20} aria-hidden="true"/>Scan to keep your photos</h3>
-    <div className="photo-download-grid">{assets.map(asset=><DownloadTile key={asset.id} source={asset.source} label={asset.label} booth={b} cache={cache} embeddedWatermark={asset.id==="receipt"&&!!b.editorPreview&&b.lightLicense.isTrial}/>)}</div>
+    <h3 id="photo-download-heading"><QrCode size={20} aria-hidden="true"/>Scan to keep your receipt</h3>
+    <div className="photo-download-grid"><DownloadTile source={b.editorPreview||b.preview} label="Decorated receipt" booth={b} cache={cache} embeddedWatermark={!!b.editorPreview&&b.lightLicense.isTrial}/></div>
     {(!b.online||!b.lightLicense.enabled||!b.lightLicense.allowed)&&<p role="status">{!b.online?"Online downloads need an internet connection. Local saving and printing are still available.":"Activate a Light license to use online downloads."}</p>}
   </section>;
 }
