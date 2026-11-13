@@ -127,14 +127,17 @@ test("four shots, original offline stickers, signature and decorated export", as
   await k.getByRole("button", { name: "Wanted", exact: true }).click();
   await expect(sticker).toBeAttached();
   await expect(k.getByRole("button", { name: "Review receipt" })).toBeEnabled();
-  const decorated = await preview.getAttribute("src");
   await k.getByRole("button", { name: "Review receipt" }).click();
+  const finalPreview = k.getByRole("img", { name: "Your final receipt", exact: true });
+  await expect(finalPreview).toBeVisible();
+  const exportPreview = await finalPreview.getAttribute("src");
   const downloaded = page.waitForEvent("download");
   await k.getByRole("button", { name: "Save receipt PNG" }).click();
   const download = await downloaded;
   await download.saveAs(`artifacts/decorated-${info.project.name}.png`);
   const saved = await readFile(`artifacts/decorated-${info.project.name}.png`);
-  expect("data:image/png;base64," + saved.toString("base64")).toBe(decorated);
+  // Receipt exports honor the selected thermal/native output; the editor is high resolution.
+  expect("data:image/png;base64," + saved.toString("base64") === exportPreview).toBe(true);
 });
 
 test("one to four distinct photos fit every template at both printer widths", async ({

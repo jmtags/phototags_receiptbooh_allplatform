@@ -266,7 +266,7 @@ export function ThemeSettings({ booth: b }: { booth: BoothModel }) {
         </p>
         <div className="launch-theme-options">
           {b.launchThemes.map((theme) => {
-            const shown = b.availableThemes.some((t) => t.id === theme.id);
+            const shown = b.receiptThemes.some((t) => t.id === theme.id);
             return (
               <label className="launch-theme-option" key={theme.id}>
                 <img src={artwork(theme)} alt="" loading="lazy" />
@@ -281,7 +281,7 @@ export function ThemeSettings({ booth: b }: { booth: BoothModel }) {
                   disabled={
                     locked ||
                     b.themesLoading ||
-                    (shown && b.availableThemes.length === 1)
+                    (shown && b.receiptThemes.length === 1)
                   }
                   onChange={(e) =>
                     b.setThemeVisible(theme.id, e.target.checked)
@@ -292,7 +292,7 @@ export function ThemeSettings({ booth: b }: { booth: BoothModel }) {
           })}
         </div>
         <p className="field-help" role="status">
-          {b.availableThemes.length} {b.availableThemes.length === 1 ? "theme" : "themes"} selected for launch mode.
+          {b.receiptThemes.length} {b.receiptThemes.length === 1 ? "theme" : "themes"} selected for launch mode.
         </p>
       </section>
       {b.themeError && (

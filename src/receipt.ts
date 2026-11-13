@@ -79,6 +79,7 @@ export type Template = {
   area: readonly [number, number, number, number];
   artwork?: string;
   event?: string;
+  frames?: readonly { photo: number; left: number; top: number; width: number; height: number }[];
 };
 export const artwork = (t: Template) =>
   t.artwork || `/assets/receipt_design_${t.id}.webp`;
@@ -102,6 +103,7 @@ export function photoSlots(
   count: ShotCount = 1,
   layout: PhotoLayout = "portrait",
 ) {
+  if (template.frames) return template.frames.map(frame => ({ x: frame.left * width, y: frame.top * height, w: frame.width * width, h: frame.height * height, photo: frame.photo }));
   const [l, t, r, b] = template.area,
     inset = Math.max(2, width * 0.006),
     gap = Math.max(5, width * 0.018);
@@ -135,14 +137,15 @@ export function photoSlots(
       h: (h - gap) / 2,
     }));
   else boxes = [{ x, y, w, h }];
-  return boxes.map((box) => {
-    if (layout !== "square") return box;
+  return boxes.map((box, photo) => {
+    if (layout !== "square") return { ...box, photo };
     const side = Math.min(box.w, box.h);
     return {
       x: box.x + (box.w - side) / 2,
       y: box.y + (box.h - side) / 2,
       w: side,
       h: side,
+      photo,
     };
   });
 }
@@ -168,7 +171,7 @@ export async function compose(
   const [l, t, r, b] = template.area;
   const inset = Math.max(2, c.width * 0.006);
   ctx.fillStyle = "#fff";
-  ctx.fillRect(
+  if (!template.frames) ctx.fillRect(
     l * c.width,
     t * c.height,
     (r - l) * c.width,
@@ -184,8 +187,8 @@ export async function compose(
     );
   for (let index = 0; index < slots.length; index++) {
     const { x, y, w, h } = slots[index],
-      placement = content?.placements[index] ?? { zoom, mirror, x: 0, y: 0 },
-      src = photos[index];
+      placement = content?.placements[slots[index].photo] ?? { zoom, mirror, x: 0, y: 0 },
+      src = photos[slots[index].photo];
     if (src) {
       const img = await image(src);
       const rotation = ((placement.rotation ?? 0) * Math.PI) / 180;
@@ -232,7 +235,7 @@ export async function compose(
       ctx.font = `${Math.round(Math.min(c.width * 0.037, w * 0.11))}px sans-serif`;
       ctx.textAlign = "center";
       ctx.fillText(
-        slots.length === 1 ? "YOUR MOMENT HERE" : `PHOTO ${index + 1}`,
+        slots.length === 1 ? "YOUR MOMENT HERE" : `PHOTO ${slots[index].photo + 1}`,
         x + w / 2,
         y + h / 2,
       );

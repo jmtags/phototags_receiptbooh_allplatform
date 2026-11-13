@@ -3,6 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 test("studio views pass automated accessibility and keyboard checks", async ({
   page,
 }, info) => {
+  test.setTimeout(120000); // Eleven settings screens each receive a full accessibility scan.
   await page.goto("/");
   await page.evaluate(() => document.fonts.ready);
   await page.keyboard.press("Tab");
@@ -25,7 +26,8 @@ test("studio views pass automated accessibility and keyboard checks", async ({
     "Branding",
     "Camera",
     "Kiosk session",
-    "Event themes",
+    "Event theme-ReceiptBooth",
+    "Event Theme-PhotoBooth",
     "Photo history",
     "Security",
     "Printer connection",

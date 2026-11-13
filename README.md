@@ -4,7 +4,7 @@ Short name: **PhotoTags LRB**.
 
 Independent, local-first React / TypeScript / Vite PWA. One-to-four-photo booth with five original Android receipt designs and 176 original stickers; Deli ES423 (384 dots) and VOZY G80 (576 dots) rendering. Android APK source remains unchanged. Light licensing integrates with isolated website components and a separate Light API service.
 
-The Settings page has a sidebar for Light license, Overview, Branding, Camera, Event themes, Photo history, Security, Receipt output, Printer connection, Offline & installation, and About the system. Capture, themes, stickers and receipt previews live in the guest kiosk. The interface uses locally bundled Manrope typography and Lucide icons. [Design decisions and open-source references](docs/DESIGN.md).
+The Settings page has a sidebar for Light license, Overview, Branding, Camera, Event theme-ReceiptBooth, Event Theme-PhotoBooth, Photo history, Security, Receipt output, Printer connection, Offline & installation, and About the system. Capture, themes, stickers and receipt previews live in the guest kiosk. The interface uses locally bundled Manrope typography and Lucide icons. [Design decisions and open-source references](docs/DESIGN.md).
 
 ## Run
 
@@ -45,7 +45,7 @@ In **Settings > Camera**, set **Retakes per guest session** to 0-10 or Unlimited
 
 ## Event themes
 
-Open **Settings > Event themes**. Enter an event and theme name, then build a receipt with custom headline, subtitle, footer and border style, or upload portrait receipt artwork. Drag the photo area or adjust its left, top, width and height controls. Preview 1-4 shots before choosing **Save theme for event**.
+Open **Settings > Event theme-ReceiptBooth**. Enter an event and theme name, then build a receipt with custom headline, subtitle, footer and border style, or upload portrait receipt artwork. Drag the photo area or adjust its left, top, width and height controls. Preview 1-4 shots before choosing **Save theme for event**.
 
 Saving activates that event. The kiosk collection initially includes its saved themes alongside all five built-in themes. Under **Themes shown in launch mode**, check which built-in and custom themes guests can choose. Keep at least one selected. Selections save automatically for each active event, including a separate All events selection. New themes are shown by default. Select another **Active event**, or **All events**, to switch collections. Saved designs can be edited in place or deleted with confirmation.
 
@@ -131,3 +131,7 @@ Browser behavior references: [File System Access](https://developer.chrome.com/d
 ## PhotoTags LRB licensing
 
 The Light client supports installation-key registration, activation, plan checkout and signed offline permits. Enforcement defaults to disabled until the separate Light service, migration and public verification key are configured. [Light setup and behavior](docs/LIGHT_LICENSING.md). Android licensing and payments use their existing process.
+
+## Normal PhotoBooth sessions
+
+Use **Event Theme-PhotoBooth** to choose the active event, visible layouts and default, or create a custom four-photo sheet with event artwork and adjustable frames. **Launch PhotoBooth** starts the APK-style sequence: four automatic captures ? decorate the photo sheet ? print ? download QR. The existing **Launch kiosk** button keeps the ReceiptBooth flow. PhotoBooth themes use separate offline storage and the existing Light license, trial watermark, PIN, history and printer setup. See [PhotoBooth setup and test scope](docs/PHOTOBOOTH.md).

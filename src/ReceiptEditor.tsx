@@ -16,6 +16,7 @@ import {
 } from "./receipt";
 import { stickerCatalog, stickerCategories } from "./stickers";
 import type { BoothModel } from "./useBooth";
+import { PhotoThemeThumbnail } from "./PhotoThemeThumbnail";
 
 const clamp = (value: number, min: number, max: number) =>
   Math.max(min, Math.min(max, value));
@@ -158,7 +159,7 @@ export function ReceiptEditor({
       };
       b.updateSticker(d.id, d.currentSticker);
     } else {
-      const slot = slots[d.index];
+      const slot = slots.find(slot => slot.photo === d.index)!;
       d.currentPlacement = {
         ...d.placement,
         x: clamp(
@@ -262,7 +263,7 @@ export function ReceiptEditor({
     });
   }
   return (
-    <section className="decorate-editor" aria-label="Decorate your receipt">
+    <section className="decorate-editor" aria-label={b.boothMode === "photo" ? "Decorate your photo" : "Decorate your receipt"}>
       <p id="receipt-gesture-help" className="sr-only">
         Drag to move. Use two fingers to pinch to resize and twist to rotate.
         With keyboard focus, use arrow keys to move, plus or minus to resize,
@@ -365,7 +366,7 @@ export function ReceiptEditor({
         <div
           className="decorate-themes"
           role="group"
-          aria-label="Choose receipt theme"
+          aria-label={b.boothMode === "photo" ? "Choose photo theme" : "Choose receipt theme"}
         >
           {b.availableThemes.map((t) => (
             <button
@@ -378,7 +379,7 @@ export function ReceiptEditor({
                 onChoose();
               }}
             >
-              <img src={artwork(t)} alt="" width="85" height="204" />
+              {t.frames ? <PhotoThemeThumbnail theme={t}/> : <img src={artwork(t)} alt="" width="85" height="204" />}
               <strong>{t.name}</strong>
               <span>
                 {t.event ? `${t.event} · ${t.description}` : t.description}
@@ -429,18 +430,18 @@ export function ReceiptEditor({
             {b.preview && (
               <img
                 src={b.editorPreview||b.preview}
-                alt="Your themed receipt preview"
+                alt={b.boothMode === "photo" ? "Your themed photo preview" : "Your themed receipt preview"}
                 width={b.receiptSize.width}
                 height={b.receiptSize.height}
                 draggable={false}
               />
             )}
             {mode === "stickers" &&
-              slots.map((slot, index) => (
+              slots.map((slot, key) => { const index = slot.photo; return (
                 <button
-                  key={index}
+                  key={key}
                   className={`photo-drag-handle ${b.activePhoto === index && !selected ? "selected" : ""}`}
-                  aria-label={`Adjust photo ${index + 1}`}
+                  aria-label={`Adjust photo ${index + 1}${key >= 4 ? " copy 2" : ""}`}
                   aria-describedby="receipt-gesture-help"
                   onDoubleClick={() =>
                     !b.busy &&
@@ -465,7 +466,7 @@ export function ReceiptEditor({
                 >
                   <span>Photo {index + 1}</span>
                 </button>
-              ))}
+              ); })}
             {mode === "stickers" &&
               b.stickers.map((s) => {
                 const asset = stickerCatalog.find((v) => v.id === s.assetId)!;

@@ -11,14 +11,18 @@ function App() {
   const booth = useBooth();
   const [kiosk, setKiosk] = useState(false);
   const [licenseWall,setLicenseWall]=useState(false);
+  const requestedMode = useRef<"receipt" | "photo">("receipt");
   useLightUsage(booth,kiosk);
   const ownsFullscreen = useRef(false);
-  async function launch() {
+  async function launch(mode: "receipt" | "photo" = "receipt") {
+    if (booth.busy || booth.job) return;
+    requestedMode.current = mode;
     if (!booth.lightLicense.hasAccess()) {
       setLicenseWall(true);
       return;
     }
     booth.stopCamera();
+    booth.beginMode(mode);
     if (
       !document.fullscreenElement &&
       document.documentElement.requestFullscreen
@@ -43,7 +47,7 @@ function App() {
     if (setup) booth.navigate("print");
     requestAnimationFrame(() =>
       document
-        .querySelector<HTMLElement>(setup ? "main" : ".launch-kiosk-button")
+        .querySelector<HTMLElement>(setup ? "main" : requestedMode.current === "photo" ? ".launch-photobooth-button" : ".launch-kiosk-button")
         ?.focus(),
     );
   }
@@ -56,14 +60,15 @@ function App() {
   useEffect(()=>{
     if(licenseWall&&booth.lightLicense.loaded&&booth.lightLicense.allowed){
       setLicenseWall(false);
-      void launch();
+      void launch(requestedMode.current);
     }
   },[licenseWall,booth.lightLicense.loaded,booth.lightLicense.allowed]);
   return (
     <>
       <Studio
         booth={kiosk ? { ...booth, camera: false } : booth}
-        onLaunchKiosk={launch}
+        onLaunchKiosk={() => void launch("receipt")}
+        onLaunchPhotoBooth={() => void launch("photo")}
       />
       {kiosk && (
         <Kiosk

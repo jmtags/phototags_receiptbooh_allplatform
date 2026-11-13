@@ -47,7 +47,7 @@ test("event theme visibility persists offline and limits the guest collection", 
   await page.goto("/");
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
-  await page.getByRole("button", { name: "Event themes", exact: true }).click();
+  await page.getByRole("button", { name: "Event theme-ReceiptBooth", exact: true }).click();
   await page.getByLabel("Event name", { exact: true }).fill("Wedding");
   await page.getByLabel("Theme name", { exact: true }).fill("Our day");
   await page.getByRole("button", { name: "Save theme for event" }).click();
@@ -69,7 +69,7 @@ test("event theme visibility persists offline and limits the guest collection", 
   });
   await context.setOffline(true);
   await page.reload();
-  await page.getByRole("button", { name: "Event themes", exact: true }).click();
+  await page.getByRole("button", { name: "Event theme-ReceiptBooth", exact: true }).click();
   await expect(page.getByLabel("Active event")).toHaveValue("Wedding");
   await expect(choices.nth(0)).not.toBeChecked();
   await page.getByRole("button", { name: "Launch kiosk", exact: true }).click();

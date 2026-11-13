@@ -15,7 +15,7 @@ test("event themes persist offline, edit in place and appear beside built-ins fo
   await page.goto("/");
   await page.evaluate(() => navigator.serviceWorker.ready);
   await page.reload();
-  await page.getByRole("button", { name: "Event themes", exact: true }).click();
+  await page.getByRole("button", { name: "Event theme-ReceiptBooth", exact: true }).click();
   await page.getByLabel("Event name", { exact: true }).fill("Spring Gala");
   await page.getByLabel("Theme name", { exact: true }).fill("Garden frame");
   await page.getByLabel("Receipt headline").fill("SPRING GALA");
@@ -39,7 +39,7 @@ test("event themes persist offline, edit in place and appear beside built-ins fo
   );
   await page.getByLabel("Active event").selectOption("Spring Gala");
   await page.reload();
-  await page.getByRole("button", { name: "Event themes", exact: true }).click();
+  await page.getByRole("button", { name: "Event theme-ReceiptBooth", exact: true }).click();
   await expect(page.getByLabel("Active event")).toHaveValue("Spring Gala");
   await expect(page.locator(".saved-theme-card")).toHaveCount(2);
   await page
@@ -183,7 +183,7 @@ test("event themes persist offline, edit in place and appear beside built-ins fo
   const raw = page.waitForEvent("download");
   await page.getByRole("button", { name: "Export ESC/POS job" }).click();
   await (await raw).saveAs(`artifacts/event-receipt-${info.project.name}.bin`);
-  await page.getByRole("button", { name: "Event themes", exact: true }).click();
+  await page.getByRole("button", { name: "Event theme-ReceiptBooth", exact: true }).click();
   const summer = page
     .locator(".saved-theme-card")
     .filter({ hasText: "Night strip" });
@@ -203,7 +203,7 @@ test("theme storage failure does not claim a theme was saved", async ({
     "Shared IndexedDB failure handling",
   );
   await page.goto("/");
-  await page.getByRole("button", { name: "Event themes", exact: true }).click();
+  await page.getByRole("button", { name: "Event theme-ReceiptBooth", exact: true }).click();
   await page.getByLabel("Event name", { exact: true }).fill("Failure test");
   await page.evaluate(() => {
     IDBObjectStore.prototype.put = function () {

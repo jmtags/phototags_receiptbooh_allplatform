@@ -29,10 +29,9 @@ export function CameraSettings({ booth: b }: { booth: BoothModel }) {
           <span>Automatic capture in Step 2</span>
         </label>
         <p className="field-help">
-          When enabled, entering Step 2 opens the camera and starts the
+          For ReceiptBooth, entering Step 2 opens the camera and starts the
           countdown as soon as the preview is ready. Every empty photo slot is
-          captured automatically. Guests can stop capture or choose photos
-          instead.
+          captured automatically when this switch is on. PhotoBooth always starts its four-photo sequence from Start, using the same timer and retake limit. Guests can stop capture.
         </p>
         <p className="field-help" role="status">
           {b.autoCapture

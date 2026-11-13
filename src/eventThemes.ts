@@ -9,6 +9,7 @@ export type ThemeDesign = {
   upload: string;
 };
 export type EventTheme = Template & {
+  photoDesign?: { background: string; ink: string; layout: "double" | "rows" | "grid" };
   event: string;
   artwork: string;
   design: ThemeDesign;
@@ -21,9 +22,9 @@ export const newDesign = (): ThemeDesign => ({
   style: "double",
   upload: "",
 });
-function database(): Promise<IDBDatabase> {
+function database(scope = "receipt"): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
-    const request = indexedDB.open("phototags-event-themes", 1);
+    const request = indexedDB.open(scope === "photo" ? "phototags-photobooth-themes" : "phototags-event-themes", 1);
     request.onupgradeneeded = () => {
       request.result.createObjectStore("themes", { keyPath: "id" });
     };
@@ -32,8 +33,8 @@ function database(): Promise<IDBDatabase> {
       reject(new Error("Event theme storage is unavailable on this device."));
   });
 }
-async function readThemes(): Promise<EventTheme[]> {
-  const db = await database();
+async function readThemes(scope: string): Promise<EventTheme[]> {
+  const db = await database(scope);
   try {
     return await new Promise((resolve, reject) => {
       const transaction = db.transaction("themes", "readonly"),
@@ -49,8 +50,8 @@ async function readThemes(): Promise<EventTheme[]> {
     db.close();
   }
 }
-async function writeTheme(value: EventTheme | string) {
-  const db = await database();
+async function writeTheme(value: EventTheme | string, scope: string) {
+  const db = await database(scope);
   try {
     await new Promise<void>((resolve, reject) => {
       const transaction = db.transaction("themes", "readwrite"),
@@ -99,22 +100,28 @@ function valid(theme: EventTheme) {
     theme.area[3] > theme.area[1]
   );
 }
-export function useEventThemes() {
+export function validPhotoFrames(theme: Template) {
+  const frames = theme.frames;
+  return !!frames && (frames.length === 4 || frames.length === 8) && [0, 1, 2, 3].every(i => frames.some(f => f.photo === i)) && frames.every(f =>
+    Number.isInteger(f.photo) && f.photo >= 0 && f.photo <= 3 && [f.left, f.top, f.width, f.height].every(Number.isFinite) &&
+    f.left >= 0 && f.top >= 0 && f.width >= .05 && f.height >= .05 && f.left + f.width <= 1.001 && f.top + f.height <= 1.001);
+}
+export function useEventThemes(scope = "receipt") {
   const [eventThemes, setEventThemes] = useState<EventTheme[]>([]),
     [themesLoading, setLoading] = useState(true),
     [themeError, setThemeError] = useState("");
   const [activeEvent, setActiveEventState] = useState(() => {
     try {
-      return localStorage.getItem("activeEvent") || "";
+      return localStorage.getItem(scope === "photo" ? "photoBoothActiveEvent" : "activeEvent") || "";
     } catch {
       return "";
     }
   });
   useEffect(() => {
     let active = true;
-    readThemes()
+    readThemes(scope)
       .then((themes) => {
-        if (active) setEventThemes(themes.filter(valid));
+        if (active) setEventThemes(themes.filter(t => valid(t) && (scope !== "photo" || validPhotoFrames(t))));
       })
       .catch((e) => {
         if (active) setThemeError(e.message);
@@ -128,18 +135,18 @@ export function useEventThemes() {
   }, []);
   function setActiveEvent(value: string) {
     try {
-      localStorage.setItem("activeEvent", value);
+      localStorage.setItem(scope === "photo" ? "photoBoothActiveEvent" : "activeEvent", value);
     } catch {
       throw new Error("The active event could not be saved on this device.");
     }
     setActiveEventState(value);
   }
   async function saveEventTheme(theme: EventTheme) {
-    if (!valid(theme))
+    if (!valid(theme) || scope === "photo" && !validPhotoFrames(theme))
       throw new Error(
         "Check the theme artwork and photo placement before saving.",
       );
-    await writeTheme(theme);
+    await writeTheme(theme, scope);
     setEventThemes((current) =>
       [...current.filter((t) => t.id !== theme.id), theme].sort((a, b) =>
         a.name.localeCompare(b.name),
@@ -147,7 +154,7 @@ export function useEventThemes() {
     );
   }
   async function deleteEventTheme(id: string) {
-    await writeTheme(id);
+    await writeTheme(id, scope);
     setEventThemes((current) => current.filter((t) => t.id !== id));
   }
   return {

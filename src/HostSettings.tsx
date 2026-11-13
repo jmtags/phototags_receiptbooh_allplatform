@@ -19,9 +19,9 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
           <article className="host-status-card">
             <Printer size={21} aria-hidden="true" />
             <span>Print destination</span>
-            <strong>{b.printer || "Select a printer queue"}</strong>
+            <strong>{b.printMethod === "airprint" ? "AirPrint / system printing" : b.printer || "Select a printer queue"}</strong>
             <p>
-              {b.printer
+              {b.printMethod === "airprint" ? "Choose your photo printer in the system print dialog." : b.printer
                 ? `${profiles[b.profile].name} · ${profiles[b.profile].width} dots`
                 : "Configure your helper and queue before the event."}
             </p>
@@ -39,8 +39,7 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
               {ready ? "Prepared on this device" : "Check offline readiness"}
             </strong>
             <p>
-              Five built-in themes, {b.eventThemes.length} saved event themes,
-              176 stickers and the guest experience.
+              ReceiptBooth and PhotoBooth have separate event collections, with 176 stickers and offline guest sessions.
             </p>
             <button
               className="host-text-button"

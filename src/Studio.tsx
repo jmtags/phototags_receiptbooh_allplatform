@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AirPrintSettings, AirPrintGuide } from "./AirPrintSettings";
+import { PhotoBoothThemeSettings } from "./PhotoBoothThemeSettings";
 import {
   Aperture,
   LayoutDashboard,
@@ -41,9 +42,11 @@ import type { BoothModel } from "./useBooth";
 export function Studio({
   booth: b,
   onLaunchKiosk,
+  onLaunchPhotoBooth,
 }: {
   booth: BoothModel;
   onLaunchKiosk: () => void;
+  onLaunchPhotoBooth: () => void;
 }) {
   const ready = b.offline === "Ready for offline use";
   const active = b.tab === "booth";
@@ -76,11 +79,12 @@ export function Studio({
     },
     {
       id: "themes",
-      label: "Event themes",
+      label: "Event theme-ReceiptBooth",
       icon: Layers3,
       description:
         "Create receipt themes, save them by event and add them to the kiosk collection.",
     },
+    { id: "photoThemes", label: "Event Theme-PhotoBooth", icon: Layers3, description: "Choose event photo layouts and create four-photo themes for PhotoBooth mode." },
     {
       id: "history",
       label: "Photo history",
@@ -124,7 +128,7 @@ export function Studio({
           <span translate="no">PhotoTags LRB</span>
           <span className="product-name">Receipt Photobooth</span>
         </button>
-        <button
+        <div className="launch-mode-actions"><button
           className="button button-primary launch-kiosk-button"
           disabled={b.busy || !!b.job}
           onClick={onLaunchKiosk}
@@ -132,6 +136,7 @@ export function Studio({
           <Maximize size={20} aria-hidden="true" />
           Launch kiosk
         </button>
+        <button className="button button-secondary launch-photobooth-button" disabled={b.busy || !!b.job || b.photoThemes.themesLoading} onClick={onLaunchPhotoBooth}><Camera size={20} aria-hidden="true"/>Launch PhotoBooth</button></div>
       </header>
 
       <div className="settings-layout">
@@ -249,6 +254,8 @@ export function Studio({
             <BrandingSettings booth={b} />
           ) : b.tab === "themes" ? (
             <ThemeSettings booth={b} />
+          ) : b.tab === "photoThemes" ? (
+            <PhotoBoothThemeSettings booth={b}/>
           ) : b.tab === "session" ? (
             <KioskSessionSettings booth={b} />
           ) : b.tab === "camera" ? (

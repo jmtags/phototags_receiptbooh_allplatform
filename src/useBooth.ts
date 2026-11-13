@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useBranding } from "./branding";
 import { useEventThemes } from "./eventThemes";
+import { usePhotoBoothThemes } from "./photoBoothThemes";
 import { useSecurity } from "./security";
 import { useLightLicense } from "./lightLicense";
 import { applyTrialWatermark } from "./trialWatermark";
@@ -51,6 +52,8 @@ export function useBooth() {
   const lightLicense = useLightLicense();
   const { branding, saveBranding } = useBranding();
   const themeLibrary = useEventThemes();
+  const photoThemes = usePhotoBoothThemes();
+  const [boothMode, setBoothMode] = useState<"receipt" | "photo">("receipt");
   const security = useSecurity();
   const photoHistory = usePhotoHistory();
   const historySession = useRef<{
@@ -86,19 +89,20 @@ export function useBooth() {
     ],
     [themeLibrary.eventThemes, themeLibrary.activeEvent],
   );
-  const availableThemes = useMemo(() => {
+  const receiptThemes = useMemo(() => {
     const hidden = Object.hasOwn(hiddenThemes, themeLibrary.activeEvent)
       ? hiddenThemes[themeLibrary.activeEvent]
       : [];
     const selected = launchThemes.filter((t) => !hidden.includes(t.id));
     return selected.length ? selected : launchThemes.slice(0, 1);
   }, [launchThemes, hiddenThemes, themeLibrary.activeEvent]);
+  const availableThemes = boothMode === "photo" ? photoThemes.availableThemes : receiptThemes;
   function setThemeVisible(id: string, visible: boolean) {
     if (busy || job || themeLibrary.themesLoading) return;
     if (
       !visible &&
-      availableThemes.length === 1 &&
-      availableThemes[0].id === id
+      receiptThemes.length === 1 &&
+      receiptThemes[0].id === id
     )
       return;
     const next = {
@@ -107,7 +111,7 @@ export function useBooth() {
         .filter((t) =>
           t.id === id
             ? !visible
-            : !availableThemes.some((shown) => shown.id === t.id),
+            : !receiptThemes.some((shown) => shown.id === t.id),
         )
         .map((t) => t.id),
     };
@@ -173,11 +177,15 @@ export function useBooth() {
     }
     setCountdownSecondsState(value);
   }
-  const [templateId, setTemplateId] = useState(
+  const [templateId, setReceiptTemplateId] = useState(
     stored("template", "super_snap"),
   );
+  const [photoTemplateId, setPhotoTemplateId] = useState("");
+  function setTemplateId(id: string) {
+    if (boothMode === "photo") setPhotoTemplateId(id); else setReceiptTemplateId(id);
+  }
   const template =
-    availableThemes.find((t) => t.id === templateId) ?? availableThemes[0];
+    availableThemes.find((t) => t.id === (boothMode === "photo" ? photoTemplateId : templateId)) ?? (boothMode === "photo" ? photoThemes.defaultTheme : availableThemes[0]);
   const [profile, setProfile] = useState<Profile>(
     stored("profile", "deli") === "g80" ? "g80" : "deli",
   );
@@ -463,7 +471,7 @@ export function useBooth() {
     };
   }, []);
   useEffect(() => {
-    save("template", template.id);
+    if (boothMode === "receipt") save("template", template.id);
     save("profile", profile);
     save("thermalView", String(thermalView));
     let active = true;
@@ -508,6 +516,7 @@ export function useBooth() {
     receiptColor,
     lightLicense.isTrial,
     layout,
+    boothMode,
   ]);
   function stopCamera() {
     captureToken.current++;
@@ -886,14 +895,23 @@ export function useBooth() {
     return true;
   }
   function newSession() {
+    resetSession(boothMode);
+  }
+  function beginMode(mode: "receipt" | "photo") {
+    if (busy || job || mode === boothMode) return;
+    setBoothMode(mode); resetSession(mode);
+  }
+  function resetSession(mode: "receipt" | "photo") {
     setReceiptColor(true);
     photoDownloadCache.current.clear();
     historySession.current = null;
     setRetakesUsed(0);
     stopCamera();
-    setShotCountState(1);
-    setPhotos([null]);
-    setPlacements([defaultPlacement()]);
+    const count = mode === "photo" ? 4 : 1;
+    if (mode === "photo") setPhotoTemplateId(photoThemes.defaultTheme.id);
+    setShotCountState(count);
+    setPhotos(Array(count).fill(null));
+    setPlacements(Array.from({ length: count }, defaultPlacement));
     setActivePhotoState(0);
     setStickers([]);
     setStrokes([]);
@@ -903,8 +921,8 @@ export function useBooth() {
   function exportImage() {
     if (complete && preview && !rendering)
       download(
-        printMethod === "airprint" ? editorPreview : preview,
-        `PhotoTags-LRB-${template.id}-${printMethod === "airprint" ? "photo" : profiles[profile].width}.png`,
+        printMethod === "airprint" || boothMode === "photo" ? editorPreview : preview,
+        `PhotoTags-LRB-${template.id}-${printMethod === "airprint" || boothMode === "photo" ? "photo" : profiles[profile].width}.png`,
       );
   }
   async function prepare() {
@@ -940,7 +958,7 @@ export function useBooth() {
       setActivePhotoState(0);
       setStickers([]);
       setStrokes([]);
-      setTemplateId("super_snap");
+      setBoothMode("receipt"); setReceiptTemplateId("super_snap");
       setLayout("portrait");
       setThermalView(true);
     } catch (e) {
@@ -972,6 +990,7 @@ export function useBooth() {
     }
   }
   return {
+    boothMode, beginMode, photoThemes,
     lightLicense,
     ...photoHistory,
     printHistoryReceipt,
@@ -982,7 +1001,7 @@ export function useBooth() {
     photoDownloadCache:photoDownloadCache.current,
     ...security,
     ...themeLibrary,
-    availableThemes,
+    availableThemes, receiptThemes,
     launchThemes,
     setThemeVisible,
     branding,

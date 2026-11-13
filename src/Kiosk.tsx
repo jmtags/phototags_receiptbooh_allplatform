@@ -23,7 +23,7 @@ import { PinGate } from "./PinGate";
 import { PhotoDownloadQr } from "./PhotoDownloadQr";
 import { useKioskCountdown } from "./useKioskCountdown";
 
-const steps = ["Choose layout", "Take a photo", "Choose theme", "Print & keep"];
+const receiptSteps = ["Choose layout", "Take a photo", "Choose theme", "Print & keep"];
 
 export function Kiosk({
   booth: b,
@@ -34,12 +34,21 @@ export function Kiosk({
   onClose: () => void;
   onSetup: () => void;
 }) {
+  const photoMode = b.boothMode === "photo";
+  const steps = photoMode ? ["Take four photos", "Decorate photo", "Print photo", "Download QR"] : receiptSteps;
   const dialog = useRef<HTMLDialogElement>(null),
     heading = useRef<HTMLHeadingElement>(null),
     startButton = useRef<HTMLButtonElement>(null);
   const [step, setStep] = useState(0),
     [chosenShots, setChosenShots] = useState<ShotCount | null>(null),
     [chosenTheme, setChosenTheme] = useState(false);
+  const visibleStep = photoMode && step > 0 ? step - 1 : step;
+  const finalStep = photoMode ? 5 : 4;
+  const previousJob = useRef(b.job);
+  useEffect(() => {
+    if (photoMode && step === 4 && previousJob.current && !b.job) setStep(5);
+    previousJob.current = b.job;
+  }, [b.job, photoMode, step]);
   const [confirm, setConfirm] = useState<"exit" | "restart" | "shots" | null>(
       null,
     ),
@@ -78,7 +87,9 @@ export function Kiosk({
     "idle" | "waiting" | "running" | "done"
   >("idle");
   const autoRun = useRef(0);
+  const advanceAfterCapture = useRef(false);
   function stopAutoCapture() {
+    advanceAfterCapture.current = false;
     autoRun.current++;
     setAutoPhase("done");
     b.stopCamera();
@@ -89,13 +100,13 @@ export function Kiosk({
       setAutoPhase("idle");
       return;
     }
-    if (!b.autoCapture || b.complete || b.job) return;
+    if ((!b.autoCapture && !photoMode) || b.complete || b.job) return;
     const missing = b.photos.findIndex((photo) => !photo);
     if (missing < 0) return;
     b.selectPhoto(missing);
     setAutoPhase("waiting");
     void b.openCamera();
-  }, [step, b.autoCapture]);
+  }, [step, b.autoCapture, photoMode]);
   useEffect(() => {
     if (step !== 2 || confirm || exitTarget || autoPhase !== "waiting") return;
     if (b.error && !b.camera) {
@@ -104,6 +115,7 @@ export function Kiosk({
     }
     if (!b.camera || !b.cameraReady || b.busy) return;
     const run = autoRun.current;
+    advanceAfterCapture.current = photoMode;
     setAutoPhase("running");
     void b.captureSequence().finally(() => {
       if (autoRun.current === run) setAutoPhase("done");
@@ -118,6 +130,9 @@ export function Kiosk({
     b.busy,
     b.error,
   ]);
+  useEffect(() => {
+    if (photoMode && step === 2 && advanceAfterCapture.current && autoPhase === "done" && b.complete && !b.camera && !b.busy && !b.rendering && !confirm && !exitTarget) go(3);
+  }, [photoMode, step, autoPhase, b.complete, b.camera, b.busy, b.rendering, confirm, exitTarget]);
   useEffect(() => {
     const modal = dialog.current!;
     modal.showModal();
@@ -139,7 +154,7 @@ export function Kiosk({
     if (b.busy || b.job) return;
     stopAutoCapture();
     b.setError("");
-    if(next===3 && !chosenTheme && b.availableThemes[0]){b.setTemplateId(b.availableThemes[0].id);setChosenTheme(true);}
+    if(next===3 && !chosenTheme && b.availableThemes[0]){b.setTemplateId(photoMode ? b.photoThemes.defaultTheme.id : b.availableThemes[0].id);setChosenTheme(true);}
     setStep(next);
   }
   function start() {
@@ -148,7 +163,7 @@ export function Kiosk({
     setChosenShots(null);
     setChosenTheme(false);
     setHostReview(false);
-    setStep(1);
+    setStep(photoMode ? 2 : 1);
   }
   function requestExit() {
     stopAutoCapture();
@@ -182,13 +197,14 @@ export function Kiosk({
     setExitTarget(null);
     setStep(0);
   }
-  const resetRemaining=useKioskCountdown(step===4&&!b.busy&&!b.job,b.kioskResetSeconds,finish);
+  const resetRemaining=useKioskCountdown(step>=4&&!b.busy&&!b.job,b.kioskResetSeconds,finish);
   const titles = [
     "Good times start here.",
     "How many shots?",
     "Find your good side.",
     "Make it yours.",
     "Your little keepsake is ready.",
+    "Your photos are ready to download.",
   ];
   const subtitles = [
     "A photo, a little personality, and a receipt to keep.",
@@ -196,6 +212,7 @@ export function Kiosk({
     `A ${b.countdownSeconds}-second countdown before every shot. You bring the smile.`,
     "Choose a theme. Drag, pinch & twist to adjust.",
     "One last look, then make it a memory you can hold.",
+    "Scan to keep your decorated photo.",
   ];
   const canContinue =
     step === 1
@@ -204,7 +221,7 @@ export function Kiosk({
         ? b.complete && !b.camera && !b.busy && !!b.preview && !b.rendering
         : step === 3
           ? chosenTheme && !!b.preview && !b.busy && !b.rendering
-          : false;
+          : photoMode && step === 4 ? b.complete && !!b.editorPreview && !b.rendering : false;
   const exitControl = (
     <button
       className={`button kiosk-exit ${step === 0 ? "kiosk-exit-floating" : ""}`}
@@ -218,9 +235,9 @@ export function Kiosk({
   return (
     <dialog
       ref={dialog}
-      className={`kiosk-dialog ${step === 3 ? "is-theme-step" : ""} ${step === 2 ? `is-camera-step ${cameraExpanded ? "is-camera-expanded" : ""}` : ""}`}
+      className={`kiosk-dialog ${photoMode ? "photo-mode" : ""} ${step === 3 ? "is-theme-step" : ""} ${step === 2 ? `is-camera-step ${cameraExpanded ? "is-camera-expanded" : ""}` : ""}`}
       style={brandStyle(b.branding)}
-      aria-label="PhotoTags LRB guest kiosk"
+      aria-label={photoMode ? "PhotoTags LRB PhotoBooth kiosk" : "PhotoTags LRB guest kiosk"}
       onCancel={(e) => {
         e.preventDefault();
         if (exitTarget) cancelUnlock();
@@ -234,11 +251,11 @@ export function Kiosk({
               {steps.map((label, i) => (
                 <li
                   key={label}
-                  aria-current={step === i + 1 ? "step" : undefined}
-                  className={step > i + 1 ? "complete" : ""}
+                  aria-current={visibleStep === i + 1 ? "step" : undefined}
+                  className={visibleStep > i + 1 ? "complete" : ""}
                 >
                   <span aria-hidden="true">
-                    {step > i + 1 ? <Check size={15} /> : i + 1}
+                    {visibleStep > i + 1 ? <Check size={15} /> : i + 1}
                   </span>
                   <span>{label}</span>
                 </li>
@@ -262,7 +279,7 @@ export function Kiosk({
               </div>
             ) : (
               <div className="kiosk-receipt-fan" aria-hidden="true">
-                {[templates[3], templates[0], templates[4]].map((t) => (
+                {(photoMode ? b.photoThemes.availableThemes.slice(0, 3) : [templates[3], templates[0], templates[4]]).map((t) => (
                   <img
                     key={t.id}
                     src={artwork(t)}
@@ -275,7 +292,7 @@ export function Kiosk({
             )}
             <span className="kiosk-welcome-label">Step in. Be yourself.</span>
             <h1>{b.branding.headline}</h1>
-            <p>{b.branding.message}</p>
+            <p>{photoMode ? "Four automatic photos. Choose your event layout, decorate, print and scan to download." : b.branding.message}</p>
             <button
               ref={startButton}
               className="button kiosk-start"
@@ -296,7 +313,7 @@ export function Kiosk({
                     setStep(b.complete ? 3 : 2);
                   }}
                 >
-                  Continue my current receipt
+                  {photoMode ? "Continue my current photo" : "Continue my current receipt"}
                 </button>
                 <p className="kiosk-small">
                   Starting a new session clears your photos and decorations.
@@ -319,14 +336,14 @@ export function Kiosk({
         ) : (
           <>
             <div className="kiosk-step-heading">
-              <span>Step {step} of 4</span>
+              <span>Step {visibleStep} of 4</span>
               <h1 ref={heading} tabIndex={-1}>
-                {titles[step]}
+                {photoMode && step === 2 ? "Take four photos." : photoMode && step === 4 ? "Your photo sheet is ready." : titles[step]}
               </h1>
               <p>{subtitles[step]}</p>
               {step === 3 && <>
                 <label className="receipt-color-toggle">
-                  <input type="checkbox" role="switch" aria-label="Color receipt" aria-describedby="receipt-color-help" checked={b.receiptColor} disabled={b.busy || !!b.job} onChange={e => b.setReceiptColor(e.target.checked)}/>
+                  <input type="checkbox" role="switch" aria-label={photoMode ? "Color photo" : "Color receipt"} aria-describedby="receipt-color-help" checked={b.receiptColor} disabled={b.busy || !!b.job} onChange={e => b.setReceiptColor(e.target.checked)}/>
                   <span>Color <strong>{b.receiptColor ? "On" : "Off"}</strong></span>
                 </label>
                 <p id="receipt-color-help" className="sr-only">Color keeps the original photo and sticker colors. Theme artwork keeps its original colors; thermal printers print black and white.</p>
@@ -344,7 +361,7 @@ export function Kiosk({
                 </button>
               </div>
             )}
-            {step === 1 && (
+            {step === 1 && !photoMode && (
               <div
                 className="kiosk-layouts shot-count-layouts"
                 role="group"
@@ -657,8 +674,8 @@ export function Kiosk({
                 <div className="kiosk-final-preview">
                   {b.preview ? (
                     <img
-                      src={b.preview}
-                      alt="Your final receipt"
+                      src={photoMode ? b.editorPreview : b.preview}
+                      alt={photoMode ? "Your final photo" : "Your final receipt"}
                       width="230"
                       height="552"
                     />
@@ -681,7 +698,7 @@ export function Kiosk({
                       onClick={b.print}
                     >
                       <Printer aria-hidden="true" size={25} />
-                      Print my receipt
+                      {photoMode ? "Print my photo" : "Print my receipt"}
                     </button>
                   )}
                 </div>
@@ -701,7 +718,7 @@ export function Kiosk({
                       </p>
                     </div>
                   </div>
-                  <PhotoDownloadQr booth={b} />
+                  {!photoMode && <PhotoDownloadQr booth={b} />}
                   {b.job ? (
                     <div className="kiosk-job" role="status">
                       <Printer aria-hidden="true" size={27} />
@@ -781,19 +798,23 @@ export function Kiosk({
                     onClick={b.exportImage}
                   >
                     <Download aria-hidden="true" size={19} />
-                    Save receipt PNG
+                    {photoMode ? "Save photo PNG" : "Save receipt PNG"}
                   </button>
-                  <button
+                  {!photoMode && <button
                     className="button button-quiet kiosk-finish"
                     disabled={!!b.job || b.busy}
                     onClick={finish}
                   >
                     Finish session
                     <ArrowRight aria-hidden="true" size={18} />
-                  </button>
+                  </button>}
                 </section>
               </div>
             )}
+            {photoMode && step === 5 && <section className="photo-download-step" aria-label="Download your PhotoBooth photo">
+              <img src={b.editorPreview} alt="Your decorated PhotoBooth sheet"/>
+              <div><PhotoDownloadQr booth={b}/><button className="button button-secondary" disabled={b.busy || !b.complete || b.rendering} onClick={b.exportImage}><Download size={18} aria-hidden="true"/>Save photo PNG</button><button className="button button-primary" disabled={b.busy || !!b.job} onClick={finish}>Finish PhotoBooth session</button></div>
+            </section>}
           </>
         )}
       </div>
@@ -802,16 +823,17 @@ export function Kiosk({
           <button
             className="button kiosk-back"
             disabled={b.busy || !!b.job}
-            onClick={() => (step === 1 ? restart() : go(step - 1))}
+            onClick={() => (step === 1 || photoMode && step === 2 ? restart() : go(step - 1))}
           >
             <ArrowLeft aria-hidden="true" size={20} />
-            {step === 1 ? "Start over" : "Back"}
+            {step === 1 || photoMode && step === 2 ? "Start over" : "Back"}
           </button>
           {step<4 && <span className="kiosk-footer-note">
             <LockKeyhole aria-hidden="true" size={14} />
             {b.autoDownloadQr ? "Download links prepared in Step 4." : "Saved here. Shared only when you choose."}
           </span>}
-          {step < 4 ? (
+          {photoMode && step === 4 && b.kioskResetSeconds > 0 && <span className="kiosk-reset-counter" role="timer" aria-label="Session reset countdown">{b.job||b.busy ? "Timer paused" : `Starting over in ${Math.floor((resetRemaining??b.kioskResetSeconds)/60)}:${String((resetRemaining??b.kioskResetSeconds)%60).padStart(2,"0")}`}</span>}
+          {step < finalStep ? (
             <button
               className="button button-primary kiosk-next"
               disabled={!canContinue || b.busy || !!b.job}
@@ -821,7 +843,7 @@ export function Kiosk({
                 ? "Continue to camera"
                 : step === 2
                   ? "Continue to themes"
-                  : "Review receipt"}
+                  : step === 4 ? "Continue to download" : photoMode ? "Review photo" : "Review receipt"}
               <ArrowRight aria-hidden="true" size={21} />
             </button>
           ) : (
