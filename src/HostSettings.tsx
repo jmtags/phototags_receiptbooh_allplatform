@@ -19,9 +19,9 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
           <article className="host-status-card">
             <Printer size={21} aria-hidden="true" />
             <span>Print destination</span>
-            <strong>{b.printMethod === "airprint" ? "AirPrint / system printing" : b.printer || "Select a printer queue"}</strong>
+            <strong>{b.printMethod === "ble" ? b.bleName || "Connect a BLE printer" : b.printMethod === "airprint" ? "AirPrint / system printing" : b.printer || "Select a printer queue"}</strong>
             <p>
-              {b.printMethod === "airprint" ? "Choose your photo printer in the system print dialog." : b.printer
+              {b.printMethod === "ble" ? `Bluetooth Low Energy · ${b.bleWidth} dots · keep the app visible.` : b.printMethod === "airprint" ? "Choose your photo printer in the system print dialog." : b.printer
                 ? `${profiles[b.profile].name} · ${profiles[b.profile].width} dots`
                 : "Configure your helper and queue before the event."}
             </p>

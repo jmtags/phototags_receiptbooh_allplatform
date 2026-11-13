@@ -727,6 +727,8 @@ export function Kiosk({
                           ? "Sending your receipt…"
                           : b.printMessage.startsWith("System")
                             ? "Check your print attempt."
+                          : b.printMessage.startsWith("Sent to the BLE")
+                            ? "Sent to your Bluetooth printer."
                           : b.printMessage.startsWith("Submitted")
                             ? "Sent to the print helper."
                             : "Your host can help with this."}
@@ -766,7 +768,7 @@ export function Kiosk({
                     </div>
                   ) : (
                     <>
-                      {b.printMethod === "airprint" ? <p className="kiosk-printer-ready"><Printer aria-hidden="true" size={16}/>AirPrint ready · choose your printer in the system dialog.</p> : b.printer ? (
+                      {b.printMethod === "ble" ? <p className="kiosk-printer-ready"><Printer aria-hidden="true" size={16}/>{b.bleName ? `Bluetooth: ${b.bleName} · ${b.bleWidth} dots` : "Connect a BLE printer in Settings before printing."}</p> : b.printMethod === "airprint" ? <p className="kiosk-printer-ready"><Printer aria-hidden="true" size={16}/>AirPrint ready · choose your printer in the system dialog.</p> : b.printer ? (
                         <p className="kiosk-printer-ready">
                           <Printer aria-hidden="true" size={16} />
                           Queue selected: {b.printer}

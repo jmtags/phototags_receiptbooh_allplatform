@@ -78,6 +78,8 @@ On iPhone/iPad, a manually configured QZ LAN host is an **experimental bridge ca
 
 ## AirPrint / system printing
 
+For direct BLE receipt printing on iPad/iPhone without a computer, open the booth in the free Bluefy browser and select **Printer connection → Bluetooth receipt printer (BLE)**. The printer must expose a supported ESC/POS BLE service; Safari, Bluetooth Classic and USB cables are not supported by this route. Poseidon compatibility requires a physical BLE test. See [iOS receipt setup and hardware limits](docs/IOS_RECEIPT_PRINTING.md).
+
 For an iPad-only setup with an AirPrint printer such as Xiaomi Instant Photo Printer 1S, open **Settings → Printer connection → Print method → AirPrint / system print dialog**. Choose **4 × 6 inch photo sheet**, load test artwork and open the sheet preview. Tap **Print / AirPrint** and select the printer in the system dialog. The iPad and printer must share Wi-Fi. The receipt fits one sheet without cropping. Printing uses a visible page with its own Print / AirPrint button, enabled only after the image is loaded and painted, to avoid empty hidden-frame previews. Review every attempt, including cancellations, before clearing it. See [AirPrint setup and validation](docs/AIRPRINT.md). This does not add direct USB/Bluetooth printing to iPad or AirPrint capability to the Poseidon PSD-200I.
 
 ## Validation and artifacts

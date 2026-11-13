@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { AirPrintSettings, AirPrintGuide } from "./AirPrintSettings";
+import { BlePrinterSettings, BlePrinterGuide } from "./BlePrinterSettings";
 import { PhotoBoothThemeSettings } from "./PhotoBoothThemeSettings";
 import {
   Aperture,
@@ -280,9 +281,10 @@ export function Studio({
                   <select value={b.printMethod} disabled={b.busy || !!b.job} onChange={e => b.setPrintMethod(e.target.value)}>
                     <option value="qz">Receipt printer · QZ Tray</option>
                     <option value="airprint">AirPrint / system print dialog</option>
+                    <option value="ble">Bluetooth receipt printer (BLE)</option>
                   </select>
                 </label>
-                {b.printMethod === "airprint" ? <AirPrintSettings booth={b}/> : <>
+                {b.printMethod === "ble" ? <BlePrinterSettings booth={b}/> : b.printMethod === "airprint" ? <AirPrintSettings booth={b}/> : <>
                 <div className="notice">
                   <ShieldCheck aria-hidden="true" size={18} />
                   <p>
@@ -421,7 +423,7 @@ export function Studio({
                   {b.printMethod === "airprint" ? "Preview AirPrint sheet" : "Send one receipt"}
                 </button>
                 <p className="field-help">
-                  {b.printMethod === "airprint" ? "Choose your printer in the system dialog. Printing or cancellation must be reviewed before trying again." : "Submission confirms delivery to the helper. Check the paper before sending another. Uncertain jobs never retry automatically."}
+                  {b.printMethod === "ble" ? "Keep this screen open until transfer finishes. Check the paper before another print. Interrupted jobs never retry automatically." : b.printMethod === "airprint" ? "Choose your printer in the system dialog. Printing or cancellation must be reviewed before trying again." : "Submission confirms delivery to the helper. Check the paper before sending another. Uncertain jobs never retry automatically."}
                 </p>
                 <div className="test-section">
                   <h3>Try the printer test</h3>
@@ -440,7 +442,7 @@ export function Studio({
                     </button>
                     <button
                       className="button button-quiet"
-                      disabled={b.printMethod === "airprint" || !b.complete || !b.preview || b.rendering}
+                      disabled={b.printMethod !== "qz" || !b.complete || !b.preview || b.rendering}
                       onClick={b.exportRaw}
                     >
                       <Download aria-hidden="true" size={16} />
@@ -450,7 +452,7 @@ export function Studio({
                 </div>
               </section>
               <aside className="setup-guide">
-                {b.printMethod === "airprint" ? <AirPrintGuide/> : <>
+                {b.printMethod === "ble" ? <BlePrinterGuide/> : b.printMethod === "airprint" ? <AirPrintGuide/> : <>
                 <div className="guide-heading">
                   <CircleHelp aria-hidden="true" size={20} />
                   <h2>A little setup, then you’re ready.</h2>

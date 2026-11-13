@@ -26,6 +26,7 @@ import {
   photoSlots,
 } from "./receipt";
 import * as printing from "./printing";
+import { BleReceiptPrinter, bleImageJob } from "./blePrinting";
 import type { AirPrintPaper } from "./airprint";
 import {
   checkOffline,
@@ -248,7 +249,15 @@ export function useBooth() {
     [host, setHost] = useState(stored("host", "localhost")),
     [printers, setPrinters] = useState<string[]>([]),
     [printer, setPrinter] = useState("");
-  const [printMethod, setPrintMethodState] = useState(stored("printMethod", "qz") === "airprint" ? "airprint" : "qz");
+  const [printMethod, setPrintMethodState] = useState(() => { const method = stored("printMethod", "qz"); return method === "airprint" || method === "ble" ? method : "qz"; });
+  const [blePrinter] = useState(() => new BleReceiptPrinter());
+  const [bleName, setBleName] = useState("");
+  const [bleWidth, setBleWidthState] = useState(stored("bleWidth", "576") === "384" ? 384 : 576);
+  const [bleGamma, setBleGammaState] = useState(() => { const value = +stored("bleGamma", "1"); return [1, 1.5, 2].includes(value) ? value : 1; });
+  useEffect(() => {
+    blePrinter.onChange = setBleName;
+    return () => { blePrinter.onChange = () => {}; blePrinter.disconnect(); };
+  }, [blePrinter]);
   const [airPrintPaper, setAirPrintPaperState] = useState<AirPrintPaper>(() => {
     const value = stored("airPrintPaper", "photo"); return value === "a4" || value === "letter" ? value : "photo";
   });
@@ -265,11 +274,27 @@ export function useBooth() {
     bytes = useRef<Uint8Array | null>(null),
     printLock = useRef(false);
   const busy = count > 0 || working || !!airPrintImage;
-  const printerReady = printMethod === "airprint" || !!printer;
+  const printerReady = printMethod === "airprint" || (printMethod === "ble" ? !!bleName && blePrinter.connected : !!printer);
   function setPrintMethod(value: string) {
-    if (busy || job || !["qz", "airprint"].includes(value)) return;
-    if (save("printMethod", value)) setPrintMethodState(value); else setError("Could not save the print method.");
+    if (busy || job || !["qz", "airprint", "ble"].includes(value)) return;
+    if (save("printMethod", value)) { if (value !== "ble") blePrinter.disconnect(); setPrintMethodState(value); } else setError("Could not save the print method.");
   }
+  function setBleWidth(value: number) {
+    if (busy || job || ![384, 576].includes(value)) return;
+    if (save("bleWidth", String(value))) setBleWidthState(value); else setError("Could not save BLE paper width.");
+  }
+  function setBleGamma(value: number) {
+    if (busy || job || ![1, 1.5, 2].includes(value)) return;
+    if (save("bleGamma", String(value))) setBleGammaState(value); else setError("Could not save BLE lightness.");
+  }
+  async function connectBle() {
+    if (busy || job || printMethod !== "ble") return;
+    setWorking(true); setError("");
+    try { await blePrinter.connect(); }
+    catch (e) { setError(`Could not connect BLE printer. ${(e as Error).message}`); }
+    finally { setWorking(false); }
+  }
+  function disconnectBle() { if (!busy && !job) blePrinter.disconnect(); }
   function setAirPrintPaper(value: AirPrintPaper) {
     if (busy || job || !["photo", "a4", "letter"].includes(value)) return;
     if (save("airPrintPaper", value)) setAirPrintPaperState(value); else setError("Could not save the paper size.");
@@ -785,6 +810,11 @@ export function useBooth() {
     }
   }
   async function print() {
+    if (printMethod === "ble") {
+      if (!complete || rendering || !editorPreview) return;
+      await submitPrint(() => bleImageJob(editorPreview, bleWidth, bleGamma));
+      return;
+    }
     if (printMethod === "airprint") {
       if (!complete || rendering || !editorPreview) return;
       await prepareAirPrint(async () => editorPreview);
@@ -814,7 +844,7 @@ export function useBooth() {
       });
       return;
     }
-    if (busy || job || !printer || printLock.current) return;
+    if (busy || job || !printerReady || printLock.current) return;
     await submitPrint(async () => {
       const saved = await readHistoryAssets(id);
       const source=photoIndex===-1?saved.receipt:saved.photos[photoIndex];
@@ -822,7 +852,7 @@ export function useBooth() {
         throw new Error("This saved image is no longer available to reprint.");
       const img = await image(source);
       const output = document.createElement("canvas");
-      output.width = profiles[profile].width;
+      output.width = printMethod === "ble" ? bleWidth : profiles[profile].width;
       output.height = Math.round(
         (output.width * img.naturalHeight) / img.naturalWidth,
       );
@@ -832,6 +862,7 @@ export function useBooth() {
         .getContext("2d")!
         .drawImage(img, 0, 0, output.width, output.height);
       if(lightLicense.isTrial)applyTrialWatermark(output);
+      if (printMethod === "ble") return bleImageJob(output.toDataURL("image/png"), bleWidth, bleGamma);
       return thermal(output, profile, gamma).bytes;
     });
   }
@@ -840,7 +871,7 @@ export function useBooth() {
       setError("A valid PhotoTags LRB license is required to print. Open Light license in Settings.");
       return;
     }
-    if (printLock.current || job || !printer || busy) return;
+    if (printLock.current || job || !printerReady || busy) return;
     printLock.current = true;
     setWorking(true);
     setError("");
@@ -865,9 +896,13 @@ export function useBooth() {
     setJob(id);
     setPrintMessage("Submitting one copy…");
     try {
-      await printing.submit(host, printer, output);
+      if (printMethod === "ble") {
+        if (!lightLicense.hasAccess()) throw new Error("Your license expired before the Bluetooth transfer. No bytes were sent.");
+        await blePrinter.submit(output);
+      }
+      else await printing.submit(host, printer, output);
       setPrintMessage(
-        "Submitted to the helper. Physical output is unconfirmed. Check the printer before continuing.",
+        printMethod === "ble" ? "Sent to the BLE printer. Check the paper before continuing." : "Submitted to the helper. Physical output is unconfirmed. Check the printer before continuing.",
       );
     } catch (e) {
       setPrintMessage(
@@ -995,6 +1030,7 @@ export function useBooth() {
     ...photoHistory,
     printHistoryReceipt,
     printMethod, setPrintMethod, printerReady,
+    bleName, bleWidth, setBleWidth, bleGamma, setBleGamma, connectBle, disconnectBle,
     airPrintPaper, setAirPrintPaper, airPrintImage, beginAirPrint, closeAirPrint: () => setAirPrintImage(""),
     captureEvent,
     ...kioskSettings,

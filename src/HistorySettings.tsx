@@ -571,7 +571,7 @@ function HistoryImageViewer({
         )}
       </div>
       <p className="field-help">
-        {b.printMethod === "airprint" ? "AirPrint / system printing · choose your printer in the print dialog." : b.printer
+        {b.printMethod === "ble" ? `One copy · BLE · ${b.bleWidth} dots · ${b.bleName || "connect printer in Settings"}` : b.printMethod === "airprint" ? "AirPrint / system printing · choose your printer in the print dialog." : b.printer
           ? `One copy · ${profiles[b.profile].name} · ${b.printer}`
           : "Select a printer in Printer connection to reprint."}
       </p>

@@ -1,5 +1,7 @@
 # AirPrint and photo-sheet printing
 
+For the separate direct Bluetooth Low Energy method in Bluefy, see [iPad/iPhone receipt printing](IOS_RECEIPT_PRINTING.md). AirPrint and BLE have different printer requirements; neither enables generic USB printing in Safari.
+
 In **Settings → Printer connection**, select **AirPrint / system print dialog**. Choose **4 × 6 inch photo sheet** for Xiaomi Instant Photo Printer 1S (ZPDYJ03HT), or A4/US Letter for another compatible printer. This setting is saved on the installation. QZ Tray remains the default for existing users.
 
 Configure Xiaomi 1S in Xiaomi Home and put it and the iPad on the same Wi-Fi. First test an ordinary image from iPad Photos → Share → Print. AirPrint discovers compatible printers in the system print dialog, not in the app's QZ queue list. This feature does not add AirPrint or direct iOS Bluetooth/USB support to the Poseidon PSD-200I.
