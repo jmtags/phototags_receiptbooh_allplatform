@@ -22,7 +22,7 @@ export function AirPrintGuide() {
       <li><span>3</span><div><h3>Open Print / AirPrint</h3><p>Preview the sheet, open the system print dialog and select your printer. The printer list is provided by iPadOS.</p></div></li>
       <li><span>4</span><div><h3>Check the output</h3><p>Choose one copy. Review the paper before clearing the attempt, including after cancelling.</p></div></li>
     </ol>
-    <p className="field-help">If printing does not open from the Home Screen app, use Open printable page in the sheet preview. Print from that page and return here.</p>
+    <p className="field-help">Print / AirPrint opens a visible print page. Wait for the receipt to load, then tap Print / AirPrint on that page. If needed, use Safari Share ? Print, then return here.</p>
     <p className="field-help">AirPrint requires an AirPrint-compatible printer. USB or Bluetooth alone does not add AirPrint support to the Poseidon PSD-200I. Photo printers use sheets rather than a receipt roll.</p>
     <a className="text-link" href="https://support.apple.com/109349" target="_blank" rel="noreferrer">Apple AirPrint setup guide</a>
   </>;

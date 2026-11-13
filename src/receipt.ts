@@ -22,6 +22,7 @@ export type SignatureStroke = {
   width: number;
 };
 export type ReceiptContent = {
+  color?: boolean;
   photos: (string | null)[];
   placements: PhotoPlacement[];
   shotCount: ShotCount;
@@ -266,6 +267,14 @@ export async function compose(
       );
       ctx.stroke();
     }
+  }
+  if (content?.color === false) {
+    const pixels = ctx.getImageData(0, 0, c.width, c.height);
+    for (let i = 0; i < pixels.data.length; i += 4) {
+      const gray = Math.round(pixels.data[i] * 0.2126 + pixels.data[i + 1] * 0.7152 + pixels.data[i + 2] * 0.0722);
+      pixels.data[i] = pixels.data[i + 1] = pixels.data[i + 2] = gray;
+    }
+    ctx.putImageData(pixels, 0, 0);
   }
   return c;
 }

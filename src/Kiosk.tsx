@@ -324,6 +324,13 @@ export function Kiosk({
                 {titles[step]}
               </h1>
               <p>{subtitles[step]}</p>
+              {step === 3 && <>
+                <label className="receipt-color-toggle">
+                  <input type="checkbox" role="switch" aria-label="Color receipt" aria-describedby="receipt-color-help" checked={b.receiptColor} disabled={b.busy || !!b.job} onChange={e => b.setReceiptColor(e.target.checked)}/>
+                  <span>Color <strong>{b.receiptColor ? "On" : "Off"}</strong></span>
+                </label>
+                <p id="receipt-color-help" className="sr-only">Color keeps the original photo and sticker colors. Theme artwork keeps its original colors; thermal printers print black and white.</p>
+              </>}
             </div>
             {b.error && (
               <div className="alert kiosk-error" role="alert">

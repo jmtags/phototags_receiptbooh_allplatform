@@ -228,6 +228,7 @@ export function useBooth() {
     ),
     [camera, setCamera] = useState(false),
     [cameraReady, setCameraReady] = useState(false);
+  const [receiptColor, setReceiptColor] = useState(true);
   const [count, setCount] = useState(0),
     [error, setError] = useState(""),
     [working, setWorking] = useState(false),
@@ -280,6 +281,7 @@ export function useBooth() {
       profile,
       gamma,
       thermalView,
+      receiptColor,
       lightLicense.isTrial,
       layout,
     ],
@@ -467,7 +469,7 @@ export function useBooth() {
     let active = true;
     canvas.current = null;
     bytes.current = null;
-    const content={photos,placements,shotCount,stickers,strokes};
+    const content={photos,placements,shotCount,stickers,strokes,color:receiptColor};
     Promise.all([
       compose(template,photos[0]??null,profile,1,false,layout,content),
       compose(template,photos[0]??null,profile,1,false,layout,content,1200),
@@ -503,6 +505,7 @@ export function useBooth() {
     profile,
     gamma,
     thermalView,
+    receiptColor,
     lightLicense.isTrial,
     layout,
   ]);
@@ -879,10 +882,11 @@ export function useBooth() {
     const id = crypto.randomUUID();
     if (!save("pendingPrint", id)) { setError("Browser storage is unavailable. Printing is blocked because job safety state cannot be saved."); return false; }
     setJob(id);
-    setPrintMessage("System print dialog requested. Printing or cancellation is unconfirmed. Check the printer before continuing.");
+    setPrintMessage("System print page opened. Printing or cancellation is unconfirmed. Check the printer before continuing.");
     return true;
   }
   function newSession() {
+    setReceiptColor(true);
     photoDownloadCache.current.clear();
     historySession.current = null;
     setRetakesUsed(0);
@@ -1029,6 +1033,7 @@ export function useBooth() {
     dimensions,
     thermalView,
     setThermalView,
+    receiptColor, setReceiptColor,
     camera,
     cameraReady,
     setCameraReady,

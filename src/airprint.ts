@@ -23,11 +23,17 @@ export async function photoSheet(source: string, paper: AirPrintPaper) {
 // Only our canvas-generated PNG enters this document. No session/identity data or remote resources.
 export function printDocument(png: string, paper: AirPrintPaper, controls = false) {
   if (!/^data:image\/png;base64,[A-Za-z0-9+/=]+$/.test(png)) throw new Error("Invalid print image.");
+  const [width, height] = airPrintPapers[paper].size.split(" ");
   return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>PhotoTags LRB print</title><style>
   @page{size:${airPrintPapers[paper].size};margin:0}
   *{box-sizing:border-box}body{margin:0;background:#eee;color:#202330;font:16px system-ui}
   nav{display:${controls ? "block" : "none"};padding:16px;max-width:650px;margin:auto}button{font:inherit;padding:12px 20px;cursor:pointer}
   img{display:block;width:min(100%,600px);height:auto;margin:auto}
-  @media print{html,body{margin:0;padding:0;background:white}nav{display:none}img{width:100%;height:100%;max-height:100vh;object-fit:contain;break-inside:avoid}}
-  </style></head><body><nav><button type="button" id="print">Print / AirPrint</button><p>Select your printer and matching paper size. Choose one copy. Return to PhotoTags after printing or cancelling.</p></nav><img alt="PhotoTags receipt fitted to a sheet" src="${png}"></body></html>`;
+  @media print{html,body{margin:0;padding:0;background:white}nav{display:none}img{width:${width};height:${height};max-width:100%;object-fit:contain;break-inside:avoid}}
+  </style></head><body><nav><button type="button" id="print" disabled>Print / AirPrint</button><p id="print-status" role="status">Loading your receipt...</p><p>Select your printer and matching paper size. Choose one copy. Return to PhotoTags after printing or cancelling.</p></nav><img alt="PhotoTags receipt fitted to a sheet" src="${png}"><script>
+  const picture=document.querySelector('img'),button=document.getElementById('print'),status=document.getElementById('print-status');
+  async function prepare(){try{await picture.decode();requestAnimationFrame(()=>requestAnimationFrame(()=>{button.disabled=false;status.textContent='Receipt ready. Tap Print / AirPrint to choose your printer.';}));}catch{status.textContent='The receipt could not load. Return to PhotoTags and review the attempt before retrying.';}}
+  button.addEventListener('click',()=>{if(button.disabled)return;button.disabled=true;status.textContent='Print dialog requested. Return to PhotoTags to review this attempt, including after cancelling.';try{window.print();}catch{status.textContent='Printing could not open. Use Safari Share > Print, then return to PhotoTags to review the attempt.';}});
+  prepare();
+  </script></body></html>`;
 }

@@ -24,7 +24,7 @@ Internet is needed for first installation, certificate/helper provisioning and u
 
 ## AirPrint / browser system printing
 
-An independent AirPrint setting uses a local flattened PNG composition and a white sheet fitted without cropping. A modal prepares the image and same-origin printable iframe before a direct user click calls its print function. A separate printable-page fallback uses a synchronous user-opened window. Both routes use the same persisted unresolved-job review state as QZ without calling QZ, while closing the sheet before a print request leaves no job. Licensing is checked before preparing an image and requesting printing. Trial watermarks remain embedded. See [AirPrint setup](AIRPRINT.md) for paper sizes, limitations and test scope.
+An independent AirPrint setting uses a local flattened PNG composition and a white sheet fitted without cropping. A modal prepares the image, then a user click opens a visible printable page. That page owns its readiness and print handler so it works independently of the Home Screen app: it waits for image decoding and two animation frames before enabling printing, and uses physical paper dimensions instead of viewport-dependent print sizing. This route uses the same persisted unresolved-job review state as QZ without calling QZ, while closing the sheet before a print request leaves no job. Licensing is checked before preparing an image and requesting printing. Trial watermarks remain embedded. See [AirPrint setup](AIRPRINT.md) for paper sizes, limitations and test scope.
 
 ## Offline and updates
 
