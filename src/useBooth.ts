@@ -25,6 +25,7 @@ import {
   photoSlots,
 } from "./receipt";
 import * as printing from "./printing";
+import type { AirPrintPaper } from "./airprint";
 import {
   checkOffline,
   offlineEvents,
@@ -238,6 +239,11 @@ export function useBooth() {
     [host, setHost] = useState(stored("host", "localhost")),
     [printers, setPrinters] = useState<string[]>([]),
     [printer, setPrinter] = useState("");
+  const [printMethod, setPrintMethodState] = useState(stored("printMethod", "qz") === "airprint" ? "airprint" : "qz");
+  const [airPrintPaper, setAirPrintPaperState] = useState<AirPrintPaper>(() => {
+    const value = stored("airPrintPaper", "photo"); return value === "a4" || value === "letter" ? value : "photo";
+  });
+  const [airPrintImage, setAirPrintImage] = useState("");
   const [job, setJob] = useState(stored("pendingPrint", "")),
     [printMessage, setPrintMessage] = useState("");
   const [installPrompt, setInstallPrompt] = useState<any>(null);
@@ -249,7 +255,16 @@ export function useBooth() {
   const canvas = useRef<HTMLCanvasElement | null>(null),
     bytes = useRef<Uint8Array | null>(null),
     printLock = useRef(false);
-  const busy = count > 0 || working;
+  const busy = count > 0 || working || !!airPrintImage;
+  const printerReady = printMethod === "airprint" || !!printer;
+  function setPrintMethod(value: string) {
+    if (busy || job || !["qz", "airprint"].includes(value)) return;
+    if (save("printMethod", value)) setPrintMethodState(value); else setError("Could not save the print method.");
+  }
+  function setAirPrintPaper(value: AirPrintPaper) {
+    if (busy || job || !["photo", "a4", "letter"].includes(value)) return;
+    if (save("airPrintPaper", value)) setAirPrintPaperState(value); else setError("Could not save the paper size.");
+  }
   const kioskSettings=useKioskSettings(busy||!!job);
   const photoDownloadCache=useRef(new Map<string,{qr:string;url:string;expiresAt:string}>());
   // Gate output immediately when inputs change, until this exact revision is rendered.
@@ -310,7 +325,7 @@ export function useBooth() {
       theme: template.name,
       shots: photos.filter(Boolean).length,
       photos: [...photos],
-      receipt: complete ? canvas.current.toDataURL("image/png") : null,
+      receipt: complete ? editorPreview || canvas.current.toDataURL("image/png") : null,
       thumbnail: thumbnail.toDataURL("image/jpeg", 0.72),
       hasReceipt: complete,
     });
@@ -758,6 +773,11 @@ export function useBooth() {
     }
   }
   async function print() {
+    if (printMethod === "airprint") {
+      if (!complete || rendering || !editorPreview) return;
+      await prepareAirPrint(async () => editorPreview);
+      return;
+    }
     if (
       printLock.current ||
       job ||
@@ -770,6 +790,18 @@ export function useBooth() {
     await submitPrint(async () => new Uint8Array(bytes.current!));
   }
   async function printHistoryReceipt(id: string, photoIndex = -1) {
+    if (printMethod === "airprint") {
+      await prepareAirPrint(async () => {
+        const saved = await readHistoryAssets(id), source = photoIndex === -1 ? saved.receipt : saved.photos[photoIndex];
+        if (!source) throw new Error("This saved image is no longer available to reprint.");
+        const img = await image(source), output = document.createElement("canvas");
+        output.width = img.naturalWidth; output.height = img.naturalHeight;
+        output.getContext("2d")!.drawImage(img, 0, 0);
+        if (lightLicense.isTrial) applyTrialWatermark(output);
+        return output.toDataURL("image/png");
+      });
+      return;
+    }
     if (busy || job || !printer || printLock.current) return;
     await submitPrint(async () => {
       const saved = await readHistoryAssets(id);
@@ -834,6 +866,22 @@ export function useBooth() {
       setWorking(false);
     }
   }
+  async function prepareAirPrint(prepareImage: () => Promise<string>) {
+    if (!lightLicense.hasAccess()) { setError("A valid PhotoTags LRB license is required to print. Open Light license in Settings."); return; }
+    if (busy || job || printLock.current) return;
+    printLock.current = true; setWorking(true); setError("");
+    try { const source = await prepareImage(); if (lightLicense.hasAccess()) setAirPrintImage(source); }
+    catch (e) { setError(`Could not prepare print sheet: ${(e as Error).message}`); }
+    finally { printLock.current = false; setWorking(false); }
+  }
+  function beginAirPrint() {
+    if (!airPrintImage || job || working || printLock.current || !lightLicense.hasAccess()) return false;
+    const id = crypto.randomUUID();
+    if (!save("pendingPrint", id)) { setError("Browser storage is unavailable. Printing is blocked because job safety state cannot be saved."); return false; }
+    setJob(id);
+    setPrintMessage("System print dialog requested. Printing or cancellation is unconfirmed. Check the printer before continuing.");
+    return true;
+  }
   function newSession() {
     photoDownloadCache.current.clear();
     historySession.current = null;
@@ -851,8 +899,8 @@ export function useBooth() {
   function exportImage() {
     if (complete && preview && !rendering)
       download(
-        preview,
-        `PhotoTags-LRB-${template.id}-${profiles[profile].width}.png`,
+        printMethod === "airprint" ? editorPreview : preview,
+        `PhotoTags-LRB-${template.id}-${printMethod === "airprint" ? "photo" : profiles[profile].width}.png`,
       );
   }
   async function prepare() {
@@ -923,6 +971,8 @@ export function useBooth() {
     lightLicense,
     ...photoHistory,
     printHistoryReceipt,
+    printMethod, setPrintMethod, printerReady,
+    airPrintPaper, setAirPrintPaper, airPrintImage, beginAirPrint, closeAirPrint: () => setAirPrintImage(""),
     captureEvent,
     ...kioskSettings,
     photoDownloadCache:photoDownloadCache.current,
@@ -974,7 +1024,7 @@ export function useBooth() {
     mirror,
     setMirror,
     photo,
-    preview,
+    preview: printMethod === "airprint" ? editorPreview : preview,
     editorPreview,
     dimensions,
     thermalView,

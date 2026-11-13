@@ -74,7 +74,11 @@ For a hardware check without a camera, choose **Load printer test artwork** in P
 
 Successful submission is **not** a claim that paper printed. Every attempt leaves a saved unresolved marker. Check printer output and queue before clearing it. A failed/closed connection never automatically retries. Do not resend an uncertain job until paper/queue inspection rules out duplicates. The attended proof uses unsigned QZ prompts; production silent use needs trusted certificates and a secure offline-capable signer. No private signing keys are shipped.
 
-On iPhone/iPad, a manually configured QZ LAN host is an **experimental bridge candidate**. A trusted certificate for that host, client trust setup, QZ origin authorization, LAN firewall/permissions and actual Safari/PWA tests are still required. No direct Safari USB/Bluetooth or AirPrint support is claimed. See [architecture and official research](docs/ARCHITECTURE.md) before configuring it.
+On iPhone/iPad, a manually configured QZ LAN host is an **experimental bridge candidate**. A trusted certificate for that host, client trust setup, QZ origin authorization, LAN firewall/permissions and actual Safari/PWA tests are still required. Direct Safari USB/Bluetooth printing remains unsupported. For AirPrint-compatible Wi-Fi printers, select AirPrint / system print dialog; see [AirPrint setup](docs/AIRPRINT.md). See [architecture and official research](docs/ARCHITECTURE.md) before configuring it.
+
+## AirPrint / system printing
+
+For an iPad-only setup with an AirPrint printer such as Xiaomi Instant Photo Printer 1S, open **Settings → Printer connection → Print method → AirPrint / system print dialog**. Choose **4 × 6 inch photo sheet**, load test artwork and open the sheet preview. Tap **Print / AirPrint** and select the printer in the system dialog. The iPad and printer must share Wi-Fi. The receipt fits one sheet without cropping. A printable-page fallback supports browsers/Home Screen apps where the embedded dialog does not open. Review every attempt, including cancellations, before clearing it. See [AirPrint setup and validation](docs/AIRPRINT.md). This does not add direct USB/Bluetooth printing to iPad or AirPrint capability to the Poseidon PSD-200I.
 
 ## Validation and artifacts
 

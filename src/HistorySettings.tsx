@@ -533,7 +533,7 @@ function HistoryImageViewer({
       <div className="history-image-actions">
         <button
           className="button button-primary"
-          disabled={!source || !b.printer || b.busy || !!b.job}
+          disabled={!source || !b.printerReady || b.busy || !!b.job}
           onClick={() => void b.printHistoryReceipt(entry.id, index)}
         >
           <Printer size={18} />
@@ -571,7 +571,7 @@ function HistoryImageViewer({
         )}
       </div>
       <p className="field-help">
-        {b.printer
+        {b.printMethod === "airprint" ? "AirPrint / system printing · choose your printer in the print dialog." : b.printer
           ? `One copy · ${profiles[b.profile].name} · ${b.printer}`
           : "Select a printer in Printer connection to reprint."}
       </p>

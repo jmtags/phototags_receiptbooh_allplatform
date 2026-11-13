@@ -665,7 +665,7 @@ export function Kiosk({
                     <button
                       className="button button-primary kiosk-print-button"
                       disabled={
-                        !b.printer ||
+                        !b.printerReady ||
                         b.busy ||
                         !b.preview ||
                         !b.complete ||
@@ -701,6 +701,8 @@ export function Kiosk({
                       <h2>
                         {b.working
                           ? "Sending your receipt…"
+                          : b.printMessage.startsWith("System")
+                            ? "Check your print attempt."
                           : b.printMessage.startsWith("Submitted")
                             ? "Sent to the print helper."
                             : "Your host can help with this."}
@@ -740,7 +742,7 @@ export function Kiosk({
                     </div>
                   ) : (
                     <>
-                      {b.printer ? (
+                      {b.printMethod === "airprint" ? <p className="kiosk-printer-ready"><Printer aria-hidden="true" size={16}/>AirPrint ready · choose your printer in the system dialog.</p> : b.printer ? (
                         <p className="kiosk-printer-ready">
                           <Printer aria-hidden="true" size={16} />
                           Queue selected: {b.printer}

@@ -37,7 +37,7 @@ Production TypeScript/Vite build passes. Workbox precaches approximately 12.5 Mi
 
 ## Not verified on physical hardware
 
-No physical printer output, native QZ authorization, OS raw queue, physical camera, Windows installed PWA, macOS browser/PWA, or iPhone/iPad Safari/PWA has been verified. No AirPrint capability is claimed. LAN bridge support remains experimental.
+No physical printer output, native QZ authorization, OS raw queue, physical camera, Windows installed PWA, macOS browser/PWA, or iPhone/iPad Safari/PWA has been verified. AirPrint/system printing is implemented; physical iPadOS/printer output remains unverified. See [AirPrint validation and setup](AIRPRINT.md). LAN bridge support remains experimental.
 
 Required acceptance tests:
 
@@ -180,6 +180,10 @@ The project-specific automatic-push skill is installed locally and included unde
 ## Safari installation instructions
 
 The install action remains visible in Offline & installation when beforeinstallprompt is unavailable: a native details control opens the Safari Add to Home Screen steps and the separate offline-readiness checklist. Browsers providing an install event retain the direct prompt button. Production build passes. A Chrome mobile-emulation smoke check verifies opening the fallback guide, calling an injected native install prompt once, and reopening the guide after an offline reload. This is not a physical iPhone/Safari installation test. Manual installation steps follow Apple's iPhone web-app guide: https://support.apple.com/guide/iphone/iphea86e5236/ios.
+
+## AirPrint / photo sheets
+
+Production build passes. Nine AirPrint checks pass across desktop, phone and tablet emulation: saved method/paper settings, accessible sheet preview, native print-function invocation once, persistent unresolved state, popup blocking, offline kiosk flow, a single 4 × 6 PDF page and history reprinting. Existing kiosk, QZ and history regressions pass 22 checks across desktop/tablet; four existing platform-specific checks are skipped. The local SQL/API licensing integration also verifies trial and paid AirPrint sheets differ by their embedded trial watermark, native print invocation and job review, alongside its existing signing, expiry, blocking, QR and usage checks. AirPrint selection does not connect to QZ. The tablet and phone runs are Chromium emulation, not physical iPadOS acceptance. No physical Xiaomi printing was performed. See [AirPrint setup and limitations](AIRPRINT.md).
 
 
 ## Isolated Light licensing

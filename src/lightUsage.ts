@@ -23,7 +23,7 @@ export function useLightUsage(booth:BoothModel,kiosk:boolean){
    pending=undefined;
    if(!alive||inFlight||!navigator.onLine||document.visibilityState!=="visible")return;
    inFlight=true;lastSent=Date.now();const {booth:b,kiosk}=latest.current;
-   try{await b.lightLicense.reportUsage({visitId,mode:kiosk?"kiosk":"settings",device:usageDevice(),camera:{...camera.current,active:b.camera&&b.cameraReady},printer:{queue:b.printer,profile:b.profile}});}finally{inFlight=false;}
+   try{await b.lightLicense.reportUsage({visitId,mode:kiosk?"kiosk":"settings",device:usageDevice(),camera:{...camera.current,active:b.camera&&b.cameraReady},printer:{queue:b.printMethod==="airprint"?"":b.printer,profile:b.printMethod==="airprint"?"":b.profile}});}finally{inFlight=false;}
   }
   const schedule=()=>{if(pending)clearTimeout(pending);pending=setTimeout(()=>void send(),Math.max(0,15000-(Date.now()-lastSent)));};
   queue.current=schedule;schedule();
@@ -36,5 +36,5 @@ export function useLightUsage(booth:BoothModel,kiosk:boolean){
   const track=stream?.getVideoTracks?.()[0];
   if(track){const settings=track.getSettings();camera.current={...(track.label?{label:track.label.slice(0,160)}:{}),...(settings.width?{width:settings.width}:{}),...(settings.height?{height:settings.height}:{}),...(settings.facingMode?{facingMode:settings.facingMode}:{})};}
   queue.current();
- },[booth.camera,booth.cameraReady,booth.printer,booth.profile,kiosk]);
+ },[booth.camera,booth.cameraReady,booth.printer,booth.profile,booth.printMethod,kiosk]);
 }

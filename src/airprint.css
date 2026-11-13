@@ -1,0 +1,6 @@
+.airprint-dialog{width:min(850px,calc(100% - 24px));max-height:calc(100dvh - 28px);padding:24px;border:1px solid #dce1eb;border-radius:24px;color:#222634;background:#fff;box-shadow:0 24px 100px #16264833;overflow:auto}
+.airprint-dialog::backdrop{background:#17233380;backdrop-filter:blur(12px)}
+.airprint-dialog header{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:20px}.airprint-dialog h2{margin:6px 0;font-size:25px}
+.airprint-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:24px;align-items:start}.airprint-body p{line-height:1.6}.airprint-sheet{width:100%;max-height:60dvh;object-fit:contain;background:#f4f5f9;border:1px solid #e2e5ef}.airprint-actions{display:flex;flex-wrap:wrap;gap:10px}
+.airprint-frame{position:absolute;left:-10000px;top:0;width:1px;height:1px;border:0;pointer-events:none}
+@media(max-width:650px){.airprint-body{grid-template-columns:minmax(0,1fr)}.airprint-sheet{max-height:32dvh}.airprint-dialog{padding:18px}.airprint-actions .button{width:100%}}

@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { AirPrintSettings, AirPrintGuide } from "./AirPrintSettings";
 import {
   Aperture,
   LayoutDashboard,
@@ -268,6 +269,13 @@ export function Studio({
                     <p>Choose where your receipt goes.</p>
                   </div>
                 </div>
+                <label className="field queue-field">Print method
+                  <select value={b.printMethod} disabled={b.busy || !!b.job} onChange={e => b.setPrintMethod(e.target.value)}>
+                    <option value="qz">Receipt printer · QZ Tray</option>
+                    <option value="airprint">AirPrint / system print dialog</option>
+                  </select>
+                </label>
+                {b.printMethod === "airprint" ? <AirPrintSettings booth={b}/> : <>
                 <div className="notice">
                   <ShieldCheck aria-hidden="true" size={18} />
                   <p>
@@ -373,6 +381,7 @@ export function Studio({
                     ))}
                   </select>
                 </label>
+                </>}
                 <div className="print-summary">
                   <FileImage aria-hidden="true" size={19} />
                   <div>
@@ -393,7 +402,7 @@ export function Studio({
                   className="button button-primary send-button"
                   disabled={
                     !b.complete ||
-                    !b.printer ||
+                    !b.printerReady ||
                     b.working ||
                     !!b.job ||
                     !b.preview ||
@@ -402,12 +411,10 @@ export function Studio({
                   onClick={b.print}
                 >
                   <Printer aria-hidden="true" size={17} />
-                  Send one receipt
+                  {b.printMethod === "airprint" ? "Preview AirPrint sheet" : "Send one receipt"}
                 </button>
                 <p className="field-help">
-                  Submission confirms delivery to the helper. Check the paper
-                  before sending another. Uncertain jobs never retry
-                  automatically.
+                  {b.printMethod === "airprint" ? "Choose your printer in the system dialog. Printing or cancellation must be reviewed before trying again." : "Submission confirms delivery to the helper. Check the paper before sending another. Uncertain jobs never retry automatically."}
                 </p>
                 <div className="test-section">
                   <h3>Try the printer test</h3>
@@ -426,7 +433,7 @@ export function Studio({
                     </button>
                     <button
                       className="button button-quiet"
-                      disabled={!b.complete || !b.preview || b.rendering}
+                      disabled={b.printMethod === "airprint" || !b.complete || !b.preview || b.rendering}
                       onClick={b.exportRaw}
                     >
                       <Download aria-hidden="true" size={16} />
@@ -436,6 +443,7 @@ export function Studio({
                 </div>
               </section>
               <aside className="setup-guide">
+                {b.printMethod === "airprint" ? <AirPrintGuide/> : <>
                 <div className="guide-heading">
                   <CircleHelp aria-hidden="true" size={20} />
                   <h2>A little setup, then you’re ready.</h2>
@@ -487,8 +495,8 @@ export function Studio({
                   <p>
                     A secure LAN print bridge is experimental and requires
                     client certificate trust, local network permissions and
-                    actual device tests. Direct Safari USB/Bluetooth and
-                    AirPrint are not provided.
+                    actual device tests. Direct Safari USB/Bluetooth
+                    printing is not provided in QZ mode. Select AirPrint above for compatible Wi-Fi printers.
                   </p>
                 </details>
                 <details className="technical-details">
@@ -509,6 +517,7 @@ export function Studio({
                   Read the QZ setup guide
                   <ArrowUpRight aria-hidden="true" size={15} />
                 </a>
+                </>}
               </aside>
             </div>
           ) : (

@@ -134,12 +134,12 @@ export function HostSettings({ booth: b }: { booth: BoothModel }) {
           <ol>
             {b.lightLicense.enabled && <li>Activate this installation and check its offline license expiry.</li>}
             <li>Check the offline package on this device.</li>
-            <li>Select the printer queue and inspect one test receipt.</li>
+            <li>Choose a print method and inspect one test receipt.</li>
             <li>Launch the kiosk and allow camera access when prompted.</li>
           </ol>
           <p>
             A prepared booth works without internet. Printing needs the
-            configured local QZ Tray helper. After sending a receipt, check the
+            configured local QZ Tray helper or an AirPrint printer on the same Wi-Fi. After sending a receipt, check the
             paper before resolving the print.
           </p>
         </section>

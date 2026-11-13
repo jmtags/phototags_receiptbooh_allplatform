@@ -22,6 +22,10 @@ Operator supplies a stable hostname (DHCP reservation/local DNS); no browser sub
 
 Internet is needed for first installation, certificate/helper provisioning and updates. A configured LAN can operate without internet, but offline certificate validation, permission prompts, host resolution and iOS PWA reconnect must be verified on real devices. LAN implementation is a configurable secure QZ client, not a verified turnkey bridge. No physical printing or iOS access has yet been demonstrated.
 
+## AirPrint / browser system printing
+
+An independent AirPrint setting uses a local flattened PNG composition and a white sheet fitted without cropping. A modal prepares the image and same-origin printable iframe before a direct user click calls its print function. A separate printable-page fallback uses a synchronous user-opened window. Both routes use the same persisted unresolved-job review state as QZ without calling QZ, while closing the sheet before a print request leaves no job. Licensing is checked before preparing an image and requesting printing. Trial watermarks remain embedded. See [AirPrint setup](AIRPRINT.md) for paper sizes, limitations and test scope.
+
 ## Offline and updates
 
 Versioned precache includes all shipped templates, logos, icons, application chunks and QZ JS. Ready status audits every precache entry plus selected artwork, checks the controlling worker, and requests persistent storage (denial is reported). Cache checks run at startup, on focus and manually. Missing files clear readiness; repair requires internet. A waiting worker is applied only by an explicit action between sessions after the photo/camera is cleared and any unresolved print is reviewed. No skip-waiting on active sessions. A first worker may claim its first client without changing an existing version. Browser storage can still be evicted.

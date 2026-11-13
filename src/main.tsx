@@ -5,6 +5,7 @@ import { Kiosk } from "./Kiosk";
 import { useBooth } from "./useBooth";
 import { LightLicenseWall } from "./LightLicenseWall";
 import { useLightUsage } from "./lightUsage";
+import { AirPrintDialog } from "./AirPrintDialog";
 import "./style.css";
 function App() {
   const booth = useBooth();
@@ -72,6 +73,7 @@ function App() {
         />
       )}
       {licenseWall&&<LightLicenseWall booth={booth} onClose={()=>setLicenseWall(false)}/>}
+      {booth.airPrintImage && <AirPrintDialog booth={booth}/>}
     </>
   );
 }
