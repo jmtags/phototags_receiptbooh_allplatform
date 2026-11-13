@@ -26,7 +26,7 @@ import {
   photoSlots,
 } from "./receipt";
 import * as printing from "./printing";
-import { BleReceiptPrinter, bleImageJob } from "./blePrinting";
+import { BleReceiptPrinter, bleImageJob, type BleSpeed } from "./blePrinting";
 import type { AirPrintPaper } from "./airprint";
 import {
   checkOffline,
@@ -254,6 +254,7 @@ export function useBooth() {
   const [bleName, setBleName] = useState("");
   const [bleWidth, setBleWidthState] = useState(stored("bleWidth", "576") === "384" ? 384 : 576);
   const [bleGamma, setBleGammaState] = useState(() => { const value = +stored("bleGamma", "1"); return [1, 1.5, 2].includes(value) ? value : 1; });
+  const [bleSpeed, setBleSpeedState] = useState<BleSpeed>(() => { const value = stored("bleSpeed", "standard"); return value === "fast" || value === "compatible" ? value : "standard"; });
   useEffect(() => {
     blePrinter.onChange = setBleName;
     return () => { blePrinter.onChange = () => {}; blePrinter.disconnect(); };
@@ -286,6 +287,10 @@ export function useBooth() {
   function setBleGamma(value: number) {
     if (busy || job || ![1, 1.5, 2].includes(value)) return;
     if (save("bleGamma", String(value))) setBleGammaState(value); else setError("Could not save BLE lightness.");
+  }
+  function setBleSpeed(value: string) {
+    if (busy || job || !["standard", "fast", "compatible"].includes(value)) return;
+    if (save("bleSpeed", value)) setBleSpeedState(value as BleSpeed); else setError("Could not save BLE transfer speed.");
   }
   async function connectBle() {
     if (busy || job || printMethod !== "ble") return;
@@ -898,7 +903,7 @@ export function useBooth() {
     try {
       if (printMethod === "ble") {
         if (!lightLicense.hasAccess()) throw new Error("Your license expired before the Bluetooth transfer. No bytes were sent.");
-        await blePrinter.submit(output);
+        await blePrinter.submit(output, bleSpeed);
       }
       else await printing.submit(host, printer, output);
       setPrintMessage(
@@ -1030,7 +1035,7 @@ export function useBooth() {
     ...photoHistory,
     printHistoryReceipt,
     printMethod, setPrintMethod, printerReady,
-    bleName, bleWidth, setBleWidth, bleGamma, setBleGamma, connectBle, disconnectBle,
+    bleName, bleWidth, setBleWidth, bleGamma, setBleGamma, bleSpeed, setBleSpeed, connectBle, disconnectBle,
     airPrintPaper, setAirPrintPaper, airPrintImage, beginAirPrint, closeAirPrint: () => setAirPrintImage(""),
     captureEvent,
     ...kioskSettings,

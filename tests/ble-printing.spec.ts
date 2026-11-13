@@ -7,7 +7,7 @@ import { takePhotos } from "./camera-fixture";
 async function fakeBluetooth(page: Page, options: { failAt?: number; unsupported?: boolean; legacy?: boolean; hold?: boolean } = {}) {
   await page.addInitScript(options => {
     const w = window as any;
-    w.bleFixture = { packets: [], requests: [], failAt: options.failAt, pendingBeforeWrite: false, held: false };
+    w.bleFixture = { packets: [], requests: [], waits: [], failAt: options.failAt, pendingBeforeWrite: false, held: false };
     const state = w.bleFixture, device: any = new EventTarget();
     device.name = "Poseidon BLE fixture";
     device.gatt = {
@@ -32,7 +32,7 @@ async function fakeBluetooth(page: Page, options: { failAt?: number; unsupported
     Object.defineProperty(navigator, "bluetooth", { configurable: true, value: { requestDevice: async (options: unknown) => { state.requests.push(options); return device; } } });
     const delay = window.setTimeout;
     window.setTimeout = ((fn: TimerHandler, ms?: number, ...args: any[]) => {
-      if (ms === 10 && typeof fn === "function") { queueMicrotask(() => fn(...args)); return 0; }
+      if ((ms === 2 || ms === 10) && typeof fn === "function") { state.waits.push(ms); queueMicrotask(() => fn(...args)); return 0; }
       return delay(fn, ms, ...args);
     }) as typeof window.setTimeout;
     Object.defineProperty(document.documentElement, "requestFullscreen", { configurable: true, value: () => Promise.reject(new Error("fixture viewport")) });
@@ -56,6 +56,7 @@ test("Safari setup explains Bluefy, persists BLE settings and leaves QZ preferen
   await expect(page.getByLabel("QZ host", { exact: true })).toHaveCount(0);
   await page.getByRole("combobox", { name: "BLE printable width", exact: true }).selectOption("384");
   await page.getByRole("combobox", { name: "BLE photo lightness", exact: true }).selectOption("2");
+  await page.getByRole("combobox", { name: "BLE transfer speed", exact: true }).selectOption("fast");
   expect((await new AxeBuilder({ page }).include(".setup-layout").withTags(["wcag2a", "wcag2aa", "wcag22aa"]).analyze()).violations.map(v => v.id)).toEqual([]);
   await page.screenshot({ path: `artifacts/ble-setup-${info.project.name}.png`, fullPage: true });
   await page.reload();
@@ -63,6 +64,7 @@ test("Safari setup explains Bluefy, persists BLE settings and leaves QZ preferen
   await expect(page.getByRole("combobox", { name: "Print method", exact: true })).toHaveValue("ble");
   await expect(page.getByRole("combobox", { name: "BLE printable width", exact: true })).toHaveValue("384");
   await expect(page.getByRole("combobox", { name: "BLE photo lightness", exact: true })).toHaveValue("2");
+  await expect(page.getByRole("combobox", { name: "BLE transfer speed", exact: true })).toHaveValue("fast");
   await page.getByRole("combobox", { name: "Print method", exact: true }).selectOption("qz");
   await expect(page.getByRole("combobox", { name: "Printer profile", exact: true })).toHaveValue("deli");
   await expect(page.getByLabel("QZ host", { exact: true })).toHaveValue("localhost");
@@ -80,8 +82,12 @@ test("BLE sends one paced raster job, preserves unresolved safety and reconnects
   await expect(page.getByRole("combobox", { name: "Print method", exact: true })).toBeDisabled();
   await page.evaluate(() => (window as any).bleFixture.release());
   await expect(page.getByRole("status").filter({ hasText: "Check your last print" })).toContainText("Sent to the BLE printer", { timeout: 20000 });
-  const wire = await page.evaluate(() => { const s = (window as any).bleFixture; return { first: s.packets.flat().slice(0, 13), max: Math.max(...s.packets.map((p: number[]) => p.length)), count: s.packets.length, pending: s.pendingBeforeWrite, requests: s.requests.length }; });
-  expect(wire.first).toEqual([27, 64, 27, 97, 1, 29, 118, 48, 0, 72, 0, 64, 0]);
+  const wire = await page.evaluate(() => { const s = (window as any).bleFixture, bytes = s.packets.flat(); return { first: bytes.slice(0, 13), tail: bytes.slice(-7), size: bytes.length, max: Math.max(...s.packets.map((p: number[]) => p.length)), count: s.packets.length, pending: s.pendingBeforeWrite, requests: s.requests.length }; });
+  expect(wire.first.slice(0, 11)).toEqual([27, 64, 27, 97, 1, 29, 118, 48, 0, 72, 0]);
+  const height = wire.first[11] + wire.first[12] * 256;
+  expect(height).toBeGreaterThan(64);
+  expect(wire.size).toBe(13 + 72 * height + 7);
+  expect(wire.tail).toEqual([10,10,10,29,86,66,0]);
   expect(wire.max).toBe(20); expect(wire.count).toBeGreaterThan(100); expect(wire.pending).toBe(true); expect(wire.requests).toBe(1); expect(sockets).toBe(0);
   await expect(page.getByRole("button", { name: "Send one receipt" })).toBeDisabled();
   await page.reload();
@@ -134,7 +140,7 @@ test("BLE receipt kiosk works offline through the legacy iOS write method", asyn
   await expect(kiosk.getByRole("button", { name: "Print my receipt" })).toBeEnabled();
 });
 
-test("generic BLE raster bands preserve exact pixels without a cutter command", async ({ page }, info) => {
+test("continuous BLE raster preserves every row and feeds/cuts once, like both QZ profiles", async ({ page }, info) => {
   test.skip(info.project.name !== "desktop", "Shared protocol check");
   await page.goto("/");
   const receipt = ts.transpile(await readFile("src/receipt.ts", "utf8"), { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 });
@@ -145,9 +151,32 @@ test("generic BLE raster bands preserve exact pixels without a cutter command", 
     const bits = new Uint8Array(384 * 65); bits[0] = 1; bits[383] = 1; bits[384 * 64] = 1;
     const data = m.encodeBleRaster(bits, 384, 65);
     let rejected = false; try { m.encodeBleRaster(bits, 385, 65); } catch { rejected = true; }
-    return { head: [...data.slice(0, 14)], lastPixel: data[13 + 47], nextBand: [...data.slice(13 + 48 * 64, 22 + 48 * 64)], tail: [...data.slice(-3)], length: data.length, rejected };
+    const original = await import(receiptUrl);
+    return { head: [...data.slice(0, 14)], lastPixel: data[13 + 47], row65: data[13 + 48 * 64], tail: [...data.slice(-7)], length: data.length, rejected, cuts: ["deli", "g80"].map(profile => [...original.encode(new Uint8Array(original.profiles[profile].width), original.profiles[profile].width, 1, profile).slice(-4)]) };
   }, { receipt, ble });
-  expect(result).toEqual({ head: [27,64,27,97,1,29,118,48,0,48,0,64,0,128], lastPixel: 1, nextBand: [29,118,48,0,48,0,1,0,128], tail: [10,10,10], length: 5 + 16 + 48 * 65 + 3, rejected: true });
+  expect(result).toEqual({ head: [27,64,27,97,1,29,118,48,0,48,0,65,0,128], lastPixel: 1, row65: 128, tail: [10,10,10,29,86,66,0], length: 13 + 48 * 65 + 7, rejected: true, cuts: [[29,86,66,0],[29,86,66,0]] });
+});
+
+test("BLE speed presets reduce pauses and packet count without replay", async ({ page }, info) => {
+  test.skip(info.project.name !== "desktop", "Shared transport check");
+  await fakeBluetooth(page); await page.goto("/");
+  const receipt = ts.transpile(await readFile("src/receipt.ts", "utf8"), { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 });
+  const ble = ts.transpile(await readFile("src/blePrinting.ts", "utf8"), { module: ts.ModuleKind.ESNext, target: ts.ScriptTarget.ES2022 });
+  const result = await page.evaluate(async ({ receipt, ble }) => {
+    const receiptUrl = URL.createObjectURL(new Blob([receipt], { type: "text/javascript" }));
+    const m = await import(URL.createObjectURL(new Blob([ble.replace('"./receipt"', JSON.stringify(receiptUrl))], { type: "text/javascript" })));
+    const printer = new m.BleReceiptPrinter(); await printer.connect(); const results = [];
+    for (const speed of ["standard", "fast", "compatible"]) {
+      const state = (window as any).bleFixture; state.packets = []; state.waits = [];
+      await printer.submit(new Uint8Array(256), speed);
+      results.push({ speed, packets: state.packets.map((p: number[]) => p.length), waits: [...state.waits], bytes: state.packets.flat().length });
+    }
+    printer.disconnect(); return results;
+  }, { receipt, ble });
+  expect(result.map(r => [r.speed, r.packets.length, r.bytes])).toEqual([["standard",13,256],["fast",2,256],["compatible",13,256]]);
+  expect(result[0].waits).toEqual(Array(13).fill(2));
+  expect(result[1].packets).toEqual([128,128]);
+  expect(result[2].waits).toEqual(Array(13).fill(10));
 });
 
 test("PhotoBooth BLE print and history reprint use the same decorated sheet", async ({ page }) => {

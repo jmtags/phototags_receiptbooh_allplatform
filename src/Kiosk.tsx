@@ -22,6 +22,8 @@ import { brandStyle, welcomeBackground } from "./branding";
 import { PinGate } from "./PinGate";
 import { PhotoDownloadQr } from "./PhotoDownloadQr";
 import { useKioskCountdown } from "./useKioskCountdown";
+import { PhotoWelcomeSamples } from "./PhotoWelcomeSamples";
+import { PhotoSheetPreview } from "./PhotoSheetPreview";
 
 const receiptSteps = ["Choose layout", "Take a photo", "Choose theme", "Print & keep"];
 
@@ -42,6 +44,7 @@ export function Kiosk({
   const [step, setStep] = useState(0),
     [chosenShots, setChosenShots] = useState<ShotCount | null>(null),
     [chosenTheme, setChosenTheme] = useState(false);
+  const [sheetPreview, setSheetPreview] = useState(false);
   const visibleStep = photoMode && step > 0 ? step - 1 : step;
   const finalStep = photoMode ? 5 : 4;
   const previousJob = useRef(b.job);
@@ -198,6 +201,7 @@ export function Kiosk({
     setStep(0);
   }
   const resetRemaining=useKioskCountdown(step>=4&&!b.busy&&!b.job,b.kioskResetSeconds,finish);
+  useEffect(() => { if (step < 3 || !b.hasPhotos) setSheetPreview(false); }, [step, b.hasPhotos]);
   const titles = [
     "Good times start here.",
     "How many shots?",
@@ -235,7 +239,7 @@ export function Kiosk({
   return (
     <dialog
       ref={dialog}
-      className={`kiosk-dialog ${photoMode ? "photo-mode" : ""} ${step === 3 ? "is-theme-step" : ""} ${step === 2 ? `is-camera-step ${cameraExpanded ? "is-camera-expanded" : ""}` : ""}`}
+      className={`kiosk-dialog ${photoMode ? "photo-mode" : ""} ${photoMode && step === 4 ? "is-photo-print-step" : ""} ${step === 3 ? "is-theme-step" : ""} ${step === 2 ? `is-camera-step ${cameraExpanded ? "is-camera-expanded" : ""}` : ""}`}
       style={brandStyle(b.branding)}
       aria-label={photoMode ? "PhotoTags LRB PhotoBooth kiosk" : "PhotoTags LRB guest kiosk"}
       onCancel={(e) => {
@@ -277,9 +281,9 @@ export function Kiosk({
               <div className="kiosk-welcome-logo">
                 <img src={b.branding.logo} alt="" />
               </div>
-            ) : (
+            ) : photoMode ? <PhotoWelcomeSamples/> : (
               <div className="kiosk-receipt-fan" aria-hidden="true">
-                {(photoMode ? b.photoThemes.availableThemes.slice(0, 3) : [templates[3], templates[0], templates[4]]).map((t) => (
+                {[templates[3], templates[0], templates[4]].map((t) => (
                   <img
                     key={t.id}
                     src={artwork(t)}
@@ -341,6 +345,7 @@ export function Kiosk({
                 {photoMode && step === 2 ? "Take four photos." : photoMode && step === 4 ? "Your photo sheet is ready." : titles[step]}
               </h1>
               <p>{subtitles[step]}</p>
+              {photoMode && step >= 3 && !!b.editorPreview && <button className="button button-secondary photo-expand-preview" onClick={() => setSheetPreview(true)} disabled={b.busy || !!b.job || b.rendering}><Maximize size={17} aria-hidden="true"/>Full-screen 4 × 6 preview</button>}
               {step === 3 && <>
                 <label className="receipt-color-toggle">
                   <input type="checkbox" role="switch" aria-label={photoMode ? "Color photo" : "Color receipt"} aria-describedby="receipt-color-help" checked={b.receiptColor} disabled={b.busy || !!b.job} onChange={e => b.setReceiptColor(e.target.checked)}/>
@@ -676,8 +681,8 @@ export function Kiosk({
                     <img
                       src={photoMode ? b.editorPreview : b.preview}
                       alt={photoMode ? "Your final photo" : "Your final receipt"}
-                      width="230"
-                      height="552"
+                      width={photoMode ? 1200 : 230}
+                      height={photoMode ? 1800 : 552}
                     />
                   ) : (
                     <div className="kiosk-loading" role="status">
@@ -932,6 +937,7 @@ export function Kiosk({
           ) : null}
         </KioskPrompt>
       )}
+      {photoMode && sheetPreview && b.editorPreview && <PhotoSheetPreview source={b.editorPreview} onClose={() => setSheetPreview(false)} printReady={b.printerReady && !b.busy && !b.job && !b.rendering && b.complete} onPrint={step === 4 ? () => { setSheetPreview(false); void b.print(); } : undefined}/>}
     </dialog>
   );
 }

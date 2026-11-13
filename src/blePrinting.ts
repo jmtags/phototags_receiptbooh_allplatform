@@ -21,6 +21,7 @@ type Device = EventTarget & {
 };
 type Server = { getPrimaryService(uuid: string): Promise<{ getCharacteristic(uuid: string): Promise<Characteristic> }> };
 type Bluetooth = { requestDevice(options: { acceptAllDevices: boolean; optionalServices: string[] }): Promise<Device> };
+export type BleSpeed = "standard" | "fast" | "compatible";
 export function bluetoothAvailable() {
   return !!(navigator as Navigator & { bluetooth?: Bluetooth }).bluetooth?.requestDevice;
 }
@@ -73,21 +74,26 @@ export class BleReceiptPrinter {
     } catch (error) { this.disconnect(); throw error; }
     finally { this.connecting = false; }
   }
-  async submit(bytes: Uint8Array) {
+  async submit(bytes: Uint8Array, speed: BleSpeed = "standard") {
     if (this.sending) throw new Error("A Bluetooth print is already running.");
     const port = this.characteristic, device = this.device;
     if (!port || !this.connected) throw new Error("Reconnect the BLE printer in Settings first.");
     this.sending = true;
+    const packetSize = speed === "fast" ? 128 : 20;
+    const acknowledged = !!(port.properties.write && (port.writeValueWithResponse || port.writeValue));
     try {
-      for (let offset = 0; offset < bytes.length; offset += 20) {
+      for (let offset = 0; offset < bytes.length; offset += packetSize) {
         if (!this.connected || this.device !== device) throw new Error("Bluetooth disconnected during printing.");
-        const packet = bytes.slice(offset, offset + 20);
+        const packet = bytes.slice(offset, offset + packetSize);
         // Prefer acknowledged writes. Never replay failed packets: partial delivery is uncertain.
         if (port.properties.write && port.writeValueWithResponse) await deadline(port.writeValueWithResponse(packet), 10000);
         else if (port.properties.write && port.writeValue) await deadline(port.writeValue(packet), 10000);
         else if (port.properties.writeWithoutResponse && port.writeValueWithoutResponse) await deadline(port.writeValueWithoutResponse(packet), 10000);
         else throw new Error("The BLE write method is unavailable.");
-        await new Promise(resolve => setTimeout(resolve, 10));
+        // An acknowledged write already provides backpressure. Unacknowledged
+        // writes keep a small pace; the compatibility preset retains the old delay.
+        const pause = speed === "compatible" ? 10 : acknowledged ? 0 : 2;
+        if (pause) await new Promise(resolve => setTimeout(resolve, pause));
       }
     } catch (error) { this.disconnect(); throw error; }
     finally { this.sending = false; }
@@ -98,17 +104,15 @@ export class BleReceiptPrinter {
 export function encodeBleRaster(bits: Uint8Array, width: number, height: number) {
   if (![384, 576].includes(width) || !Number.isInteger(height) || height < 1 || height > 65535 || bits.length !== width * height) throw new Error("Invalid BLE raster dimensions.");
   const stride = width / 8, out: number[] = [27, 64, 27, 97, 1];
-  // Short bands avoid a single large image command overrunning small printer buffers.
-  for (let top = 0; top < height; top += 64) {
-    const rows = Math.min(64, height - top);
-    out.push(29, 118, 48, 0, stride & 255, stride >> 8, rows, 0);
-    for (let y = top; y < top + rows; y++) for (let x = 0; x < width; x += 8) {
-      let byte = 0;
-      for (let bit = 0; bit < 8; bit++) if (bits[y * width + x + bit]) byte |= 128 >> bit;
-      out.push(byte);
-    }
+  // One continuous raster avoids firmware feed seams between separate image bands.
+  // BLE packets remain small; transport fragmentation does not add raster commands.
+  out.push(29, 118, 48, 0, stride & 255, stride >> 8, height & 255, height >> 8);
+  for (let y = 0; y < height; y++) for (let x = 0; x < width; x += 8) {
+    let byte = 0;
+    for (let bit = 0; bit < 8; bit++) if (bits[y * width + x + bit]) byte |= 128 >> bit;
+    out.push(byte);
   }
-  out.push(10, 10, 10); // Feed only. No unverified cutter command.
+  out.push(10, 10, 10, 29, 86, 66, 0); // Feed to the cutter and cut, as in existing QZ output.
   return new Uint8Array(out);
 }
 export async function bleImageJob(source: string, width: number, gamma: number) {

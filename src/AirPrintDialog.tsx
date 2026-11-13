@@ -14,9 +14,9 @@ export function AirPrintDialog({ booth: b }: { booth: BoothModel }) {
   }, []);
   useEffect(() => {
     let active = true;
-    photoSheet(b.airPrintImage, b.airPrintPaper).then(png => { if (active) setSheet(png); }).catch(() => { if (active) setError("Could not prepare the print sheet. Close and try again."); });
+    photoSheet(b.airPrintImage, b.airPrintPaper, b.boothMode === "photo").then(png => { if (active) setSheet(png); }).catch(() => { if (active) setError("Could not prepare the print sheet. Close and try again."); });
     return () => { active = false; };
-  }, [b.airPrintImage, b.airPrintPaper]);
+  }, [b.airPrintImage, b.airPrintPaper, b.boothMode]);
   useEffect(() => { if (!b.lightLicense.hasAccess()) b.closeAirPrint(); }, [b.lightLicense.allowed]);
   function openPrint() {
     if (!sheet || sent.current) return;
@@ -34,7 +34,7 @@ export function AirPrintDialog({ booth: b }: { booth: BoothModel }) {
   return <dialog className="airprint-dialog" ref={modal} aria-labelledby="airprint-title" onCancel={e => { e.preventDefault(); b.closeAirPrint(); }}>
     <header><div><span className="section-kicker">AirPrint / system printing</span><h2 id="airprint-title">Print your photo sheet</h2></div><button className="icon-button" aria-label="Close AirPrint preview" onClick={b.closeAirPrint}><X aria-hidden="true" size={20}/></button></header>
     <div className="airprint-body">
-      {sheet ? <img className="airprint-sheet" src={sheet} alt="Receipt fitted onto a photo sheet without cropping"/> : <p role="status">Preparing your print sheet...</p>}
+      {sheet ? <img className="airprint-sheet" src={sheet} alt={b.boothMode === "photo" ? "PhotoBooth image fitted onto a photo sheet without cropping" : "Receipt fitted onto a photo sheet without cropping"}/> : <p role="status">Preparing your print sheet...</p>}
       <div><p>{airPrintPapers[b.airPrintPaper].name} · one image fitted without cropping.</p><p>Choose your printer in the system dialog. For Xiaomi 1S, use the same Wi-Fi as your iPad and matching photo paper.</p><p>Printing or cancelling cannot be confirmed by the app. Check the paper before clearing this attempt.</p>
       {error && <p role="alert" className="alert">{error}</p>}
       {b.job ? <p role="status">Print page opened. Close this preview to review the attempt. If you cancelled, review it before trying again.</p> : <div className="airprint-actions"><button className="button button-primary" disabled={!sheet} onClick={openPrint}><Printer size={18} aria-hidden="true"/>Print / AirPrint</button></div>}

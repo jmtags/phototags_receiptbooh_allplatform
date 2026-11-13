@@ -7,13 +7,13 @@ export const airPrintPapers = {
 };
 export type AirPrintPaper = keyof typeof airPrintPapers;
 
-export async function photoSheet(source: string, paper: AirPrintPaper) {
+export async function photoSheet(source: string, paper: AirPrintPaper, edgeToEdge = false) {
   const img = await image(source), spec = airPrintPapers[paper];
   const canvas = document.createElement("canvas");
   canvas.width = spec.width; canvas.height = spec.height;
   const ctx = canvas.getContext("2d")!;
   ctx.fillStyle = "white"; ctx.fillRect(0, 0, canvas.width, canvas.height);
-  const margin = 36;
+  const margin = edgeToEdge && paper === "photo" ? 0 : 36;
   const scale = Math.min((canvas.width - margin * 2) / img.naturalWidth, (canvas.height - margin * 2) / img.naturalHeight);
   const w = img.naturalWidth * scale, h = img.naturalHeight * scale;
   ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
